@@ -5,7 +5,7 @@
 ---------------------------------
 ---------------------------------
 
-This python script is used for testing the Batch Templates inside the BatchExplorer-data\ncj folder. It does not test BatchExplorer only the Azure Batch CLI and its extension client. Please set the following environmental variables before running the job script. 
+This python script is used for testing the Batch Templates inside the batch-extension-templates\ncj folder. It does not test BatchExplorer only the Azure Batch CLI and its extension client. Please set the following environmental variables before running the job script. 
 
 PS_BATCH_ACCOUNT_NAME
 PS_BATCH_ACCOUNT_KEY
