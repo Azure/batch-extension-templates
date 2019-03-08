@@ -33,8 +33,8 @@ The manifest file contains 5 properties you need to set and 1 optional.
   "tests": [
     {
         "name": "name of the test, this is only the display name of the job”
-        "template": "../ncj/maya/render-default-windows/job.template.json", # A link to the template you want to run
-        "poolTemplate": "../ncj/maya/render-default-windows/pool.template.json", A link to the pool template you want the job to run on 
+        "template": "../templates/maya/render-default-windows/job.template.json", # A link to the template you want to run
+        "poolTemplate": "../templates/maya/render-default-windows/pool.template.json", A link to the pool template you want the job to run on 
         "parameters": "Tests/maya/render-default-windows/job.parameters2017.json", # A job parameters file that all the parameters that need to be set on the Job
         "expectedOutput": "maya.exr.0001" What the expected output is meant to be in the task, this is used for validation
 		"applicationLicense": "if any additional licenses need to be set"
