@@ -2,32 +2,32 @@
   "tests": [
     {
         "name": "3dsmax-vray-dr-rt-2018",
-        "template": "../ncj/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../ncj/3dsmax/vray-dr/pool.template.json",
+        "template": "../templates/3dsmax/vray-dr/job.template.json",
+        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
         "parameters": "Tests/3dsmax/vray-dr/job.parameters.rt.2018.json",
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
     },
     {
         "name": "3dsmax-vray-dr-rt-2019",
-        "template": "../ncj/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../ncj/3dsmax/vray-dr/pool.template.json",
+        "template": "../templates/3dsmax/vray-dr/job.template.json",
+        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
         "parameters": "Tests/3dsmax/vray-dr/job.parameters.rt.2019.json",
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
     },
     {
         "name": "3dsmax-vray-dr-adv-2018",
-        "template": "../ncj/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../ncj/3dsmax/vray-dr/pool.template.json",
+        "template": "../templates/3dsmax/vray-dr/job.template.json",
+        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
         "parameters": "Tests/3dsmax/vray-dr/job.parameters.adv.2018.json",
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
     },
     {
         "name": "3dsmax-vray-dr-adv-2019",
-        "template": "../ncj/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../ncj/3dsmax/vray-dr/pool.template.json",
+        "template": "../templates/3dsmax/vray-dr/job.template.json",
+        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
         "parameters": "Tests/3dsmax/vray-dr/job.parameters.adv.2019.json",
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
