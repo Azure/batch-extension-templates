@@ -87,7 +87,6 @@ def run_job_manager_tests(blob_client: azureblob.BlockBlobService, batch_client:
     :param batch_client: The batch client needed for making batch operations
     :type batch_client: azure.batch.BatchExtensionsClient
     """
-
     logger.info("{} jobs will be created.".format(len(_job_managers)))
     utils.execute_parallel_jobmanagers("upload_assets", _job_managers, blob_client)
     logger.info("Creating pools...")
