@@ -69,7 +69,7 @@ def runner_arguments():
     parser.add_argument("ServicePrincipalCredentialsTenant", help="Service Principal tenant")
     parser.add_argument("ServicePrincipalCredentialsResouce", help="Service Principal resource")
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
-    parser.add_argument("-VMImageType", choices=['windows','Windows','centos','Centos','CentOS', None], default=None, help="The custom image type, windows or centos")
+    parser.add_argument("-VMImageType", choices=['windows','Windows','centos','Centos','CentOS', 'docker', None], default=None, help="The custom image type, windows or centos")
 
     return parser.parse_args()
 
