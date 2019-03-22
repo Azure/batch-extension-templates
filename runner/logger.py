@@ -94,10 +94,10 @@ def export_result(job_managers: 'list[job_manager.JobManager]', total_time: int)
                 converted_time = time.strptime(str(job_item.duration).split('.')[0], '%H:%M:%S')
                 total_seconds = datetime.timedelta(hours=converted_time.tm_hour, minutes=converted_time.tm_min,
                                                seconds=converted_time.tm_sec).total_seconds()
+                child.attrib["time"] = str(total_seconds)
             except ValueError as e:
                 child.attrib["time"] = job_duration
                     
-            child.attrib["time"] = str(total_seconds)
         # job did not run, so the test did not run
         else:
             child.attrib["time"] = "0:00:00"

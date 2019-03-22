@@ -4,7 +4,6 @@ This repository contains templates that can be used with the [azure-batch-cli-ex
 
 This is also what [Batch Explorer](https://github.com/Azure/BatchExplorer) uses for its gallery.
 
-
 Templates are located in the `templates` folder. They need to follow a **strict** folder structure for Batch Explorer to be able to parse it.
 
 - templates/
