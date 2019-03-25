@@ -1,0 +1,35 @@
+{
+   "jobName":{
+      "value":"centos-maya2017update5-arnold2011"
+   },
+   "poolId":{
+      "value":"centos_maya2017update5_arnold2011"
+   },
+   "containerImage":{
+      "value": "azurebatchrendering/centos_maya2017update5_arnold2011:latest"
+   },
+   "mayaVersion":{
+      "value":"Maya2017"
+   },
+   "inputFilegroup":{
+      "value":"myfilegroup"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "inputDataSas":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"maya.mb"
+   },
+   "additionalflags":{
+      "value":"-of png"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "outputFilegroup":{
+      "value":"myfilegroup"
+   }
+}

@@ -1,0 +1,36 @@
+{
+  "tests": [
+    {
+        "name": "maya2018-arnold-linux-container",
+        "template": "../templates/maya/render-arnold-linux-container/job.template.json",
+        "poolTemplate": "../templates/maya/render-arnold-linux-container/pool.template.json",
+        "parameters": "Tests/maya/render-arnold-linux-container/job.parameters2018.centos_maya2018update4_arnold3101.json",
+        "dockerImage": "azurebatchrendering/centos_maya2018update4_arnold3101",
+        "expectedOutput":"maya.exr.0001"
+    },
+    {
+        "name": "maya2018-arnold-linux-container",
+        "template": "../templates/maya/render-arnold-linux-container/job.template.json",
+        "poolTemplate": "../templates/maya/render-arnold-linux-container/pool.template.json",
+        "parameters": "Tests/maya/render-arnold-linux-container/job.parameters2018.centos_maya2018update4_arnold2103.json",
+        "dockerImage": "azurebatchrendering/centos_maya2018update4_arnold2103",
+        "expectedOutput":"maya.exr.0001"
+    },
+    {
+        "name": "maya2018-arnold-linux-container",
+        "template": "../templates/maya/render-arnold-linux-container/job.template.json",
+        "poolTemplate": "../templates/maya/render-arnold-linux-container/pool.template.json",
+        "parameters": "Tests/maya/render-arnold-linux-container/job.parameters2018.centos_maya2018update4_arnold2023.json",
+        "dockerImage": "azurebatchrendering/centos_maya2018update4_arnold2023",
+        "expectedOutput":"maya.exr.0001"
+    }
+  ], 
+  "images": 
+[    {
+        "publisher": "microsoft-azure-batch",
+        "osType": "windows",
+        "offer": "centos-container",
+        "sku": "7-5",
+        "version": "latest"
+    }]
+}

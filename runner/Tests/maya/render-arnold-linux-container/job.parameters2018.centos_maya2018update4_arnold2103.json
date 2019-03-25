@@ -1,12 +1,12 @@
 {
    "jobName":{
-      "value":"maya-arnold-linux-2018"
+      "value":"centos-maya2018update4-arnold2103"
    },
    "poolId":{
-      "value":"default-linux"
+      "value":"centos_maya2018update4_arnold2103"
    },
    "containerImage":{
-      "value": "azurebatchrendering/centos_maya2018update4_arnold2023:latest"
+      "value": "azurebatchrendering/centos_maya2018update4_arnold2103:latest"
    },
    "mayaVersion":{
       "value":"Maya2018"

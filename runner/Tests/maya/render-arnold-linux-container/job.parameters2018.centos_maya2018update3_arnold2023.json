@@ -1,0 +1,35 @@
+{
+   "jobName":{
+      "value":"centos-maya2018update3-arnold2023"
+   },
+   "poolId":{
+      "value":"centos_maya2018update3_arnold2023"
+   },
+   "containerImage":{
+      "value": "azurebatchrendering/centos_maya2018update3_arnold2023:latest"
+   },
+   "mayaVersion":{
+      "value":"Maya2018"
+   },
+   "inputFilegroup":{
+      "value":"myfilegroup"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "inputDataSas":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"maya.mb"
+   },
+   "additionalflags":{
+      "value":"-of png"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "outputFilegroup":{
+      "value":"myfilegroup"
+   }
+}
