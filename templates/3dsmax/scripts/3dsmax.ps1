@@ -8,7 +8,7 @@ param (
     [string]$renderer = "vray",
     [string]$irradianceMap = $null,
     [string]$pathFile = $null,
-    [string]$workingDirectory = "$env:AZ_BATCH_JOB_PREP_WORKING_DIR\assets",
+    [string]$workingDirectory = "$env:AZ_BATCH_TASK_WORKING_DIR",
     [string]$preRenderScript = $null,
     [string]$camera = $null,
     [string]$additionalArgs = $null,
