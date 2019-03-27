@@ -155,12 +155,24 @@
             },
             "onAllTasksComplete": "terminateJob",
             "jobPreparationTask": {
-                "commandLine": "azcopy /source:\"[parameters('inputFilegroupSas')]\" /dest:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\assets\" /S || exit /b %errorlevel% & rmdir /S /Q \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\assets\\outputs\" & exit /b 0",
+                "resourceFiles": [
+                    {
+                        "source": {
+                            "fileGroup": "[parameters('inputFilegroup')]"
+                        },
+                        "filePath": "assets\\"
+                    }
+                ],
+                "commandLine": "dir",
                 "userIdentity": {
                     "autoUser": {
-                        "elevationLevel": "nonAdmin",
+                        "elevationLevel": "admin",
                         "scope": "pool"
                     }
+                },
+                "containerSettings": {
+                    "imageName": "[parameters('containerImage')]",
+                    "containerRunOptions": "--rm"
                 }
             },
             "jobReleaseTask": {
@@ -185,21 +197,25 @@
                     "displayName": "Frame {0}",
                     "userIdentity": {
                         "autoUser": {
-                            "elevationLevel": "nonAdmin",
+                            "elevationLevel": "admin",
                             "scope": "pool"
                         }
                     },
-                    "commandLine": "powershell.exe 3dsmax.ps1 -maxVersion \\\"[parameters('maxVersion')]\\\" -start {0} -end {0} -outputName \\\"images\\[parameters('outputName')]\\\" -sceneFile \\\"[parameters('sceneFile')]\\\" -pathFile \\\"[parameters('pathFile')]\\\" -renderer arnold -preRenderScript \\\"[parameters('preRenderScript')]\\\" -camera \\\"[parameters('camera')]\\\" -additionalArgs \\\" [parameters('additionalArgs')]\\\" -irradianceMap \\\"[parameters('irradianceMapFile')]\\\" -renderPresetFile \\\"[parameters('renderPresetFile')]\\\"",
+                    "commandLine": "powershell.exe \"%AZ_BATCH_TASK_WORKING_DIR%\"\\3dsmax.ps1 -maxVersion \\\"[parameters('maxVersion')]\\\" -start {0} -end {0} -outputName \\\"images\\[parameters('outputName')]\\\" -sceneFile \\\"[parameters('sceneFile')]\\\" -pathFile \\\"[parameters('pathFile')]\\\" -renderer arnold -preRenderScript \\\"[parameters('preRenderScript')]\\\" -camera \\\"[parameters('camera')]\\\" -additionalArgs \\\" [parameters('additionalArgs')]\\\" -irradianceMap \\\"[parameters('irradianceMapFile')]\\\" -renderPresetFile \\\"[parameters('renderPresetFile')]\\\"",
                     "resourceFiles":[
                         {
-                            "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/3dsmax.ps1",
+                            "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/feature/3dsmaxcontainers/templates/3dsmax/scripts/3dsmax.ps1",
                             "filePath":"3dsmax.ps1"
+                        },
+                        {
+                            "blobSource":"https://dakydddev.blob.core.windows.net/fgrp-smoketestscenes/3dsmax-arnold.max?st=2019-03-25T03%3A44%3A00Z&se=2019-03-31T03%3A44%3A00Z&sp=rl&sv=2018-03-28&sr=b&sig=l96Q%2BwgQ4f7d4wAkqydtkWxDOxEngCadMXGIOKLu0ew%3D",
+                            "filePath":"3dsmax-arnold.max"
                         }
                     ],
                     "containerSettings": {
                         "imageName": "[parameters('containerImage')]",
-                        "containerRunOptions": "--privileged --rm"
-                      },
+                        "containerRunOptions": "--rm"
+                    },
                     "outputFiles": [
                         {
                             "filePattern": "../stdout.txt",
