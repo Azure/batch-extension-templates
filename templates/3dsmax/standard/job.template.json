@@ -192,8 +192,12 @@
                     "commandLine": "powershell.exe 3dsmax.ps1 -maxVersion \\\"[parameters('maxVersion')]\\\" -start {0} -end {0} -outputName \\\"images\\[parameters('outputName')]\\\" -sceneFile \\\"[parameters('sceneFile')]\\\" -pathFile \\\"[parameters('pathFile')]\\\" -renderer [parameters('renderer')] -preRenderScript \\\"[parameters('preRenderScript')]\\\" -camera \\\"[parameters('camera')]\\\" -additionalArgs \\\" [parameters('additionalArgs')]\\\" -irradianceMap \\\"[parameters('irradianceMapFile')]\\\" -renderPresetFile \\\"[parameters('renderPresetFile')]\\\"",
                     "resourceFiles":[
                         {
-                            "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/3dsmax.ps1",
+                            "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/repath-render-elements/templates/3dsmax/scripts/3dsmax.ps1",
                             "filePath":"3dsmax.ps1"
+                        },
+                        {
+                            "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/repath-render-elements/templates/3dsmax/scripts/RepathRenderElements.ms",
+                            "filePath":"RepathRenderElements.ms"
                         }
                     ],
                     "outputFiles": [
