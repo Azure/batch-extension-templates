@@ -161,6 +161,13 @@ if ($renderer -like "vray")
     $pre_render_script_content += "if index == 1 then (r.output_splitfilename = ""$outputFiles"")`r`n"
 }
 
+if ((Test-Path ".\RepathRenderElements.ms"))
+{
+	$remapRenderElementsScript = (Get-Content -Path ".\RepathRenderElements.ms" -Raw)
+	$pre_render_script_content += "-- Remap any render element paths`r`n"
+	$pre_render_script_content += $remapRenderElementsScript
+}
+
 $pre_render_script_content | Out-File $pre_render_script -Encoding ASCII
 
 if (ParameterValueSet $preRenderScript)
