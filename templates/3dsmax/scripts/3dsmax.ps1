@@ -163,7 +163,7 @@ if ($renderer -like "vray")
 
 if ((Test-Path ".\RepathRenderElements.ms"))
 {
-	$remapRenderElementsScript = (Get-Content -Path ".\RepathRenderElements.ms")
+	$remapRenderElementsScript = (Get-Content -Path ".\RepathRenderElements.ms" -Raw)
 	$pre_render_script_content += "-- Remap any render element paths`r`n"
 	$pre_render_script_content += $remapRenderElementsScript
 }
