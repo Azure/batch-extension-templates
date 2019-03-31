@@ -197,11 +197,11 @@
                         },
                         "resourceFiles":[
 							{
-								"blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/repath-render-elements/templates/3dsmax/scripts/3dsmax.ps1",
+								"blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/3dsmax.ps1",
 								"filePath":"3dsmax.ps1"
 							},
 							{
-								"blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/repath-render-elements/templates/3dsmax/scripts/RepathRenderElements.ms",
+								"blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/RepathRenderElements.ms",
 								"filePath":"RepathRenderElements.ms"
 							}
                         ],
