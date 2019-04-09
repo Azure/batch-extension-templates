@@ -1,11 +1,11 @@
 {
     "templateMetadata": {
-        "description": "Application template for working with Maya and Arnold on CentOS."
+        "description": "Application template for working with Maya software renderer on CentOS docker containers."
     },
     "parameters": {
         "poolId": {
             "type": "string",
-            "defaultValue": "maya-arnold-pool-centos",
+            "defaultValue": "maya-pool-centos-docker",
             "metadata": {
                 "description": "The ID of the pool on which to run the job."
             }
@@ -18,13 +18,13 @@
             },
             "additionalProperties": {
               "app": "maya",
-              "renderEngine": "arnold",
+              "renderEngine": "mayasw",
               "imageReferenceId": "centos-75-container"
             }
         },
         "jobName": {
             "type": "string",
-            "defaultValue": "maya-arnold-centos",
+            "defaultValue": "maya-centos-docker",
             "metadata": {
                 "description": "The unique name of the job.",
                 "advancedType": "job-id"
