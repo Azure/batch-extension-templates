@@ -1,6 +1,6 @@
 sysEnv = dotNetClass "System.Environment"
 rem = maxOps.GetCurRenderElementMgr()
-if(maxOps.GetCurRenderElementMgr() != undefined) then
+if(rem != undefined) then
 (
 	for n = 0 to (rem.NumRenderElements() - 1) do
 	(
