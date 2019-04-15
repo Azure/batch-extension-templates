@@ -155,5 +155,10 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-    exit(0)
+    try:
+        main()
+        exit(0)
+    except Exception as err:
+        traceback.print_exc()
+        utils.print_batch_exception(err)
+        exit(1)
