@@ -1,15 +1,15 @@
 {
    "jobName":{
-      "value":"centos-maya2018update2-arnold2023"
+      "value":"centos-maya2017-vray"
    },
    "poolId":{
-      "value":"centos_maya2018update2_arnold2023"
+      "value":"centos-maya2017-vray"
    },
    "containerImage":{
-      "value": "azurebatchrendering/centos_maya2018update2_arnold2023:latest"
+      "value": "azurebatchrendering/centos-maya_2017u5_vray36004"
    },
    "mayaVersion":{
-      "value":"Maya2018"
+      "value":"Maya2017"
    },
    "inputFilegroup":{
       "value":"myfilegroup"
@@ -21,7 +21,7 @@
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"maya.mb"
+      "value":"maya-vray.mb"
    },
    "additionalflags":{
       "value":"-of png"

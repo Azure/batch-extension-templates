@@ -1,15 +1,15 @@
 {
    "jobName":{
-      "value":"centos-maya2018update3-arnold2023"
+      "value":"centos-maya2017"
    },
    "poolId":{
-      "value":"centos_maya2018update3_arnold2023"
+      "value":"centos_maya2017"
    },
    "containerImage":{
-      "value": "azurebatchrendering/centos_maya2018update3_arnold2023:latest"
+      "value": "azurebatchrendering/centos-maya_2017u5:latest"
    },
    "mayaVersion":{
-      "value":"Maya2018"
+      "value":"Maya2017"
    },
    "inputFilegroup":{
       "value":"myfilegroup"

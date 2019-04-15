@@ -1,12 +1,12 @@
 {
    "jobName":{
-      "value":"centos-maya2018update4-arnold3101"
+      "value":"centos-maya2018-arnold"
    },
    "poolId":{
-      "value":"centos_maya2018update4_arnold3101"
+      "value":"centos-maya2018-arnold"
    },
    "containerImage":{
-      "value": "azurebatchrendering/centos_maya2018update4_arnold3101:latest"
+      "value": "azurebatchrendering/centos-maya_2018u4_arnold2023:latest"
    },
    "mayaVersion":{
       "value":"Maya2018"
@@ -21,7 +21,7 @@
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"maya.mb"
+      "value":"maya-arnold.mb"
    },
    "additionalflags":{
       "value":"-of png"
