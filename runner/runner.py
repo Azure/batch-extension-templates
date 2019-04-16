@@ -137,7 +137,6 @@ def main():
         run_job_manager_tests(blob_client, batch_client, images_refs, args.VMImageURL)
 
     except batchmodels.batch_error.BatchErrorException as err:
-        traceback.print_exc()
         utils.print_batch_exception(err)
         raise
     finally:
@@ -159,5 +158,4 @@ if __name__ == '__main__':
         exit(0)
     except Exception as err:
         traceback.print_exc()
-        utils.print_batch_exception(err)
         exit(1)
