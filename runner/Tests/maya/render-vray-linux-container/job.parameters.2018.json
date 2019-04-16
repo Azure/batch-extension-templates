@@ -1,0 +1,35 @@
+{
+   "jobName":{
+      "value":"container-centos-maya2018-vray"
+   },
+   "poolId":{
+      "value":"container-centos-maya2018-vray"
+   },
+   "containerImage":{
+      "value": "azurebatchrendering/centos-maya_2018u4_vray36004"
+   },
+   "mayaVersion":{
+      "value":"Maya2018"
+   },
+   "inputFilegroup":{
+      "value":"myfilegroup"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "inputDataSas":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"maya-vray.mb"
+   },
+   "additionalflags":{
+      "value":"-of png"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "outputFilegroup":{
+      "value":"myfilegroup"
+   }
+}

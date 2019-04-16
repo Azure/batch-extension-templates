@@ -15,6 +15,10 @@ file_handler.setFormatter(formatter)
 # add the handlers to logger
 logger.addHandler(file_handler)
 
+# add console logger as well
+consoleHandler = logging.StreamHandler()
+consoleHandler.setFormatter(formatter)
+logger.addHandler(consoleHandler)
 
 def info(message: str):
     """
