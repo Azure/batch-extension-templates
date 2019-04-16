@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"centos-maya2017"
+      "value":"container-centos-maya2017"
    },
    "poolId":{
-      "value":"centos_maya2017"
+      "value":"container-centos-maya2017"
    },
    "containerImage":{
       "value": "azurebatchrendering/centos-maya_2017u5:latest"
