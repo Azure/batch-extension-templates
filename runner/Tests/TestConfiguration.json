@@ -195,7 +195,7 @@
       "poolTemplate": "../templates/maya/render-arnold-linux-container/pool.template.json",
       "parameters": "Tests/maya/render-arnold-linux-container/job.parameters.2017.json",
       "dockerImage": "azurebatchrendering/centos-maya_2017u5_arnold2011",
-      "expectedOutput": "maya-arnold_0001.png"
+      "expectedOutput": "maya-arnold_0001.exr"
     },
      {
       "name": "container-centos-maya2018-arnold",
@@ -203,7 +203,7 @@
       "poolTemplate": "../templates/maya/render-arnold-linux-container/pool.template.json",
       "parameters": "Tests/maya/render-arnold-linux-container/job.parameters.2018.json",
       "dockerImage": "azurebatchrendering/centos-maya_2018u4_arnold2023",
-      "expectedOutput": "maya-arnold_0001.png"
+      "expectedOutput": "maya-arnold_0001.exr"
     },
     {
       "name": "container-centos-maya2017-vray",
@@ -211,15 +211,15 @@
       "poolTemplate": "../templates/maya/render-vray-linux-container/pool.template.json",
       "parameters": "Tests/maya/render-vray-linux-container/job.parameters.2017.json",
       "dockerImage": "azurebatchrendering/centos-maya_2017u5_vray36004",
-      "expectedOutput": "maya-vray.exr.0001"
+      "expectedOutput": "maya-vray.0001.png"
     },
-     {
+    {
       "name": "container-centos-maya2018-vray",
       "template": "../templates/maya/render-vray-linux-container/job.template.json",
       "poolTemplate": "../templates/maya/render-vray-linux-container/pool.template.json",
       "parameters": "Tests/maya/render-vray-linux-container/job.parameters.2018.json",
       "dockerImage": "azurebatchrendering/centos-maya_2018u4_vray36004",
-      "expectedOutput": "maya-vray.exr.0001"
+      "expectedOutput": "maya-vray.0001.png"
     },
     {
       "name": "container-centos-maya2017",
