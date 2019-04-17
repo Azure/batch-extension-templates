@@ -5,6 +5,11 @@
         "description": "Render a Maya scene with the Arnold renderer on Linux"
     },
     {
+        "id": "render-arnold-linux-container",
+        "name": "Render Maya/Arnold scene on Linux using containers",
+        "description": "Render a Maya scene with the Arnold renderer on Linux containers"
+    },
+    {
         "id": "render-arnold-windows",
         "name": "Render Maya/Arnold scene on Windows",
         "description": "Render a Maya scene with the Arnold renderer on Windows"
@@ -13,6 +18,11 @@
         "id": "render-default-linux",
         "name": "Render Maya scene on CentOS",
         "description": "Render a Maya scene with the default renderer on Linux"
+    },
+     {
+        "id": "render-default-linux-container",
+        "name": "Render Maya scene on CentOS using containers",
+        "description": "Render a Maya scene with the default renderer on Linux containers"
     },
     {
         "id": "render-default-windows",
@@ -23,6 +33,11 @@
         "id": "render-vray-linux",
         "name": "Render Maya/V-Ray scene on CentOS",
         "description": "Render a Maya scene with the V-Ray renderer on Linux"
+    },
+     {
+        "id": "render-vray-linux-container",
+        "name": "Render Maya/V-Ray scene on CentOS using containers",
+        "description": "Render a Maya scene with the V-Ray renderer on Linux containers"
     },
     {
         "id": "render-vray-windows",

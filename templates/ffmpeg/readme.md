@@ -7,7 +7,7 @@ FFmpeg is a complete, cross-platform solution to record, convert and stream audi
 
 The FFmpeg templates provide a quick and easy demonstration of how you can leverage the power of the Azure Batch Service to run parallel workloads in the cloud. In this demonstration we will be using FFmpeg to create an animation from a collection of rendered frames. 
 
-The frames were rendered using 3ds Max and the V-Ray renderer from [this template](https://github.com/Azure/BatchLabs-data/tree/master/ncj/3dsmax/vray-scene), that can be found by selecting the 3ds Max application from the 'Gallery' menu and selecting the 'VRay CPU - Render a scene' action.
+The frames were rendered using 3ds Max and the V-Ray renderer from [this template](https://github.com/Azure/BatchLabs-data/tree/master/templates/3dsmax/vray-scene), that can be found by selecting the 3ds Max application from the 'Gallery' menu and selecting the 'VRay CPU - Render a scene' action.
 
 ![3ds Max action](./images/select-action.png)
 

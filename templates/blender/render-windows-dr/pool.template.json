@@ -119,7 +119,7 @@
             },
             "resourceFiles": [
                 {
-                    "blobSource": "https://raw.githubusercontent.com/Azure/BatchExplorer-data/master/ncj/blender/scripts/[variables('setupScript')]",
+                    "blobSource": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/[variables('setupScript')]",
                     "filePath": "[variables('setupScript')]"
                 }
             ]
