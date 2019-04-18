@@ -34,7 +34,7 @@
             "type": "string",
             "defaultValue": "2019",
             "metadata": {
-                "description": "The version of 3ds Max to install Corona binaries into"
+                "description": "The version of 3dsMax to install Corona binaries into"
             },
             "allowedValues":[
                 "2018",
