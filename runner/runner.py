@@ -1,5 +1,6 @@
 from __future__ import print_function
 from azure.common.credentials import ServicePrincipalCredentials
+from azure.keyvault import KeyVaultClient, KeyVaultAuthentication
 import traceback
 import datetime
 import sys
@@ -45,6 +46,24 @@ def create_batch_client(args: object) -> batch.BatchExtensionsClient:
         base_url=args.BatchAccountUrl,
         subscription_id=args.BatchAccountSub)
 
+def create_keyvault_client(args: object):
+    """
+    Create keyvault client namedTuple with url
+    """
+    def auth_callback(server, resource, scope):
+        credentials = ServicePrincipalCredentials(
+            client_id = args.ServicePrincipalCredentialsClientID,
+            secret = args.ServicePrincipalCredentialsSecret,
+            tenant = args.ServicePrincipalCredentialsTenant,
+            resource = "https://vault.azure.net"
+        )
+        token = credentials.token
+        return token['token_type'], token['access_token']
+
+    client = KeyVaultClient(KeyVaultAuthentication(auth_callback))
+
+    return (client, args.KeyVaultUrl)
+
 
 def runner_arguments():
     """
@@ -64,6 +83,7 @@ def runner_arguments():
     parser.add_argument("BatchAccountSub", help="The batch account sub ")
     parser.add_argument("StorageAccountName", help="Storage name ")
     parser.add_argument("StorageAccountKey", help="storage key")
+    parser.add_argument("KeyVaultUrl", help="Azure Key vault to fetch secrets from, service principal must have access")
     parser.add_argument("ServicePrincipalCredentialsClientID", help="Service Principal id")
     parser.add_argument("ServicePrincipalCredentialsSecret", help="Service Principal secret")
     parser.add_argument("ServicePrincipalCredentialsTenant", help="Service Principal tenant")
@@ -111,6 +131,9 @@ def main():
     # Create a batch account using AAD    
     batch_client = create_batch_client(args)
 
+    # Create a keyvault client using AAD    
+    keyvault_client_with_url = create_keyvault_client(args)
+
     # Clean up any storage container that is older than a 7 days old.
     utils.cleanup_old_resources(blob_client)
 
@@ -128,6 +151,7 @@ def main():
                     jobSetting["template"],
                     jobSetting["poolTemplate"],
                     jobSetting["parameters"],
+                    keyvault_client_with_url,
                     jobSetting["expectedOutput"],
                     application_licenses))
 

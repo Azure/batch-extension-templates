@@ -189,6 +189,13 @@
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
     },
+     {
+      "name": "3dsmax-corona-2018",
+      "template": "../templates/3dsmax/corona/job.template.json",
+      "poolTemplate": "../templates/3dsmax/corona/pool.template.json",
+      "parameters": "Tests/3dsmax/Corona/template.parameters.2018.json",
+      "expectedOutput": "maya.exr.0001"
+    },
     {
       "name": "container-centos-maya2017-arnold",
       "template": "../templates/maya/render-arnold-linux-container/job.template.json",
@@ -229,7 +236,7 @@
       "dockerImage": "azurebatchrendering/centos-maya_2017u5",
       "expectedOutput": "maya.exr.0001"
     },
-     {
+    {
       "name": "container-centos-maya2018",
       "template": "../templates/maya/render-default-linux-container/job.template.json",
       "poolTemplate": "../templates/maya/render-default-linux-container/pool.template.json",

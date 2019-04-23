@@ -1,4 +1,6 @@
 from azure.storage.blob.models import ContainerPermissions
+from azure.keyvault import KeyVaultClient, KeyVaultAuthentication
+from azure.common.credentials import ServicePrincipalCredentials
 from pathlib import Path
 import azext.batch as batch
 import azure.storage.blob as azureblob
@@ -15,6 +17,7 @@ import logger
 This module is responsible for creating, submitting and monitoring the pools and jobs
 
 """
+_keyVault_param_identifier = "KEYVAULT_"
 
 _time = str(datetime.datetime.now().day) + "-" + \
         str(datetime.datetime.now().hour) + "-" + \
@@ -27,13 +30,14 @@ _time = str(datetime.datetime.now().day) + "-" + \
 class JobManager(object):
 
     def __init__(self, template_file: str, pool_template_file: str,
-                 parameters_file: str, expected_output: str, application_licenses: str = None):
+                 parameters_file: str, keyvault_client_with_url: tuple, expected_output: str, application_licenses: str = None):
         super(JobManager, self).__init__()
         self.raw_job_id = ctm.get_job_id(parameters_file)  # The attribute 'raw_job_id' of type 'str'
         self.job_id = _time + "-" + self.raw_job_id  # The attribute 'job_id' of type 'str'
         self.pool_id = _time + "-" + ctm.get_pool_id(parameters_file)  # The attribute 'pool_id' of type 'str'
         self.template_file = template_file  # The attribute 'template_file' of type 'str'
         self.parameters_file = parameters_file  # The attribute 'parameters_file' of type 'str '
+        self.keyvault_client_with_url = keyvault_client_with_url  # The attribute 'keyvault_client_with_url' of type 'tuple'
         self.application_licenses = application_licenses  # The attribute 'application_licenses' of type 'str'
         self.expected_output = expected_output  # The attribute 'expected_output' of type 'str'
         self.pool_template_file = pool_template_file  # The attribute 'pool_template_file' of type 'str'
@@ -90,6 +94,7 @@ class JobManager(object):
         template = ctm.load_file(self.template_file)
         parameters = ctm.load_file(self.parameters_file)
 
+        self.update_params_with_values_from_keyvault(parameters, self.keyvault_client_with_url)
         # overrides some of the parameters needed in the file, container SAS
         # tokens need to be generated for the container
         ctm.set_parameter_name(parameters, self.job_id)
@@ -109,6 +114,7 @@ class JobManager(object):
         :type template: str
         """
         parameters = ctm.load_file(self.parameters_file)
+        self.update_params_with_values_from_keyvault(parameters, self.keyvault_client_with_url)
         pool_json = batch_service_client.pool.expand_template(template, parameters)
         ctm.set_template_pool_id(template, self.pool_id)
         pool = batch_service_client.pool.poolparameter_from_json(pool_json)
@@ -413,3 +419,11 @@ class JobManager(object):
             logger.info(
                 "Job: {}. did not complete successfully, Container {} was not deleted.".format(
                     self.job_id, self.storage_info.output_container))
+
+    def update_params_with_values_from_keyvault(self, parameters, keyvault_client_with_url):
+        for parameter, value in parameters.items:
+            if str.startswith(_keyVault_param_identifier, parameter):
+                secretId = value[len(_keyVault_param_identifier):]  #substring the original value without the keyvault identifier prefix
+                secret_bundle = keyvault_client_with_url[0].get_secret(keyvault_client_with_url[1], secretId, "latest")
+                parameters[parameter] = secret_bundle.value
+    
