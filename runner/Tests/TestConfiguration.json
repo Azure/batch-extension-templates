@@ -193,7 +193,7 @@
       "name": "3dsmax-corona-2018",
       "template": "../templates/3dsmax/corona/job.template.json",
       "poolTemplate": "../templates/3dsmax/corona/pool.template.json",
-      "parameters": "Tests/3dsmax/Corona/template.parameters.2018.json",
+      "parameters": "Tests/3dsmax/corona/template.parameters.2018.json",
       "expectedOutput": "maya.exr.0001"
     },
     {
