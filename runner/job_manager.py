@@ -421,9 +421,10 @@ class JobManager(object):
                     self.job_id, self.storage_info.output_container))
 
     def update_params_with_values_from_keyvault(self, parameters, keyvault_client_with_url):
-        for parameter, value in parameters.items:
-            if str.startswith(_keyVault_param_identifier, parameter):
-                secretId = value[len(_keyVault_param_identifier):]  #substring the original value without the keyvault identifier prefix
-                secret_bundle = keyvault_client_with_url[0].get_secret(keyvault_client_with_url[1], secretId, "latest")
+        for parameter, value in parameters.items():
+            stringValue = str(value)[11:-2] #substring the inner value from format {"value": "<value-we-want>"}
+            if len(stringValue) > 0 and stringValue.startswith(_keyVault_param_identifier):
+                secretId = stringValue[len(_keyVault_param_identifier):]  #substring the original value without the keyvault identifier prefix
+                secret_bundle = keyvault_client_with_url[0].get_secret(keyvault_client_with_url[1], secretId, '')
                 parameters[parameter] = secret_bundle.value
     

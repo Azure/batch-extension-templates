@@ -50,17 +50,12 @@ def create_keyvault_client(args: object):
     """
     Create keyvault client namedTuple with url
     """
-    def auth_callback(server, resource, scope):
-        credentials = ServicePrincipalCredentials(
-            client_id = args.ServicePrincipalCredentialsClientID,
-            secret = args.ServicePrincipalCredentialsSecret,
-            tenant = args.ServicePrincipalCredentialsTenant,
-            resource = "https://vault.azure.net"
-        )
-        token = credentials.token
-        return token['token_type'], token['access_token']
+    credentials = ServicePrincipalCredentials(
+        client_id = args.ServicePrincipalCredentialsClientID,
+        secret = args.ServicePrincipalCredentialsSecret,
+        tenant = args.ServicePrincipalCredentialsTenant)
 
-    client = KeyVaultClient(KeyVaultAuthentication(auth_callback))
+    client = KeyVaultClient(credentials)
 
     return (client, args.KeyVaultUrl)
 
