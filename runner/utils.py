@@ -1,6 +1,7 @@
 import azure.batch.models as batchmodels
 import azure.storage.blob as azureblob
 from azure.storage.blob.models import ContainerPermissions
+from azure.keyvault import KeyVaultClient
 import azext.batch as batch
 import datetime
 import time
@@ -283,3 +284,32 @@ def execute_parallel_jobmanagers(method_name: str, job_managers: 'list[job_manag
     # Wait for all threads to finish
     for thread in threads:
         thread.join()
+
+def update_params_with_values_from_keyvault(parameters: dict(), keyvault_client_with_url: tuple()):
+    """
+    Replaces parameters with keyvault placeholder values with the actual value fetched from keyvault
+    
+    :param parameters: The parameters file as dictionary, values are wrapped as {"value": "<inner_value>"}
+    :type parameters:  dict(str, str)
+    :param keyvault_client_with_url: Tuple holding the client for the keyVault along with the keyVault URL the client 
+        is to be used with
+    :type  keyvault_client_with_url: tuple(KeyVaultClient, str)
+    """
+    _keyVault_param_identifier = "KEYVAULT_"
+
+    for parameter, value in parameters.items():
+        inner_value = str(value)[11:-2] #substring the inner_value from format {"value": "<inner_value>"}
+        if len(inner_value) > 0 and inner_value.startswith(_keyVault_param_identifier):
+
+            logger.info("Replacing keyVault parameter {}".format(inner_value))
+            if keyvault_client_with_url[0] == None:
+                logger.error("No keyVault client is available, but keyVault parameter was specified: {}".format(inner_value))
+                continue
+
+            #substring the original value without the keyvault identifier prefix
+            secret_id = inner_value[len(_keyVault_param_identifier):]  
+            secret_bundle = keyvault_client_with_url[0].get_secret(keyvault_client_with_url[1], secret_id, '')
+
+            #update the value in the parameters dict with the secret value returned from keyVault
+            parameters[parameter] = secret_bundle.value
+
