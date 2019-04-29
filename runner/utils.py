@@ -287,7 +287,8 @@ def execute_parallel_jobmanagers(method_name: str, job_managers: 'list[job_manag
 
 def update_params_with_values_from_keyvault(parameters: dict(), keyvault_client_with_url: tuple()):
     """
-    Replaces parameters with keyvault placeholder values with the actual value fetched from keyvault
+    Replaces parameters with keyvault placeholder values with the actual value fetched from keyvault.
+    e.g. for Corona renderer we store the password used for the fairSaas login in keyVault
     
     :param parameters: The parameters file as dictionary, values are wrapped as {"value": "<inner_value>"}
     :type parameters:  dict(str, str)

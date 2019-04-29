@@ -91,6 +91,7 @@ class JobManager(object):
         template = ctm.load_file(self.template_file)
         parameters = ctm.load_file(self.parameters_file)
 
+        #updates any placeholder parameter values with the values from keyVault, if required
         utils.update_params_with_values_from_keyvault(parameters, self.keyvault_client_with_url)
         # overrides some of the parameters needed in the file, container SAS
         # tokens need to be generated for the container
@@ -111,6 +112,8 @@ class JobManager(object):
         :type template: str
         """
         parameters = ctm.load_file(self.parameters_file)
+        
+        #updates any placeholder parameter values with the values from keyVault, if required
         utils.update_params_with_values_from_keyvault(parameters, self.keyvault_client_with_url)
         pool_json = batch_service_client.pool.expand_template(template, parameters)
         ctm.set_template_pool_id(template, self.pool_id)
