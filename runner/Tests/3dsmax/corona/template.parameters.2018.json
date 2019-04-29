@@ -1,0 +1,56 @@
+{
+   "jobName":{
+      "value":"max2018-corona"
+   },
+   "poolId":{
+      "value":"max2018-corona"
+   },
+   "inputFilegroup":{
+      "value":"rendering"
+   },
+   "inputFilegroupSas":{
+      "value":"https://"
+   },
+   "sceneFile":{
+      "value":"3dsmax-corona-2018.max"
+   },
+   "maxVersion":{
+      "value":"2018"
+   },
+   "renderer":{
+      "value":"corona"
+   },
+   "outputName":{
+      "value":"image.jpg"
+   },
+   "frameStart":{
+      "value":1
+   },
+   "frameEnd":{
+      "value":1
+   },
+   "frameStep":{
+      "value":1
+   },
+   "frameWidth":{
+      "value":400
+   },
+   "frameHeight":{
+      "value":300
+   },
+   "coronaFairSaasUsername": {
+      "value":"rendering@microsoft.com"
+   },
+   "coronaFairSaasPassword": {
+      "value":"KEYVAULT_coronaFairSaasPassword"
+   },
+   "coronaAppPackageName": {
+      "value":"CORONA_3DS_MAX_PLUGIN"
+   },
+   "coronaAppPackageVersion": {
+      "value":"hotfix2"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   }
+}
