@@ -3,7 +3,7 @@
       "value":"maya-arnold-linux-2018"
    },
    "poolId":{
-      "value":"default-linux"
+      "value":"maya-arnold-linux-2018"
    },
    "mayaVersion":{
       "value":"Maya2018"
@@ -28,5 +28,11 @@
    },
    "outputFilegroup":{
       "value":"myfilegroup"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "nodeSize":{
+      "value":"Standard_D2_v2"
    }
 }

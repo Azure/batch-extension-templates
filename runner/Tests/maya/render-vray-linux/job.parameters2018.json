@@ -3,7 +3,7 @@
       "value":"maya-vray-linux-2018"
    },
    "poolId":{
-      "value":"vray-linux"
+      "value":"maya-vray-linux-2018"
    },
    "mayaVersion":{
       "value":"Maya2018"
@@ -25,5 +25,11 @@
    },
    "outputFilegroup":{
       "value":"myfilegroup"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "nodeSize":{
+      "value":"Standard_D2_v2"
    }
 }

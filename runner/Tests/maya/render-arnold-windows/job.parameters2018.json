@@ -3,7 +3,7 @@
       "value":"maya-arnold-windows-2018"
    },
    "poolId":{
-      "value":"maya-arnold-pool-windows"
+      "value":"maya-arnold-windows-2018"
    },
    "mayaVersion":{
       "value":"Maya2018"
@@ -26,7 +26,10 @@
    "outputs":{
       "value":"rendering-output"
    },
-   "outputFilegroup":{
-      "value":"myfilegroup"
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "nodeSize":{
+      "value":"Standard_D2_v2"
    }
 }
