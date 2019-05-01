@@ -293,16 +293,18 @@ class JobManager(object):
             time.sleep(10)
             nodes = list(batch_service_client.compute_node.list(self.pool_id))
 
-        if any([n for n in nodes if n.state == batchmodels.ComputeNodeState.idle]):
-            self.pool_start_duration = n.state_transition_time - pool.creation_time
-            logger.info("Job [{}] is starting to run on a TVM".format(self.job_id))
-            return True
-        else:
-            self.job_status = utils.JobStatus(utils.JobState.POOL_FAILED,
-                                              "Failed to start the pool [{}] before [{}], you may want to increase your timeout].".format(
-                                                  self.pool_id, timeout))
-            logger.error("POOL [{}] FAILED TO ALLOCATE IN TIME".format(self.pool_id))
-            return False
+        for n in nodes:
+            if n.state == batchmodels.ComputeNodeState.idle:
+                self.pool_start_duration = nodes.state_transition_time - pool.creation_time
+                logger.info("Job [{}] is starting to run on a TVM".format(self.job_id))
+                return True
+
+        #if we get here we have timed out without any nodes going to idle
+        self.job_status = utils.JobStatus(utils.JobState.POOL_FAILED,
+                                            "Failed to start the pool [{}] before [{}], you may want to increase your timeout].".format(
+                                                self.pool_id, timeout))
+        logger.error("POOL [{}] FAILED TO ALLOCATE IN TIME".format(self.pool_id))
+        return False
 
     def wait_for_job_results(self, batch_service_client: batch.BatchExtensionsClient, timeout: int):
         """
