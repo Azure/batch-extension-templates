@@ -349,7 +349,7 @@ class JobManager(object):
                                                            datetime.timedelta(minutes=timeout))
             # How long the Job runs for
             job = batch_service_client.job.get(self.job_id)
-            self.duration = job.state_transition_time - job.creation_time
+            self.duration = datetime.datetime.now() - job.creation_time
 
             self.check_expected_output(batch_service_client)
 
