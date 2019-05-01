@@ -42,8 +42,8 @@ class JobManager(object):
         self.status = utils.JobStatus(
             utils.JobState.NOT_STARTED,
             "Job hasn't started yet.")  # The attribute 'status' of type 'utils.JobState'
-        self.duration = None  # The attribute 'duration' of type 'int'
-        self.pool_start_duration = None  # The attribute 'pool_start_duration' of type 'int'
+        self.duration = None  # The attribute 'duration' of type 'timedelta'
+        self.pool_start_duration = None  # The attribute 'pool_start_duration' of type 'timedelta'
 
     def __str__(self) -> str:
         return "job_id: [{}] pool_id: [{}] ".format(self.job_id, self.pool_id)
@@ -293,6 +293,7 @@ class JobManager(object):
             time.sleep(10)
             nodes = list(batch_service_client.compute_node.list(self.pool_id))
 
+        #determine pool startup duration as the time between pool creation and first node reported as idle
         for n in nodes:
             if n.state == batchmodels.ComputeNodeState.idle:
                 self.pool_start_duration = n.state_transition_time - pool.creation_time
@@ -315,22 +316,16 @@ class JobManager(object):
         :param timeout: The duration we wait for task complete.
         :type timeout: int
         """
-        # Starts the timer
-        self.duration = time.time()
 
         # Wait for all the tasks to complete
         if self.wait_for_steady_tvm(batch_service_client, datetime.timedelta(minutes=timeout)):
-            # How long it takes for the pool to start up
-            pool_time = time.time() - self.duration
 
-            job_time = time.time()
             self.status = utils.wait_for_tasks_to_complete(batch_service_client, self.job_id,
                                                            datetime.timedelta(minutes=timeout))
             # How long the Job runs for
-            job_time = time.time() - job_time
+            job = batch_service_client.job.get(self.job_id)
+            self.duration = job.state_transition_time - job.creation_time
 
-            # How long it took for both the pool and job time to start.
-            self.duration = (datetime.timedelta(seconds=(pool_time + job_time)))
             self.check_expected_output(batch_service_client)
 
     def retry(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService,
