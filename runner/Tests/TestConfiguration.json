@@ -33,14 +33,14 @@
         "template": "../templates/arnold/render-windows-frames/job.template.json",
         "poolTemplate": "../templates/arnold/render-windows-frames/pool.template.json",
         "parameters": "Tests/arnold/render-windows-frames/job.parameters.json",
-        "expectedOutput":"arnold.ass.tif"
+        "expectedOutput":"arnold.tif"
     },
     {
         "name": "arnold-linux-frames",
         "template": "../templates/arnold/render-linux-frames/job.template.json",
         "poolTemplate": "../templates/arnold/render-linux-frames/pool.template.json",
         "parameters": "Tests/arnold/render-linux-frames/job.parameters.json",
-        "expectedOutput":"arnold.ass.tif"
+        "expectedOutput":"arnold.tif"
     },
     {
         "name": "maya2018-default-linux",
