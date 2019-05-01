@@ -43,6 +43,7 @@ class JobManager(object):
             utils.JobState.NOT_STARTED,
             "Job hasn't started yet.")  # The attribute 'status' of type 'utils.JobState'
         self.duration = None  # The attribute 'duration' of type 'int'
+        self.pool_start_duration = None  # The attribute 'pool_start_duration' of type 'int'
 
     def __str__(self) -> str:
         return "job_id: [{}] pool_id: [{}] ".format(self.job_id, self.pool_id)
@@ -293,6 +294,7 @@ class JobManager(object):
             nodes = list(batch_service_client.compute_node.list(self.pool_id))
 
         if any([n for n in nodes if n.state == batchmodels.ComputeNodeState.idle]):
+            self.pool_start_duration = n.state_transition_time - pool.creation_time
             logger.info("Job [{}] is starting to run on a TVM".format(self.job_id))
             return True
         else:

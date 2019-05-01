@@ -91,7 +91,7 @@ def export_result(job_managers: 'list[job_manager.JobManager]', total_time: int)
 
         # Add the time it took for this test to compete.
         if job_item.duration is not None:
-            info("Job {} took {} to complete".format(job_item.job_id, job_item.duration))
+            info("Job {} took {} to complete, pool {} took {} to become available".format(job_item.job_id, job_item.duration, job_item.pool_id, job_item.pool_start_duration))
             # If the job failed we set the duration to 0
             job_duration = "0:00:00"
             try:
