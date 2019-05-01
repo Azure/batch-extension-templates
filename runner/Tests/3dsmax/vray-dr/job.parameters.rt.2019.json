@@ -47,7 +47,7 @@
     "dedicatedVmCount":{
       "value":"2"
    },
-   "nodeSize":{
+   "vmSize":{
       "value":"Standard_D2_v2"
    }
 }
