@@ -33,10 +33,10 @@
       "value":1
    },
    "frameWidth":{
-      "value":400
+      "value":40
    },
    "frameHeight":{
-      "value":300
+      "value":30
    },
    "coronaFairSaasUsername": {
       "value":"rendering@microsoft.com"
@@ -57,6 +57,6 @@
       "value":"1"
    },
    "vmSize":{
-      "value":"Standard_D2_v2"
+      "value":"Standard_D3_v2"
    }
 }
