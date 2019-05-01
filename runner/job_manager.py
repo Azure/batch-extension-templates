@@ -279,9 +279,10 @@ class JobManager(object):
             time.sleep(10)
             pool = batch_service_client.pool.get(self.pool_id)
 
-        # Check if pool allocated with a resize errors. 
+        # Check if pool allocated with a resize errors, if it does then recreate a new pool with 
+        # id +"-retry", wait for it to come up and check again for resize errors 
         if self.check_for_pool_resize_error(pool):
-            return False
+            return recreate_pool_and_check_for_resize_errors(pool)
 
         # Wait for TVMs to become available 
         # Need to cast to a list here since compute_node.list returns an object that contains a list 
@@ -306,6 +307,21 @@ class JobManager(object):
                                                 self.pool_id, timeout))
         logger.error("POOL [{}] FAILED TO ALLOCATE IN TIME".format(self.pool_id))
         return False
+
+    def recreate_pool_and_check_for_resize_errors(pool: batchmodels.CloudPool):
+        batch_service_client.pool.delete(pool)
+        pool.pool_id += "-retry"
+        batch_service_client.pool.add(pool)
+        self.pool_id = pool.pool_id
+        pool = batch_service_client.pool.get(self.pool_id)
+
+        while pool.allocation_state.value == "resizing" and self.check_time_has_expired(timeout):
+            time.sleep(10)
+            pool = batch_service_client.pool.get(self.pool_id)
+
+        if self.check_for_pool_resize_error(pool):
+            return False
+        return True
 
     def wait_for_job_results(self, batch_service_client: batch.BatchExtensionsClient, timeout: int):
         """
