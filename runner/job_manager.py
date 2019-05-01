@@ -295,7 +295,7 @@ class JobManager(object):
 
         for n in nodes:
             if n.state == batchmodels.ComputeNodeState.idle:
-                self.pool_start_duration = nodes.state_transition_time - pool.creation_time
+                self.pool_start_duration = n.state_transition_time - pool.creation_time
                 logger.info("Job [{}] is starting to run on a TVM".format(self.job_id))
                 return True
 
