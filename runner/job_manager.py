@@ -276,7 +276,8 @@ class JobManager(object):
 
         # Check if pool allocated with resize errors 
         if self.check_for_pool_resize_error(pool):
-            return self.resize_pool_and_check_for_resize_errors(pool)
+            if not self.resize_pool_and_check_for_resize_errors(pool):
+                return False
 
         # Wait for TVMs to become available 
         # Need to cast to a list here since compute_node.list returns an object that contains a list 
