@@ -277,7 +277,7 @@ class JobManager(object):
 
         # Check if pool allocated with resize errors 
         if self.check_for_pool_resize_error(pool):
-            if not self.resize_pool_and_check_for_resize_errors(pool):
+            if not self.resize_pool_and_check_for_resize_errors(pool, batch_service_client):
                 return False
 
         # Wait for TVMs to become available 
@@ -304,7 +304,7 @@ class JobManager(object):
         logger.error("POOL [{}] FAILED TO ALLOCATE IN TIME".format(self.pool_id))
         return False
 
-    def resize_pool_and_check_for_resize_errors(self, pool: batchmodels.CloudPool) -> bool:
+    def resize_pool_and_check_for_resize_errors(self, pool: batchmodels.CloudPool,  batch_service_client: batch.BatchExtensionsClient) -> bool:
         """
         Resizes a pool to double the current number of dedicated nodes and waits to check
         it resizes correctly. If resize still fails the JobStatus is set to POOL_FAILED 
@@ -315,7 +315,7 @@ class JobManager(object):
         :return: Returns true if the pool resized correctly, otherwise false.
         :rtype bool
         """
-        new_node_count = pool.current_dedicated_nodes * 2
+        new_node_count = pool.target_dedicated_nodes * 2
         logger.info("Resizing pool [{}] to node count {}".format(self.pool_id, new_node_count))
 
         batch_service_client.pool.resize(self.pool_id, target_dedicated_nodes = new_node_count)
