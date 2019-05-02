@@ -44,6 +44,7 @@ class JobManager(object):
             "Job hasn't started yet.")  # The attribute 'status' of type 'utils.JobState'
         self.duration = None  # The attribute 'duration' of type 'timedelta'
         self.pool_start_duration = None  # The attribute 'pool_start_duration' of type 'timedelta'
+        self.start_time = datetime.datetime.now()
 
     def __str__(self) -> str:
         return "job_id: [{}] pool_id: [{}] ".format(self.job_id, self.pool_id)
@@ -348,9 +349,8 @@ class JobManager(object):
 
             self.status = utils.wait_for_tasks_to_complete(batch_service_client, self.job_id,
                                                            datetime.timedelta(minutes=timeout))
-            # How long the Job runs for
-            job = batch_service_client.job.get(self.job_id)
-            self.duration = datetime.datetime.now(datetime.timezone.utc) - job.creation_time
+            # Set duration to time from jobManager starting to all tasks completing
+            self.duration = datetime.datetime.now() - self.start_time
 
             self.check_expected_output(batch_service_client)
 
