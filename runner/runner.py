@@ -90,7 +90,7 @@ def runner_arguments():
     parser.add_argument("ServicePrincipalCredentialsTenant", help="Service Principal tenant")
     parser.add_argument("ServicePrincipalCredentialsResouce", help="Service Principal resource")
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
-    parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
+    parser.add_argument("-KeyVaultURL", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
 
     return parser.parse_args()
 
