@@ -55,7 +55,7 @@ def create_keyvault_client(args: object) -> tuple():
     :rtype: tuple(KeyVaultClient, str)
     """
     if (args.KeyVaultUrl == None):
-        return tuple(None, None)
+        return (None, None)
 
     credentials = ServicePrincipalCredentials(
         client_id = args.ServicePrincipalCredentialsClientID,
