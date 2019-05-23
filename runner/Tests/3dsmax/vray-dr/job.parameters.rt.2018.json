@@ -36,12 +36,18 @@
       "value":1
    },
    "frameWidth":{
-      "value":400
+      "value":40
    },
    "frameHeight":{
-      "value":300
+      "value":30
    },
    "outputs":{
       "value":"rendering-output"
+   },
+    "dedicatedVmCount":{
+      "value":"2"
+   },
+   "vmSize":{
+      "value":"Standard_D3_v2"
    }
 }

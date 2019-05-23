@@ -24,13 +24,19 @@
       "value":1
    },
    "xTiles":{
-      "value":3
+      "value":2
    },
    "yTiles":{
-      "value":3
+      "value":2
    },
 
    "outputs":{
       "value":"rendering-output"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "nodeSize":{
+      "value":"Standard_D3_v2"
    }
 }

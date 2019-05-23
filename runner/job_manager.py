@@ -42,7 +42,9 @@ class JobManager(object):
         self.status = utils.JobStatus(
             utils.JobState.NOT_STARTED,
             "Job hasn't started yet.")  # The attribute 'status' of type 'utils.JobState'
-        self.duration = None  # The attribute 'duration' of type 'int'
+        self.duration = None  # The attribute 'duration' of type 'timedelta'
+        self.pool_start_duration = None  # The attribute 'pool_start_duration' of type 'timedelta'
+        self.start_time = datetime.datetime.now()
 
     def __str__(self) -> str:
         return "job_id: [{}] pool_id: [{}] ".format(self.job_id, self.pool_id)
@@ -240,11 +242,6 @@ class JobManager(object):
         :rtype: bool 
         """
         if pool.allocation_state.value == "steady" and pool.resize_errors is not None:
-            self.status = utils.JobStatus(utils.JobState.POOL_FAILED,
-                                          "Job failed to start since the pool [{}] failed to allocate any TVMs due to "
-                                          "error [Code: {}, message {}]. "
-                                          .format(self.pool_id, pool.resize_errors[0].code,
-                                                  pool.resize_errors[0].message))
             logger.error("POOL {} FAILED TO ALLOCATE".format(self.pool_id))
             return True
         return False
@@ -278,9 +275,10 @@ class JobManager(object):
             time.sleep(10)
             pool = batch_service_client.pool.get(self.pool_id)
 
-        # Check if pool allocated with a resize errors. 
+        # Check if pool allocated with resize errors 
         if self.check_for_pool_resize_error(pool):
-            return False
+            if not self.resize_pool_and_check_for_resize_errors(pool, batch_service_client):
+                return False
 
         # Wait for TVMs to become available 
         # Need to cast to a list here since compute_node.list returns an object that contains a list 
@@ -292,15 +290,49 @@ class JobManager(object):
             time.sleep(10)
             nodes = list(batch_service_client.compute_node.list(self.pool_id))
 
-        if any([n for n in nodes if n.state == batchmodels.ComputeNodeState.idle]):
-            logger.info("Job [{}] is starting to run on a TVM".format(self.job_id))
-            return True
-        else:
-            self.job_status = utils.JobStatus(utils.JobState.POOL_FAILED,
-                                              "Failed to start the pool [{}] before [{}], you may want to increase your timeout].".format(
-                                                  self.pool_id, timeout))
-            logger.error("POOL [{}] FAILED TO ALLOCATE IN TIME".format(self.pool_id))
+        #determine pool startup duration as the time between pool creation and first node reported as idle
+        for n in nodes:
+            if n.state == batchmodels.ComputeNodeState.idle:
+                self.pool_start_duration = n.state_transition_time - pool.creation_time
+                logger.info("Job [{}] is starting to run on a TVM".format(self.job_id))
+                return True
+
+        #if we get here we have timed out without any nodes going to idle
+        self.job_status = utils.JobStatus(utils.JobState.POOL_FAILED,
+                                            "Failed to start the pool [{}] before [{}], you may want to increase your timeout].".format(
+                                                self.pool_id, timeout))
+        logger.error("POOL [{}] FAILED TO ALLOCATE IN TIME".format(self.pool_id))
+        return False
+
+    def resize_pool_and_check_for_resize_errors(self, pool: batchmodels.CloudPool,  batch_service_client: batch.BatchExtensionsClient) -> bool:
+        """
+        Resizes a pool to double the current number of dedicated nodes and waits to check
+        it resizes correctly. If resize still fails the JobStatus is set to POOL_FAILED 
+        and False is returned.
+
+        :param pool: The pool to attempt to resize
+        :type CloudPool: `azure.batch.models.CloudPool`
+        :return: Returns true if the pool resized correctly, otherwise false.
+        :rtype bool
+        """
+        new_node_count = pool.target_dedicated_nodes * 2
+        logger.info("Resizing pool [{}] to node count {}".format(self.pool_id, new_node_count))
+
+        batch_service_client.pool.resize(self.pool_id, target_dedicated_nodes = new_node_count)
+
+        pool = batch_service_client.pool.get(self.pool_id)
+        while pool.allocation_state.value == "resizing" and self.check_time_has_expired(timeout):
+            time.sleep(10)
+            pool = batch_service_client.pool.get(self.pool_id)
+
+        if self.check_for_pool_resize_error(pool):
+            self.status = utils.JobStatus(utils.JobState.POOL_FAILED,
+                "Job failed to start since the pool [{}] failed to allocate any TVMs due to "
+                "error [Code: {}, message {}]. "
+                .format(self.pool_id, pool.resize_errors[0].code,
+                        pool.resize_errors[0].message))
             return False
+        return True
 
     def wait_for_job_results(self, batch_service_client: batch.BatchExtensionsClient, timeout: int):
         """
@@ -311,22 +343,15 @@ class JobManager(object):
         :param timeout: The duration we wait for task complete.
         :type timeout: int
         """
-        # Starts the timer
-        self.duration = time.time()
 
         # Wait for all the tasks to complete
         if self.wait_for_steady_tvm(batch_service_client, datetime.timedelta(minutes=timeout)):
-            # How long it takes for the pool to start up
-            pool_time = time.time() - self.duration
 
-            job_time = time.time()
             self.status = utils.wait_for_tasks_to_complete(batch_service_client, self.job_id,
                                                            datetime.timedelta(minutes=timeout))
-            # How long the Job runs for
-            job_time = time.time() - job_time
+            # Set duration to time from jobManager starting to all tasks completing
+            self.duration = datetime.datetime.now() - self.start_time
 
-            # How long it took for both the pool and job time to start.
-            self.duration = (datetime.timedelta(seconds=(pool_time + job_time)))
             self.check_expected_output(batch_service_client)
 
     def retry(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService,

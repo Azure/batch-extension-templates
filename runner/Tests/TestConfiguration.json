@@ -29,6 +29,20 @@
         "expectedOutput":"arnold.ass.tif"
     },
     {
+        "name": "arnold-windows-frames",
+        "template": "../templates/arnold/render-windows-frames/job.template.json",
+        "poolTemplate": "../templates/arnold/render-windows-frames/pool.template.json",
+        "parameters": "Tests/arnold/render-windows-frames/job.parameters.json",
+        "expectedOutput":"arnold.tif"
+    },
+    {
+        "name": "arnold-linux-frames",
+        "template": "../templates/arnold/render-linux-frames/job.template.json",
+        "poolTemplate": "../templates/arnold/render-linux-frames/pool.template.json",
+        "parameters": "Tests/arnold/render-linux-frames/job.parameters.json",
+        "expectedOutput":"arnold.tif"
+    },
+    {
         "name": "maya2018-default-linux",
         "template": "../templates/maya/render-default-linux/job.template.json",
         "poolTemplate": "../templates/maya/render-default-linux/pool.template.json",
