@@ -120,7 +120,7 @@ class JobManager(object):
         pool_json = batch_service_client.pool.expand_template(template, parameters)
         ctm.set_template_pool_id(template, self.pool_id)
         pool = batch_service_client.pool.poolparameter_from_json(pool_json)
-        logger.info('Creating pool [{}]...'.format(self.pool_id))
+        logger.info('Creating pool [{}]...'.format(pool))
         try:
             batch_service_client.pool.add(pool)
         except batchmodels.batch_error.BatchErrorException as err:
@@ -161,7 +161,7 @@ class JobManager(object):
         # Set rendering version
         ctm.set_image_reference(template, image_references)
         ctm.set_template_pool_id(template, self.pool_id)
-        if VM_image_URL is not None and VM_OS_type is not None:
+        if VM_image_URL is not None:
             ctm.set_custom_image(template, VM_image_URL, VM_OS_type)
 
         all_pools = [p.id for p in batch_service_client.pool.list()]
