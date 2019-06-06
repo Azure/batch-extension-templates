@@ -115,6 +115,6 @@
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
-        "enableAutoScale": false,
+        "enableAutoScale": false
     }
 }
