@@ -96,6 +96,10 @@
                         "elevationLevel": "admin"
                     }
                 },
+                "containerSettings": {
+                    "imageName": "[parameters('containerImage')]",
+                    "containerRunOptions": "--privileged --rm"
+                },
                 "commandLine": "/bin/bash -c 'azcopy --source \"[parameters('inputDataSas')]\" --destination \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" --recursive'"
             },
             "jobReleaseTask": {
