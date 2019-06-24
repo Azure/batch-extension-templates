@@ -8,7 +8,7 @@
         },
         "dedicatedVmCount": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 1,
             "metadata": {
                 "description": "The number of dedicated nodes in the Azure Batch pool"
             }
@@ -89,7 +89,8 @@
             },
             "allowedValues":[
                 "2018",
-                "2019"
+                "2019",
+                "2020"
             ]
         },
         "vrayPort": {

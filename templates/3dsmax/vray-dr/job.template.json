@@ -25,7 +25,9 @@
                 "description": "The renderer to use"
             },
             "allowedValues":[
-                "2018"
+                "2018",
+                "2019",
+                "2020"           
             ]
         },
         "vrayRenderer": {
