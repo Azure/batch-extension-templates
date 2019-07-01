@@ -1,0 +1,35 @@
+{
+   "jobName":{
+      "value":"container-centos-maya2019-arnold"
+   },
+   "poolId":{
+      "value":"container-centos-maya2019-arnold"
+   },
+   "containerImage":{
+      "value": "azurebatchrendering/centos-maya_2019_arnold3211:latest"
+   },
+   "mayaVersion":{
+      "value":"Maya2019"
+   },
+   "inputFilegroup":{
+      "value":"myfilegroup"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "inputDataSas":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"maya-arnold.mb"
+   },
+   "additionalflags":{
+      "value":"-of png"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "outputFilegroup":{
+      "value":"myfilegroup"
+   }
+}
