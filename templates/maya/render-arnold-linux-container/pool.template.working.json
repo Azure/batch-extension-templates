@@ -103,12 +103,9 @@
             ]
         }
     },
-    "pool": {
-        "id": "[parameters('poolName')]",
-        "displayName": "Maya Arnold rendering pool for CentOS",
-        "vmSize": "[parameters('vmSize')]",
-        "virtualMachineConfiguration":    {
-          "imageReference": {
+    "variables": {
+        "osType": {
+            "imageReference": {
                 "publisher": "microsoft-azure-batch",
                 "offer": "centos-container",
                 "sku": "7-5",
@@ -120,10 +117,16 @@
                 "[parameters('containerImageParam').containerImage]"
               ]
             }
-        },
+        }
+    },
+    "pool": {
+        "id": "[parameters('poolName')]",
+        "displayName": "Maya Arnold rendering pool for CentOS",
+        "vmSize": "[parameters('vmSize')]",
+        "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('vmCount')]",
         "enableAutoScale": false,
-        "applicationLicenses": [
+        "applicationLicenses":  [
           "maya",
           "[parameters('containerImageParam').renderer]"
         ]
