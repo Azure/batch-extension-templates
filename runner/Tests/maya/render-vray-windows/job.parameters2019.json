@@ -1,12 +1,12 @@
 {
    "jobName":{
-      "value":"maya-vray-windows-2018"
+      "value":"maya-vray-windows-2019"
    },
    "poolId":{
-      "value":"maya-vray-windows-2018"
+      "value":"maya-vray-windows-2019"
    },
    "mayaVersion":{
-      "value":"Maya2018"
+      "value":"Maya2019"
    },
    "inputFilegroup":{
       "value":"myfilegroup"

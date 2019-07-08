@@ -1,22 +1,34 @@
 {
     "templateMetadata": {
-        "description": "Application template for working with V-Ray standalone renderer on Windows."
+        "description": "Application template for working with Maya default renderer on Windows."
     },
     "parameters": {
         "poolId": {
             "type": "string",
-            "defaultValue": "vray-pool-windows",
+            "defaultValue": "maya-sw-pool-windows",
             "metadata": {
                 "description": "The ID of the pool on which to run the job."
             }
         },
         "jobName": {
             "type": "string",
-            "defaultValue": "render-vray",
+            "defaultValue": "maya-sw-windows",
             "metadata": {
                 "description": "The unique name of the job.",
                 "advancedType": "job-id"
             }
+        },
+        "mayaVersion": {
+            "type": "string",
+            "defaultValue": "Maya2019",
+            "metadata": {
+                "description": "The renderer to use"
+            },
+            "allowedValues":[
+                "Maya2017",
+                "Maya2018",
+                "Maya2019"
+            ]
         },
         "inputData": {
             "type": "string",
@@ -25,12 +37,34 @@
                 "advancedType": "file-group"
             }
         },
+        "inputDataSas": {
+            "type": "string",
+            "metadata": {
+                "description": "SAS token for reading the data from the selected file group",
+                "advancedType": "file-group-sas",
+                "dependsOn": "inputData"
+            }
+        },
         "sceneFile": {
             "type": "string",
             "metadata": {
-                "description": "The V-Ray scene file to be rendered (.vrscene)",
+                "description": "The Maya scene file to be rendered",
                 "advancedType": "file-in-file-group",
                 "dependsOn": "inputData"
+            }
+        },
+        "additionalFlags": {
+            "type": "string",
+            "defaultValue": " ",
+            "metadata": {
+                "description": "Any additional flags to pass to the renderer. Example: -cam camera2"
+            }
+        },
+        "jobPriority": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "Priority values can range from -1000 to 1000, with -1000 being the lowest priority and 1000 being the highest priority."
             }
         },
         "frameStart": {
@@ -55,23 +89,44 @@
             }
         }
     },
+    "variables":{
+        "MayaVersions": {
+            "Maya2017" : {
+                "environmentValue": "%MAYA_2017_EXEC%"
+            },
+            "Maya2018":{
+                "environmentValue": "%MAYA_2018_EXEC%"
+            },
+            "Maya2019":{
+                "environmentValue": "%MAYA_2019_EXEC%"
+            }
+        }
+   },
     "job": {
         "type": "Microsoft.Batch/batchAccounts/jobs",
         "properties": {
             "id": "[parameters('jobName')]",
+            "priority": "[parameters('jobPriority')]",
             "poolInfo": {
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
-                "resourceFiles": [
-                    {
-                        "source": {
-                            "fileGroup": "[parameters('inputData')]"
-                        },
-                        "filePath": "assets/"
+                "userIdentity": {
+                    "autoUser": {
+                        "scope": "pool",
+                        "elevationLevel": "nonAdmin"
                     }
-                ],
-                "commandLine": "dir"
+                },
+                "commandLine": "SET"
+            },
+            "jobReleaseTask": {
+                "userIdentity": {
+                    "autoUser": {
+                       "scope": "pool",
+                       "elevationLevel": "nonAdmin"
+                    }
+                },
+                "commandLine":"cmd.exe /c DEL /S /Q \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" & exit /b 0"
             },
             "taskFactory": {
                 "type": "parametricSweep",
@@ -86,11 +141,21 @@
                     "displayName": "Frame {0}",
                     "userIdentity": {
                         "autoUser": {
-                            "scope": "task",
+                            "scope": "pool",
                             "elevationLevel": "admin"
                         }
                     },
-                    "commandLine": "mkdir images & subst X: %AZ_BATCH_JOB_PREP_WORKING_DIR%\\assets & %VRAY_4.10.03_EXEC% -sceneFile=\"X:\\[parameters('sceneFile')]\" -frames={0} -imgfile=\"%AZ_BATCH_TASK_WORKING_DIR%\\images\\image{0}.png\" -display=0",
+                    "commandLine": "SET",
+                    "environmentSettings": [
+                        {
+                            "name": "MAYA_SCRIPT_PATH",
+                            "value": "%AZ_BATCH_JOB_PREP_WORKING_DIR%\\scripts"
+                        },
+                        {
+                            "name": "FLEXLM_TIMEOUT",
+                            "value": "5000000"
+                        }
+                    ],
                     "outputFiles": [
                         {
                             "filePattern": "../stdout.txt",
@@ -122,6 +187,18 @@
                                 "autoStorage": {
                                     "fileGroup": "[parameters('outputs')]",
                                     "path":"[parameters('jobName')]/images"
+                                }
+                            },
+                            "uploadOptions": {
+                                "uploadCondition": "taskSuccess"
+                            }
+                        },
+                        {
+                            "filePattern": "thumbs/**/*",
+                            "destination": {
+                                "autoStorage": {
+                                    "fileGroup": "[parameters('outputs')]",
+                                    "path": "[parameters('jobName')]/thumbs"
                                 }
                             },
                             "uploadOptions": {
