@@ -112,8 +112,8 @@
             "vray"
         ],
         "startTask": {
-            "commandLine": "cmd.exe /c install-azure-nc-drivers.cmd [parameters('nodeSize')]",
-            "waitForSuccess": true,
+            "commandLine": "cmd.exe /c install-azure-nc-drivers.cmd [parameters('nodeSize')] && %MAYA_2017%\\vray\\bin\\vrayses.exe",
+            "waitForSuccess": false,
             "maxTaskRetryCount": 0,
             "userIdentity": {
                 "autoUser": {

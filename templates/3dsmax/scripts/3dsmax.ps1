@@ -135,6 +135,8 @@ function SetupDistributedRendering
 $pre_render_script = "prerender.ms"
 $pre_render_script_content = "-- Pre render script`r`n"
 $pre_render_script_content += "r = renderers.current`r`n"
+$pre_render_script_content += "r = mversion = maxVersion()`r`n"
+$pre_render_script_content += "r = print (\"Using 3ds Max \"+ mversion[8] as string)`r`n"
 
 if ($dr)
 {
@@ -170,6 +172,7 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
 
 if ($renderer -eq "arnold")
 {
+    Write-Host "3ds Max is using the Arnold renderer " 
     $pre_render_script_content += "-- Fail on arnold license error`r`n"
     $pre_render_script_content += "r.abort_on_license_fail = true`r`n"
     $pre_render_script_content += "r.prepass_enabled = false`r`n"

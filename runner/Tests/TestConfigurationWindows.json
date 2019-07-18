@@ -64,7 +64,7 @@
         "expectedOutput":"maya-vray.0001.png"
     },
     {
-        "name": "maya2018-vray-windows",
+        "name": "maya2019-vray-windows",
         "template": "../templates/maya/render-vray-windows/job.template.json",
         "poolTemplate": "../templates/maya/render-vray-windows/pool.template.json",
         "parameters": "Tests/maya/render-vray-windows/job.parameters2019.json",
@@ -77,6 +77,13 @@
         "parameters": "Tests/blender/render-windows/job.parameters.json",
         "expectedOutput":"blender-windows_0001.png"
     },
+    {
+        "name": "blender-windows28",
+        "template": "../templates/blender/render-windows/job.template28.json",
+        "poolTemplate": "../templates/blender/render-windows/pool.template.json",
+        "parameters": "Tests/blender/render-windows/job.parameters.json",
+        "expectedOutput":"blender-windows_0001.png"
+    }
     {
         "name": "blender-windows-dr",
         "template": "../templates/blender/render-windows-dr/job.template.json",
