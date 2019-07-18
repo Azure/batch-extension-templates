@@ -50,20 +50,6 @@
         "expectedOutput":"maya-vray.0001.png"
     },
     {
-        "name": "blender-linux",
-        "template": "../templates/blender/render-linux/job.template.json",
-        "poolTemplate": "../templates/blender/render-linux/pool.template.json",
-        "parameters": "Tests/blender/render-linux/job.parameters.json",
-        "expectedOutput":"blender-linux_0001.png"
-    },
-    {
-        "name": "blender-linux-dr",
-        "template": "../templates/blender/render-linux-dr/job.template.json",
-        "poolTemplate": "../templates/blender/render-linux-dr/pool.template.json",
-        "parameters": "Tests/blender/render-linux-dr/job.parameters.json",
-        "expectedOutput":"tile_001.png"
-    },
-    {
         "name": "vray-render-linux",
         "template": "../templates/vray/render-linux/job.template.json",
         "poolTemplate": "../templates/vray/render-linux/pool.template.json",
@@ -75,7 +61,7 @@
     {
         "osType": "windows",
         "offer": "rendering-windows2016",
-        "version": "1.3.3"
+        "version": "1.3.4"
     },
     {
         "osType": "linux",
