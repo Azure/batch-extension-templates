@@ -136,14 +136,14 @@ $pre_render_script = "prerender.ms"
 $pre_render_script_content = "-- Pre render script`r`n"
 $pre_render_script_content += "r = renderers.current`r`n"
 $pre_render_script_content += "r = mversion = maxVersion()`r`n"
-$pre_render_script_content += "r = print (\"Using 3ds Max \"+ mversion[8] as string)`r`n"
+#$pre_render_script_content += "r = print ('Using 3ds Max '+ mversion[8] as string)`r`n"
 
 if ($dr)
 {
     SetupDistributedRendering
 }
 
-Write-Host "Using renderer $renderer"
+Write-Host "Using renderer 3ds-Max $maxVersion with $renderer"
 
 if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
 {
