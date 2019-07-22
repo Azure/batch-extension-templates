@@ -151,7 +151,7 @@ def set_image_reference(in_memory_json_object: str, image_ref: 'List[utils.Image
     # if the json_object is Centos
     if "centos" in image_reference["offer"]:
         for i in range(0, len(image_ref)):
-            if image_ref[i].osType == "liunx":
+            if image_ref[i].osType == "centos":
                 set_image_reference_properties(image_reference, image_ref[i])
 
 
