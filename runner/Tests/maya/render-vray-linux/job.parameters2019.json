@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"maya-arnold-linux-2019"
+      "value":"maya-vray-linux-2019"
    },
    "poolId":{
-      "value":"maya-arnold-linux-2019"
+      "value":"maya-vray-linux-2019"
    },
    "mayaVersion":{
       "value":"Maya2018"
@@ -18,10 +18,7 @@
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"maya.mb"
-   },
-   "additionalflags":{
-      "value":"-of png"
+      "value":"maya-vray.mb"
    },
    "outputs":{
       "value":"rendering-output"
