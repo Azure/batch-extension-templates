@@ -63,12 +63,6 @@
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
-                "userIdentity": {
-                    "autoUser": {
-                        "scope": "task",
-                        "elevationLevel": "admin"
-                    }
-                },
                 "resourceFiles": [
                     {
                         "source": {
@@ -92,7 +86,7 @@
                     "displayName": "Frame {0}",
                     "userIdentity": {
                         "autoUser": {
-                            "scope": "task",
+                            "scope": "pool",
                             "elevationLevel": "admin"
                         }
                     },

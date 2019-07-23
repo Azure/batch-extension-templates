@@ -53,7 +53,7 @@
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
-                "commandLine": "/bin/bash -c 'env'"
+                "commandLine": "/bin/bash -c 'env;export'"
             },
             "taskFactory": {
                 "type": "taskPerFile",
@@ -64,7 +64,7 @@
                     "displayName": "frame {fileNameWithoutExtension}",
                     "commandLine": "/bin/bash -c 'sudo mkdir -m a=rwx \"$AZ_BATCH_TASK_WORKING_DIR/images\";mkdir \"$AZ_BATCH_TASK_WORKING_DIR/assets\";/opt/solidangle/mtoa/2018/bin/kick -i \"$AZ_BATCH_TASK_WORKING_DIR/assets/{fileName}\" -dw -v 6 -of [parameters('outputFormat')] -o \"$AZ_BATCH_TASK_WORKING_DIR/images/{fileNameWithoutExtension}.[parameters('outputFormat')]\"'",                    "userIdentity": {
                         "autoUser": {
-                            "scope": "task",
+                            "scope": "pool",
                             "elevationLevel": "admin"
                         }
                     },
