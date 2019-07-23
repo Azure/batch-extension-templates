@@ -1,25 +1,32 @@
 {
   "tests": [
     {
-        "name": "arnold-linux-frames",
-        "template": "../templates/arnold/render-linux-frames/job.template.json",
-        "poolTemplate": "../templates/arnold/render-linux-frames/pool.template.json",
-        "parameters": "Tests/arnold/render-linux-frames/job.parameters.json",
-        "expectedOutput":"arnold.tif"
-    },    
+        "name": "maya2019-default-linux",
+        "template": "../templates/maya/render-default-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-default-linux/pool.template.json",
+        "parameters": "Tests/maya/render-default-linux/job.parameters2019.json",
+        "expectedOutput":"maya.exr.0001"
+    },
     {
-        "name": "vray-render-linux",
-        "template": "../templates/vray/render-linux/job.template.json",
-        "poolTemplate": "../templates/vray/render-linux/pool.template.json",
-        "parameters": "Tests/vray/render-linux/job.parameters.json",
-        "expectedOutput":"image1.png"
+        "name": "maya2019-arnold-linux",
+        "template": "../templates/maya/render-arnold-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-arnold-linux/pool.template.json",
+        "parameters": "Tests/maya/render-arnold-linux/job.parameters2019.json",
+        "expectedOutput":"maya.exr.0001"
+    },
+    {
+        "name": "maya2019-vray-linux",
+        "template": "../templates/maya/render-vray-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
+        "parameters": "Tests/maya/render-vray-linux/job.parameters2019.json",
+        "expectedOutput":"maya-vray.0001.png"
     }
   ], 
   "images": [
     {
         "osType": "windows",
         "offer": "rendering-windows2016",
-        "version": "1.3.3"
+        "version": "1.3.4"
     },
     {
         "osType": "centos",
