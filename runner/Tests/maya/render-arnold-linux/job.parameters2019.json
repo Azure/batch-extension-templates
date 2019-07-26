@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"maya-arnold-linux-2018"
+      "value":"maya-arnold-linux-2019"
    },
    "poolId":{
-      "value":"maya-arnold-linux-2018"
+      "value":"maya-arnold-linux-2019"
    },
    "mayaVersion":{
       "value":"Maya2019"

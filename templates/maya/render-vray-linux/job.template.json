@@ -20,17 +20,19 @@
         },
         "mayaVersion": {
             "type": "string",
-            "defaultValue": "Maya2018",
+            "defaultValue": "Maya2019",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
                 "Maya2017",
-                "Maya2018"
+                "Maya2018",
+                "Maya2019"
             ]
         },
         "inputData": {
             "type": "string",
+            "defaultValue": "fgrp-18-10-47-maya-vray-linux-2018",
             "metadata": {
                 "description": "The file group where the input data is stored",
                 "advancedType": "file-group"
@@ -46,6 +48,7 @@
         },
         "sceneFile": {
             "type": "string",
+            "defaultValue": "maya-vray.mb",
             "metadata": {
                 "description": "The Maya scene file to be rendered",
                 "advancedType": "file-in-file-group",
@@ -82,6 +85,7 @@
         },
         "outputs": {
             "type": "string",
+            "defaultValue": "fgrp-18-10-30-vray-render-linux",
             "metadata": {
                 "description": "The file group where outputs will be stored",
                 "advancedType": "file-group"
@@ -103,7 +107,7 @@
                         "elevationLevel": "admin"
                     }
                 },
-                "commandLine": "/bin/bash -c 'azcopy --source \"[parameters('inputDataSas')]\" --destination \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" --recursive'"
+                "commandLine": "/bin/bash -c 'env; azcopy --source \"[parameters('inputDataSas')]\" --destination \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" --recursive"
             },
             "jobReleaseTask": {
                 "userIdentity": {

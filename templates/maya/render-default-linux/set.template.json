@@ -32,7 +32,7 @@
         },
         "inputData": {
             "type": "string",
-            "defaultValue": "fgrp-18-10-47-maya-vray-linux-2018",
+            "defaultValue": "fgrp-23-12-15-maya-arnold-linux-2017",
             "metadata": {
                 "description": "The file group where the input data is stored",
                 "advancedType": "file-group"
@@ -48,7 +48,7 @@
         },
         "sceneFile": {
             "type": "string",
-            "defaultValue" : "maya-vray.mb",
+            "defaultValue" : "maya.mb",
             "metadata": {
                 "description": "The Maya scene file to be rendered",
                 "advancedType": "file-in-file-group",
@@ -85,7 +85,7 @@
         },
         "outputs": {
             "type": "string",
-            "defaultValue" : "fgrp-18-10-14-vray-render-linux-output",
+            "defaultValue" : "fgrp-23-12-15-arnold-linux-frames-output",
             "metadata": {
                 "description": "The file group where outputs will be stored",
                 "advancedType": "file-group"
@@ -107,7 +107,7 @@
                         "elevationLevel": "admin"
                     }
                 },
-                "commandLine": "/bin/bash -c 'azcopy --source \"[parameters('inputDataSas')]\" --destination \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" --recursive;env'"
+                "commandLine": "/bin/bash -c 'env;set'"
             },
             "jobReleaseTask": {
                 "userIdentity": {
@@ -116,7 +116,7 @@
                        "elevationLevel": "admin"
                     }
                 },
-                "commandLine": "/bin/bash -c \"sudo rm -rfv $AZ_BATCH_JOB_PREP_WORKING_DIR/*\""
+                "commandLine": "/bin/bash -c 'env;set'"
             },
             "taskFactory": {
                 "type": "parametricSweep",
@@ -135,7 +135,7 @@
                             "elevationLevel": "admin"
                         }
                     },
-                    "commandLine": "/bin/bash -c 'set -e; set -o pipefail; mkdir \"$AZ_BATCH_TASK_WORKING_DIR/thumbs\";mkdir \"$AZ_BATCH_TASK_WORKING_DIR/images\";sudo mkdir -m a=rwx -p \"/X\";sudo mount --rbind $AZ_BATCH_JOB_PREP_WORKING_DIR /X;export maya_version=[parameters('mayaVersion')].sh;export maya_version=${{maya_version,,}};$maya_version -r sw [parameters('additionalFlags')] -proj \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" -rd \"$AZ_BATCH_TASK_WORKING_DIR/images\" -s {0} -e {0} \"/X/[parameters('sceneFile')]\";err=$?;sudo umount \"/X\";exit $err'",                    
+                    "commandLine": "/bin/bash -c 'env;set'",
                     "environmentSettings": [
                         {
                             "name": "MAYA_SCRIPT_PATH",
