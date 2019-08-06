@@ -1,0 +1,38 @@
+{
+   "jobName":{
+      "value":"maya-arnold-linux-2019"
+   },
+   "poolId":{
+      "value":"maya-arnold-linux-2019"
+   },
+   "mayaVersion":{
+      "value":"Maya2019"
+   },
+   "inputFilegroup":{
+      "value":"myfilegroup"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "inputDataSas":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"maya.mb"
+   },
+   "additionalflags":{
+      "value":"-of png"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "outputFilegroup":{
+      "value":"myfilegroup"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "nodeSize":{
+      "value":"Standard_D2_v2"
+   }
+}

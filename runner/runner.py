@@ -142,7 +142,13 @@ def main():
     try:
         images_refs = []  # type: List[utils.ImageReference]
         with open(args.TestConfig) as f:
-            template = json.load(f)
+            try:
+                template = json.load(f)
+            except ValueError as e:
+                logger.err("Failed to read test config file due to the following error", e)
+                raise e
+
+
 
             for jobSetting in template["tests"]:
                 application_licenses = None
@@ -168,9 +174,9 @@ def main():
     finally:
         # Delete all the jobs and containers needed for the job
         # Reties any jobs that failed
-        utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
-        utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
-        utils.execute_parallel_jobmanagers("delete_pool", _job_managers, batch_client)
+        #utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
+        #utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
+        #utils.execute_parallel_jobmanagers("delete_pool", _job_managers, batch_client)
         end_time = datetime.datetime.now().replace(microsecond=0)
         logger.print_result(_job_managers)
         logger.export_result(_job_managers, (end_time - start_time))
