@@ -81,9 +81,9 @@
         "name": "blender-windows28",
         "template": "../templates/blender/render-windows/job.template28.json",
         "poolTemplate": "../templates/blender/render-windows/pool.template.json",
-        "parameters": "Tests/blender/render-windows/job.parameters.json",
-        "expectedOutput":"blender-windows_0001.png"
-    }
+        "parameters": "Tests/blender/render-windows/job.parameters28.json",
+        "expectedOutput":"blender-windows28_0001.png"
+    },
     {
         "name": "blender-windows-dr",
         "template": "../templates/blender/render-windows-dr/job.template.json",
@@ -185,7 +185,8 @@
         "parameters": "Tests/3dsmax/vray-dr/job.parameters.adv.2019.json",
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
-    },{
+    },
+    {
         "name": "3dsmax-vray-dr-adv-2020",
         "template": "../templates/3dsmax/vray-dr/job.template.json",
         "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
