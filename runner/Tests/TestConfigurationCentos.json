@@ -50,6 +50,13 @@
         "expectedOutput":"maya-vray.0001.png"
     },
     {
+        "name": "maya2019-vray-linux",
+        "template": "../templates/maya/render-vray-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
+        "parameters": "Tests/maya/render-vray-linux/job.parameters2018.json",
+        "expectedOutput":"maya-vray.0001.png"
+    },
+    {
         "name": "blender-linux",
         "template": "../templates/blender/render-linux/job.template.json",
         "poolTemplate": "../templates/blender/render-linux/pool.template.json",
