@@ -22,6 +22,13 @@
         "expectedOutput":"maya.exr.0001"
     },
     {
+        "name": "maya2019-default-linux",
+        "template": "../templates/maya/render-default-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-default-linux/pool.template.json",
+        "parameters": "Tests/maya/render-default-linux/job.parameters2019.json",
+        "expectedOutput":"maya.exr.0001"
+    },
+    {
         "name": "maya2017-arnold-linux",
         "template": "../templates/maya/render-arnold-linux/job.template.json",
         "poolTemplate": "../templates/maya/render-arnold-linux/pool.template.json",
@@ -36,6 +43,13 @@
         "expectedOutput":"maya.exr.0001"
     },
     {
+        "name": "maya2019-arnold-linux",
+        "template": "../templates/maya/render-arnold-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-arnold-linux/pool.template.json",
+        "parameters": "Tests/maya/render-arnold-linux/job.parameters2019.json",
+        "expectedOutput":"maya.exr.0001"
+    },
+    {
         "name": "maya2017-vray-linux",
         "template": "../templates/maya/render-vray-linux/job.template.json",
         "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
@@ -47,6 +61,13 @@
         "template": "../templates/maya/render-vray-linux/job.template.json",
         "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
         "parameters": "Tests/maya/render-vray-linux/job.parameters2018.json",
+        "expectedOutput":"maya-vray.0001.png"
+    },
+    {
+        "name": "maya2019-vray-linux",
+        "template": "../templates/maya/render-vray-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
+        "parameters": "Tests/maya/render-vray-linux/job.parameters2019.json",
         "expectedOutput":"maya-vray.0001.png"
     },
     {
