@@ -106,7 +106,7 @@
                 ],
                 "repeatTask": {
                     "displayName": "Frame {0}",
-                    "commandLine": "blender -b \"$AZ_BATCH_JOB_PREP_WORKING_DIR/[parameters('blendFile')]\" -o \"[parameters('jobName')]_####\" -f {0} -t 0 [parameters('optionalParameters')]",
+                    "commandLine":  "/bin/bash -c 'set -e; set -o pipefail; blender -b \"$AZ_BATCH_JOB_PREP_WORKING_DIR/[parameters('blendFile')]\" -o \"[parameters('jobName')]_####\" -f {0} -t 0 [parameters('optionalParameters')];exit $err'",
                     "outputFiles": [
                         {
                             "filePattern": "../stdout.txt",

@@ -1,36 +1,21 @@
 {
-    "templateMetadata": {
-        "description": "Application template for working with Maya and Arnold on CentOS."
-    },
     "parameters": {
         "poolId": {
             "type": "string",
-            "defaultValue": "maya-arnold-pool-centos",
+            "defaultValue": "blender-pool-ubuntu",
             "metadata": {
                 "description": "The ID of the pool on which to run the job."
             }
         },
         "jobName": {
             "type": "string",
-            "defaultValue": "maya-arnold-centos",
+            "defaultValue": "blender-render",
             "metadata": {
-                "description": "The unique name of the job.",
+                "description": "The name of the Azure Batch job, also used to prefix rendered outputs",
                 "advancedType": "job-id"
             }
         },
-        "mayaVersion": {
-            "type": "string",
-            "defaultValue": "Maya2019",
-            "metadata": {
-                "description": "The renderer to use"
-            },
-            "allowedValues":[
-                "Maya2017",
-                "Maya2018",
-                "Maya2019"
-            ]
-        },
-        "inputData": {
+         "inputData": {
             "type": "string",
             "metadata": {
                 "description": "The file group where the input data is stored",
@@ -45,40 +30,34 @@
                 "dependsOn": "inputData"
             }
         },
-        "sceneFile": {
+        "blendFile": {
             "type": "string",
             "metadata": {
-                "description": "The Maya scene file to be rendered",
+                "description": "The Blender scene file to be rendered",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputData"
+                "dependsOn": "inputData",
+                "wildcards": "*.blend"
             }
         },
-        "additionalFlags": {
+        "optionalParameters": {
             "type": "string",
             "defaultValue": " ",
             "metadata": {
-                "description": "Any additional flags to pass to the renderer. Example: -cam camera2"
-            }
-        },
-        "jobPriority": {
-            "type": "int",
-            "defaultValue": 0,
-            "metadata": {
-                "description": "Priority values can range from -1000 to 1000, with -1000 being the lowest priority and 1000 being the highest priority."
+                "description": "Optional parameters to pass to blender, e.g. --scene <name>"
             }
         },
         "frameStart": {
             "type": "int",
             "defaultValue": 1,
             "metadata": {
-                "description": "Index of the first frame to render"
+                "description": "The first frame to render"
             }
         },
         "frameEnd": {
             "type": "int",
             "defaultValue": 1,
             "metadata": {
-                "description": "Index of the last frame to render"
+                "description": "The last frame to render"
             }
         },
         "outputs": {
@@ -93,11 +72,12 @@
         "type": "Microsoft.Batch/batchAccounts/jobs",
         "properties": {
             "id": "[parameters('jobName')]",
-            "priority": "[parameters('jobPriority')]",
             "poolInfo": {
                 "poolId": "[parameters('poolId')]"
             },
-            "jobPreparationTask": {
+            "displayName": "",
+            "onAllTasksComplete": "terminateJob",
+            "jobPreparationTask":{
                 "userIdentity": {
                     "autoUser": {
                         "scope": "pool",
@@ -126,23 +106,7 @@
                 ],
                 "repeatTask": {
                     "displayName": "Frame {0}",
-                    "userIdentity": {
-                        "autoUser": {
-                            "scope": "pool",
-                            "elevationLevel": "admin"
-                        }
-                    },
-                        "commandLine": "/bin/bash -c 'set -e; set -o pipefail; mkdir \"$AZ_BATCH_TASK_WORKING_DIR/thumbs\";mkdir \"$AZ_BATCH_TASK_WORKING_DIR/images\";sudo mkdir -m a=rwx -p \"/X\";sudo mount --rbind $AZ_BATCH_JOB_PREP_WORKING_DIR /X;export maya_version=[parameters('mayaVersion')].sh;export maya_version=${{maya_version,,}};$maya_version -r arnold -ai:lve 1 [parameters('additionalFlags')] -proj \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" -rd \"$AZ_BATCH_TASK_WORKING_DIR/images\" -s {0} -e {0} \"/X/[parameters('sceneFile')]\";err=$?;sudo umount \"/X\";exit $err'",
-                      "environmentSettings": [
-                        {
-                            "name": "MAYA_SCRIPT_PATH",
-                            "value": "%AZ_BATCH_JOB_PREP_WORKING_DIR%/scripts"
-                        },
-                        {
-                            "name": "FLEXLM_TIMEOUT",
-                            "value": "5000000"
-                        }
-                    ],
+                    "commandLine":  "/bin/bash -c 'set -e; set -o pipefail; blender2.8.sh -b \"$AZ_BATCH_JOB_PREP_WORKING_DIR/[parameters('blendFile')]\" -o \"[parameters('jobName')]_####\" -t 0 -E \"CYCLES\"  [parameters('optionalParameters')] -f {0} ;exit $err'",
                     "outputFiles": [
                         {
                             "filePattern": "../stdout.txt",
@@ -169,33 +133,20 @@
                             }
                         },
                         {
-                            "filePattern": "images/**/*",
+                            "filePattern": "[parameters('jobName')]_*",
                             "destination": {
                                 "autoStorage": {
                                     "fileGroup": "[parameters('outputs')]",
-                                    "path":"[parameters('jobName')]/images"
+                                    "path": "[parameters('jobName')]/outputs"
                                 }
                             },
                             "uploadOptions": {
-                                "uploadCondition": "taskSuccess"
-                            }
-                        },
-                        {
-                            "filePattern": "thumbs/**/*",
-                            "destination": {
-                                "autoStorage": {
-                                    "fileGroup": "[parameters('outputs')]",
-                                    "path": "[parameters('jobName')]/thumbs"
-                                }
-                            },
-                            "uploadOptions": {
-                                "uploadCondition": "taskSuccess"
+                                "uploadCondition": "TaskSuccess"
                             }
                         }
                     ]
                 }
-            },
-            "onAllTasksComplete": "terminateJob"
+            }
         }
     }
 }

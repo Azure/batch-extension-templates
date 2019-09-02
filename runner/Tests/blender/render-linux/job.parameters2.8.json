@@ -1,0 +1,32 @@
+{
+   "jobName":{
+      "value":"blender-linux-2-8"
+   },
+   "poolId":{
+      "value":"blender-linux-28"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "inputDataSas":{
+      "value":"https://"
+   },
+   "blendFile":{
+      "value":"shapes.blend"
+   },
+   "frameStart":{
+      "value":1
+   },
+   "frameEnd":{
+      "value":1
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "nodeSize":{
+      "value":"Standard_D2_v2"
+   }
+}

@@ -1,18 +1,18 @@
 {
     "templateMetadata": {
-        "description": "Application template for working with Maya and Arnold on CentOS."
+        "description": "Application template for working with Maya and V-Ray on CentOS."
     },
     "parameters": {
         "poolId": {
             "type": "string",
-            "defaultValue": "maya-arnold-pool-centos",
+            "defaultValue": "maya-sw-pool-centos",
             "metadata": {
                 "description": "The ID of the pool on which to run the job."
             }
         },
         "jobName": {
             "type": "string",
-            "defaultValue": "maya-arnold-centos",
+            "defaultValue": "maya-sw-centos",
             "metadata": {
                 "description": "The unique name of the job.",
                 "advancedType": "job-id"
@@ -29,29 +29,6 @@
                 "Maya2018",
                 "Maya2019"
             ]
-        },
-        "inputData": {
-            "type": "string",
-            "metadata": {
-                "description": "The file group where the input data is stored",
-                "advancedType": "file-group"
-            }
-        },
-        "inputDataSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputData"
-            }
-        },
-        "sceneFile": {
-            "type": "string",
-            "metadata": {
-                "description": "The Maya scene file to be rendered",
-                "advancedType": "file-in-file-group",
-                "dependsOn": "inputData"
-            }
         },
         "additionalFlags": {
             "type": "string",
@@ -104,7 +81,7 @@
                         "elevationLevel": "admin"
                     }
                 },
-                "commandLine": "/bin/bash -c 'azcopy --source \"[parameters('inputDataSas')]\" --destination \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" --recursive'"
+                "commandLine": "/bin/bash -c 'env'"
             },
             "jobReleaseTask": {
                 "userIdentity": {
@@ -132,8 +109,8 @@
                             "elevationLevel": "admin"
                         }
                     },
-                        "commandLine": "/bin/bash -c 'set -e; set -o pipefail; mkdir \"$AZ_BATCH_TASK_WORKING_DIR/thumbs\";mkdir \"$AZ_BATCH_TASK_WORKING_DIR/images\";sudo mkdir -m a=rwx -p \"/X\";sudo mount --rbind $AZ_BATCH_JOB_PREP_WORKING_DIR /X;export maya_version=[parameters('mayaVersion')].sh;export maya_version=${{maya_version,,}};$maya_version -r arnold -ai:lve 1 [parameters('additionalFlags')] -proj \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" -rd \"$AZ_BATCH_TASK_WORKING_DIR/images\" -s {0} -e {0} \"/X/[parameters('sceneFile')]\";err=$?;sudo umount \"/X\";exit $err'",
-                      "environmentSettings": [
+                    "commandLine": "/bin/bash -c 'env'",
+                        "environmentSettings": [
                         {
                             "name": "MAYA_SCRIPT_PATH",
                             "value": "%AZ_BATCH_JOB_PREP_WORKING_DIR%/scripts"
