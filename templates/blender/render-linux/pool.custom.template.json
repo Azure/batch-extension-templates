@@ -2,7 +2,7 @@
     "parameters": {
         "poolName": {
             "type": "string",
-            "defaultValue": "arnold-linux",
+            "defaultValue": "blender-custom-pool",
             "metadata": {
                 "description": "Id of the pool"
             }
@@ -26,12 +26,8 @@
             "metadata": {
                 "description": "The size of the virtual machines that run the application"
             },
-            "defaultValue": "Standard_D3_v2",
+            "defaultValue": "Standard_D4_v2",
             "allowedValues": [
-                "Standard_A8",
-                "Standard_A9",
-                "Standard_A10",
-                "Standard_A11",
                 "Standard_D1_v2",
                 "Standard_D2_v2",
                 "Standard_D3_v2",
@@ -76,19 +72,7 @@
                 "Standard_L32",
                 "Standard_M64s",
                 "Standard_M64ms",
-                "Standard_M128s",
-                "Standard_NC6",
-                "Standard_NC12",
-                "Standard_NC24",
-                "Standard_NC24r",
-                "Standard_NC6s_v2",
-                "Standard_NC12s_v2",
-                "Standard_NC24s_v2",
-                "Standard_NC24rs_v2",
-                "Standard_NC6s_v3",
-                "Standard_NC12s_v3",
-                "Standard_NC24s_v3",
-                "Standard_NC24rs_v3"
+                "Standard_M128s"
             ]
         }
     },
@@ -105,14 +89,11 @@
     },
     "pool": {
         "id": "[parameters('poolName')]",
-        "displayName": "Windows rendering pool for Arnold",
+        "displayName": "Blender rendering pool for CentOS",
         "vmSize": "[parameters('nodeSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
-        "enableAutoScale": false,
-        "applicationLicenses": [
-            "arnold"
-        ]
+        "enableAutoScale": false
     }
 }
