@@ -20,7 +20,7 @@
         "description": "This will create a VRay DR Pool that can be used from 3ds Max.  After creating the DR Pool you must submit a VRay DR Job to start the required VRay DR services."
     },
 	{
-        "id": "standard-with-itoosoft-plugins",
+        "id": "itoosoft-plugins",
         "name": "VRay or Arnold scene with forestPack and railclone",
         "description": "This job will render different frames of a 3ds max scene in parallel using the VRay or Arnold renderer, with support for ForestPack and Railclone plugins from itoosoft."
     }
