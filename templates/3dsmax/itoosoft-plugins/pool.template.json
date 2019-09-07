@@ -55,6 +55,7 @@
                 "description": "The version of 3ds Max to install additional plugin binaries into"
             },
             "allowedValues":[
+                "2018",
                 "2019"
             ]
         },
