@@ -144,7 +144,13 @@ def main():
     try:
         images_refs = []  # type: List[utils.ImageReference]
         with open(args.TestConfig) as f:
-            template = json.load(f)
+            try:
+                template = json.load(f)
+            except ValueError as e:
+                logger.err("Failed to read test config file due to the following error", e)
+                raise e
+
+
 
             for jobSetting in template["tests"]:
                 application_licenses = None
