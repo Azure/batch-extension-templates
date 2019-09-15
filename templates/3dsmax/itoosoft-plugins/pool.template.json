@@ -22,7 +22,7 @@
         },
 		"forestPackInstallCommand": {
             "type": "string",
-			"defaultValue": "forestPackSetup.exe /S && \"C:\\Program Files\\Itoo Software\\Forest Pack Lite\\UpdateManager.exe -product -fpl install ALL\"",
+			"defaultValue": "forestPackSetup.exe /S && \"C:\\Program Files\\Itoo Software\\Forest Pack Lite\\UpdateManager.exe\" -product fpl install all",
             "metadata": {
                 "description": "CommandLine for executing the forestPack installer"
             }
@@ -43,7 +43,7 @@
         },
 		 "railCloneInstallCommand": {
             "type": "string",
-			"defaultValue": "railCloneSetup.exe /S && \"C:\\Program Files\\Itoo Software\\Rail Clone Lite\\UpdateManager.exe -product -rcl install ALL\"",
+			"defaultValue": "railCloneSetup.exe /S && \"C:\\Program Files\\Itoo Software\\RailClone Lite\\UpdateManager.exe\" -product rcl install all",
             "metadata": {
                 "description": "CommandLine for executing the railClone installer"
             }
