@@ -22,7 +22,7 @@
         },
 		"forestPackInstallCommand": {
             "type": "string",
-			"defaultValue": "forestPackSetup.exe /S && \"C:\\Program Files\\Itoo Software\\Forest Pack Lite\\UpdateManager.exe\" -product fpl install all",
+			"defaultValue": "forestPackSetup.exe /S",
             "metadata": {
                 "description": "CommandLine for executing the forestPack installer"
             }
@@ -43,7 +43,7 @@
         },
 		 "railCloneInstallCommand": {
             "type": "string",
-			"defaultValue": "railCloneSetup.exe /S && \"C:\\Program Files\\Itoo Software\\RailClone Lite\\UpdateManager.exe\" -product rcl install all",
+			"defaultValue": "railCloneSetup.exe /S",
             "metadata": {
                 "description": "CommandLine for executing the railClone installer"
             }
@@ -183,7 +183,7 @@
         "enableAutoScale": false,
         "enableInterNodeCommunication": false,
         "startTask": {
-            "commandLine": "cmd /c \"%AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\[parameters('railCloneInstallCommand')]\"" ,
+            "commandLine": "cmd /c \"%AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\[parameters('forestPackInstallCommand')] && xcopy \"%AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\packages\" \"%LOCALAPPDATA%\\Itoo Software\\Forest Pack Lite\" /s /e && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\[parameters('railCloneInstallCommand')] && xcopy \"%AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\packages\" \"%LOCALAPPDATA%\\Itoo Software\\RailClone Lite\" /s /e\"" ,
             "waitForSuccess": true,
             "maxTaskRetryCount": 0,
             "userIdentity": {
