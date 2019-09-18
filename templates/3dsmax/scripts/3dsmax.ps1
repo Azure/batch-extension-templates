@@ -185,6 +185,7 @@ if ($renderer -eq "arnold")
 
 if ($renderer -like "vray")
 {
+    Write-Host "3ds Max is using the Vray renderer " 
     $outputPath = "$env:AZ_BATCH_TASK_WORKING_DIR\images\" -replace "\\", "\\"
     $pre_render_script_content += "-- Set output channel path`r`n"
     $pre_render_script_content += "rendererName = r as string`r`n"

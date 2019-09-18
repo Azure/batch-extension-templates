@@ -121,7 +121,6 @@ def run_job_manager_tests(blob_client: azureblob.BlockBlobService, batch_client:
 
 def main():
     args = runner_arguments()
-    print(args.CleanUpResources)
     logger.account_info(args)
     start_time = datetime.datetime.now().replace(microsecond=0)
     logger.info('Template runner start time: [{}]'.format(start_time))
@@ -149,8 +148,6 @@ def main():
             except ValueError as e:
                 logger.err("Failed to read test config file due to the following error", e)
                 raise e
-
-
 
             for jobSetting in template["tests"]:
                 application_licenses = None
