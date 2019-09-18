@@ -181,7 +181,7 @@
                     "commandLine": "powershell.exe 3dsmax.ps1 -maxVersion \\\"[parameters('maxVersion')]\\\" -start {0} -end {0} -outputName \\\"images\\[parameters('outputName')]\\\" -sceneFile \\\"[parameters('sceneFile')]\\\" -pathFile \\\"[parameters('pathFile')]\\\" -renderer corona -preRenderScript \\\"[parameters('preRenderScript')]\\\" -camera \\\"[parameters('camera')]\\\" -additionalArgs \\\" [parameters('additionalArgs')]\\\" -irradianceMap \\\"[parameters('irradianceMapFile')]\\\" -renderPresetFile \\\"[parameters('renderPresetFile')]\\\"",
                     "resourceFiles":[
                         {
-                            "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/3dsmax.ps1",
+                            "blobSource":"https://renderingapplications.blob.core.windows.net/batch-rendering-apps/3dsmax.ps1?sr=b&sv=2015-02-21&st=2019-09-09T23%3A48%3A11Z&se=2019-09-20T00%3A48%3A11Z&sp=rwd&sig=TT%2F4l7UdWWm7NHRqgC59J%2F5AOSbPsvjf07uYGI00eAg%3D",
                             "filePath":"3dsmax.ps1"
                         },
                         {
