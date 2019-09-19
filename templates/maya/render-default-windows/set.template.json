@@ -1,18 +1,18 @@
 {
     "templateMetadata": {
-        "description": "Application template for working with Maya and Arnold on Windows."
+        "description": "Application template for working with Maya default renderer on Windows."
     },
     "parameters": {
         "poolId": {
             "type": "string",
-            "defaultValue": "maya-arnold-pool-windows",
+            "defaultValue": "maya-sw-pool-windows",
             "metadata": {
                 "description": "The ID of the pool on which to run the job."
             }
         },
         "jobName": {
             "type": "string",
-            "defaultValue": "maya-arnold-windows",
+            "defaultValue": "maya-sw-windows",
             "metadata": {
                 "description": "The unique name of the job.",
                 "advancedType": "job-id"
@@ -114,16 +114,16 @@
                 "userIdentity": {
                     "autoUser": {
                         "scope": "pool",
-                        "elevationLevel": "admin"
+                        "elevationLevel": "nonAdmin"
                     }
                 },
-                "commandLine": "cmd.exe /c set & echo --- & azcopy /source:\"[parameters('inputDataSas')]\" /dest:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" /S /Y /V:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\azcopy.log\" || exit /b %errorlevel%"
+                "commandLine": "SET"
             },
             "jobReleaseTask": {
                 "userIdentity": {
                     "autoUser": {
                        "scope": "pool",
-                       "elevationLevel": "admin"
+                       "elevationLevel": "nonAdmin"
                     }
                 },
                 "commandLine":"cmd.exe /c DEL /S /Q \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" & exit /b 0"
@@ -145,7 +145,7 @@
                             "elevationLevel": "admin"
                         }
                     },
-                    "commandLine": "mkdir \"%AZ_BATCH_TASK_WORKING_DIR%\\thumbs\" & subst X: %AZ_BATCH_JOB_PREP_WORKING_DIR% && cmd.exe /v /c \"[variables('MayaVersions')[parameters('mayaVersion')].environmentValue] -renderer arnold -ai:lve 2 [parameters('additionalFlags')] -proj \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" -rd \"%AZ_BATCH_TASK_WORKING_DIR%\\images\" -s {0} -e {0} \"X:\\[parameters('sceneFile')]\"\" & subst X: /D",
+                    "commandLine": "SET",
                     "environmentSettings": [
                         {
                             "name": "MAYA_SCRIPT_PATH",

@@ -91,6 +91,7 @@ def runner_arguments():
     parser.add_argument("ServicePrincipalCredentialsResouce", help="Service Principal resource")
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
     parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
+    parser.add_argument("-CleanUpResources", action="store_false")
 
     return parser.parse_args()
 
@@ -148,8 +149,6 @@ def main():
                 logger.err("Failed to read test config file due to the following error", e)
                 raise e
 
-
-
             for jobSetting in template["tests"]:
                 application_licenses = None
                 if 'applicationLicense' in jobSetting:
@@ -174,9 +173,11 @@ def main():
     finally:
         # Delete all the jobs and containers needed for the job
         # Reties any jobs that failed
-        utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
-        utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
-        utils.execute_parallel_jobmanagers("delete_pool", _job_managers, batch_client)
+
+        if args.CleanUpResources: 
+            utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
+            utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
+            utils.execute_parallel_jobmanagers("delete_pool", _job_managers, batch_client)
         end_time = datetime.datetime.now().replace(microsecond=0)
         logger.print_result(_job_managers)
         logger.export_result(_job_managers, (end_time - start_time))

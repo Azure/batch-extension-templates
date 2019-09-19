@@ -20,13 +20,14 @@
         },
         "mayaVersion": {
             "type": "string",
-            "defaultValue": "Maya2018",
+            "defaultValue": "Maya2019",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
                 "Maya2017",
-                "Maya2018"
+                "Maya2018",
+                "Maya2019"
             ]
         },
         "inputData": {
@@ -95,6 +96,9 @@
             },
             "Maya2018":{
                 "environmentValue": "%MAYA_2018_EXEC%"
+            },
+            "Maya2019":{
+                "environmentValue": "%MAYA_2019_EXEC%"
             }
         }
    },

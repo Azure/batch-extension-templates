@@ -1,6 +1,6 @@
 {
    "jobName":{
-      "value":"max2018-vray"
+      "value":"max2020-vray"
    },
    "poolId":{
       "value":"max-vray"
@@ -15,7 +15,7 @@
       "value":"3dsmax-vray.max"
    },
    "maxVersion":{
-      "value":"2018"
+      "value":"2020"
    },
    "renderer":{
       "value":"vray"

@@ -19,7 +19,7 @@ steps:
       from glob import iglob
       from os import path
       import os
-      # Python >= 3.7.2
+      # Python >= 3.7.3
       Runner_py = next(iglob(path.join('**', 'runner.py'), recursive=True), None)
       if not Runner_py:
           raise SystemExit('Could not find a runner.py')
