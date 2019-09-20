@@ -192,67 +192,67 @@
 					"environmentSettings": [
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_PRO_LIBRARYDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\lib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\lib"
 						},
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_PRO_EFFECTSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\effects"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\effects"
 						},
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_PRO_MAPSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\maps"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\maps"
 						},
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_PRO_MATLIBDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\matlib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\matlib"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_PRO_LIBRARYDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\lib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\lib"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_PRO_MACROSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\macros"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\macros"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_PRO_MAPSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\maps"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\maps"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_PRO_MATLIBDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\matlib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\matlib"
 						},
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_LITE_LIBRARYDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\lib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\lib"
 						},
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_LITE_EFFECTSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\effects"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\effects"
 						},
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_LITE_MAPSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\maps"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\maps"
 						},
 						{
 							"name":"ITOO_SOFTWARE_FOREST_PACK_LITE_MATLIBDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\Forest Pack\matlib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\\matlib"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_LITE_LIBRARYDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\lib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\lib"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_LITE_MACROSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\macros"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\macros"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_LITE_MAPSDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\maps"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\maps"
 						},
 						{
 							"name":"ITOO_SOFTWARE_RAIL_CLONE_LITE_MATLIBDIR",
-							"value":"%LOCALAPPDATA%\Itoo Software\RailClone\matlib"
+							"value":"%LOCALAPPDATA%\\Itoo Software\\RailClone\\matlib"
 						}
 					],
                     "commandLine": "powershell.exe 3dsmax.ps1 -maxVersion \\\"[parameters('maxVersion')]\\\" -start {0} -end {0} -outputName \\\"images\\[parameters('outputName')]\\\" -sceneFile \\\"[parameters('sceneFile')]\\\" -pathFile \\\"[parameters('pathFile')]\\\" -renderer \\\"[parameters('renderer')]\\\" -preRenderScript \\\"[parameters('preRenderScript')]\\\" -camera \\\"[parameters('camera')]\\\" -additionalArgs \\\" [parameters('additionalArgs')]\\\" -irradianceMap \\\"[parameters('irradianceMapFile')]\\\" -renderPresetFile \\\"[parameters('renderPresetFile')]\\\"",
