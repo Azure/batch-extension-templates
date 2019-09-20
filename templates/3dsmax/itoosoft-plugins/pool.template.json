@@ -183,7 +183,7 @@
         "enableAutoScale": false,
         "enableInterNodeCommunication": false,
         "startTask": {
-            "commandLine": "cmd /c \"%AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\[parameters('forestPackInstallCommand')] && xcopy \"%AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\packages\" \"%LOCALAPPDATA%\\Itoo Software\\Forest Pack Lite\" /s /e /i && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\[parameters('railCloneInstallCommand')] && xcopy \"%AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\packages\" \"%LOCALAPPDATA%\\Itoo Software\\RailClone Lite\" /s /e /i\"" ,
+            "commandLine": "cmd /c \"%AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\[parameters('forestPackInstallCommand')] && xcopy \"%AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\packages\" \"%LOCALAPPDATA%\\Itoo Software\\Forest Pack\" /s /e /i && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\[parameters('railCloneInstallCommand')] && xcopy \"%AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\packages\" \"%LOCALAPPDATA%\\Itoo Software\\RailClone\" /s /e /i\"" ,
             "waitForSuccess": true,
             "maxTaskRetryCount": 0,
             "userIdentity": {
