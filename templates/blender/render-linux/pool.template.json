@@ -111,7 +111,7 @@
             },
             "resourceFiles": [
                 {
-                    "blobSource": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/setup-linux-pool.sh",
+                    "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/setup-linux-pool.sh",
                     "filePath": "setup-linux-pool.sh"
                 }
             ]

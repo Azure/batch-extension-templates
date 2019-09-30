@@ -43,7 +43,7 @@ def create_batch_client(args: object) -> batch.BatchExtensionsClient:
     return batch.BatchExtensionsClient(
         credentials=credentials,
         batch_account=args.BatchAccountName,
-        base_url=args.BatchAccountUrl,
+        batch_url=args.BatchAccountUrl,
         subscription_id=args.BatchAccountSub)
 
 def create_keyvault_client(args: object) -> tuple():
@@ -167,7 +167,7 @@ def main():
 
         run_job_manager_tests(blob_client, batch_client, images_refs, args.VMImageURL)
 
-    except batchmodels.batch_error.BatchErrorException as err:
+    except batchmodels.BatchErrorException as err:
         utils.print_batch_exception(err)
         raise
     finally:
