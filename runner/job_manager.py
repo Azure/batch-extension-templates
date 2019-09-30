@@ -66,7 +66,7 @@ class JobManager(object):
             job_parameters = batch_service_client.job.jobparameter_from_json(
                 job_json)
             batch_service_client.job.add(job_parameters)
-        except batchmodels.batch_error.BatchErrorException as err:
+        except batchmodels.BatchErrorException as err:
             logger.error(
                 "Failed to submit job\n{}\n with params\n{}".format(
                     template, parameters))
@@ -123,7 +123,7 @@ class JobManager(object):
         logger.info('Creating pool [{}]...'.format(pool))
         try:
             batch_service_client.pool.add(pool)
-        except batchmodels.batch_error.BatchErrorException as err:
+        except batchmodels.BatchErrorException as err:
             if utils.expected_exception(
                     err, "The specified pool already exists"):
                 logger.warning(
@@ -390,7 +390,7 @@ class JobManager(object):
         logger.info("Deleting pool: {}.".format(self.pool_id))
         try:
             batch_service_client.pool.delete(self.pool_id)
-        except batchmodels.batch_error.BatchErrorException as batch_exception:
+        except batchmodels.BatchErrorException as batch_exception:
             if utils.expected_exception(
                     batch_exception, "The specified pool has been marked for deletion"):
                 logger.warning(
@@ -420,7 +420,7 @@ class JobManager(object):
         # delete the job
         try:
             batch_service_client.job.delete(self.job_id)
-        except batchmodels.batch_error.BatchErrorException as batch_exception:
+        except batchmodels.BatchErrorException as batch_exception:
             if utils.expected_exception(
                     batch_exception, "The specified job does not exist"):
                 logger.error(
