@@ -185,7 +185,7 @@
                 "killJobOnCompletion": false,
                 "resourceFiles": [
                     {
-                        "httpUrl" "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/python-frame-splitter.py",
+                        "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/python-frame-splitter.py",
                         "filePath": "scripts/python-frame-splitter.py"
                     }
                 ],
