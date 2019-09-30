@@ -161,7 +161,7 @@
             },
             "resourceFiles": [
                 {
-                    "blobSource": "https://raw.githubusercontent.com/Azure/Batch-extension-templates/master/templates/3dsmax/scripts/install-corona.ps1",
+                    "httpUrl": "https://raw.githubusercontent.com/Azure/Batch-extension-templates/master/templates/3dsmax/scripts/install-corona.ps1",
                     "filePath": "install-corona.ps1"
                 }
             ]

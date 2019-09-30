@@ -70,7 +70,7 @@
                     },
                     "resourceFiles": [
                         {
-                            "blobSource": "{url}",
+                            "httpUrl": "{url}",
                             "filePath": "assets/{fileName}"
                         }
                     ],
