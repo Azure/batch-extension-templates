@@ -144,6 +144,7 @@ if ($dr)
 }
 
 Write-Host "Using renderer 3ds-Max $maxVersion with $renderer"
+Write-Host "Hello123456789"
 
 if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
 {

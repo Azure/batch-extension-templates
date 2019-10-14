@@ -1,11 +1,12 @@
 {
   "tests": [
     {
-        "name": "vray-render-windows",
-        "template": "../templates/vray/render-windows/job.template.json",
-        "poolTemplate": "../templates/vray/render-windows/pool.template.json",
-        "parameters": "Tests/vray/render-windows/job.parameters.json",
-        "expectedOutput": "image1.png"
+        "name": "3dsmax-vray-dr-adv-2019",
+        "template": "../templates/3dsmax/vray-dr/job.template.json",
+        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
+        "parameters": "Tests/3dsmax/vray-dr/job.parameters.adv.2019.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
     }
 ], 
   "images": [
