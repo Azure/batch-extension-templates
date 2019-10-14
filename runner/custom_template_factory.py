@@ -81,8 +81,7 @@ def set_resource_file(in_memory_json_object: str, resource_branch_name: str):
         if in_memory_json_object["pool"]["startTask"]["resourceFiles"] is not None:
             for index in range(len(in_memory_json_object.get("pool").get("startTask").get("resourceFiles"))):
                 for key in in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index]:
-                    in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index][key] = 
-                    in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index][key].replace("batch-extension-templates/master/", "batch-extension-templates/"+resource_branch_name.strip())
+                    in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index][key] = in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index][key].replace("batch-extension-templates/master/", "batch-extension-templates/"+resource_branch_name.strip())
 
 
 def set_parameter_name(in_memory_json_object: str, job_id: str):
