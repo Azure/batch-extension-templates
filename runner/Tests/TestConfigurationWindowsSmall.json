@@ -1,6 +1,13 @@
 {
   "tests": [
     {
+        "name": "maya2017-default-windows",
+        "template": "../templates/maya/render-default-windows/job.template.json",
+        "poolTemplate": "../templates/maya/render-default-windows/pool.template.json",
+        "parameters": "Tests/maya/render-default-windows/job.parameters2017.json",
+        "expectedOutput":"maya.exr.0001"
+    },
+    {
         "name": "3dsmax-vray-dr-adv-2019",
         "template": "../templates/3dsmax/vray-dr/job.template.json",
         "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
