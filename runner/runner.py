@@ -12,6 +12,7 @@ import azure.storage.blob as azureblob
 import azure.batch.models as batchmodels
 import azext.batch as batch
 import argparse
+from pygit2 import Repository
 
 """
 This python module is used for validating the rendering templates by using the azure CLI. 
@@ -92,7 +93,7 @@ def runner_arguments():
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
     parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
     parser.add_argument("-CleanUpResources", action="store_false")
-    parser.add_argument("-templateResourcesBranchFileName", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
+    parser.add_argument("-templateResourcesBranchFileName", default=None, help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
 
     return parser.parse_args()
 
@@ -141,6 +142,11 @@ def main():
     # Clean up any storage container that is older than a 7 days old.
     utils.cleanup_old_resources(blob_client)
 
+    branc_file_name = args.templateResourcesBranchFileName
+    if args.templateResourcesBranchFileName == "current":
+        branc_file_name = Repository('../').head.shorthand
+        logger.info('Pulling resource files from the branch: {}'.format(branc_file_name))
+
     try:
         images_refs = []  # type: List[utils.ImageReference]
         with open(args.TestConfig) as f:
@@ -162,7 +168,7 @@ def main():
                     keyvault_client_with_url,
                     jobSetting["expectedOutput"],
                     application_licenses,
-                    args.templateResourcesBranchFileName))
+                    branc_file_name))
 
             for image in template["images"]:
                 images_refs.append(utils.ImageReference(image["osType"], image["offer"], image["version"]))
