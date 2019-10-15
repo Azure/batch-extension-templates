@@ -65,8 +65,8 @@ def set_custom_image(in_memory_json_object: str, VM_image_URL: str, VM_image_typ
 def set_pool_resource_file(in_memory_json_object: str, resource_branch_name: str):
     """
     Replaces the github branch name to point to a new branch. 
-    "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
-    "https://raw.githubusercontent.com/Azure/batch-extension-templates/'resource_branch_name'/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
+    "https://raw.../master/..../install-azure-nc-drivers.cmd",
+    "https://raw.../'resource_branch_name'/..../install-azure-nc-drivers.cmd",
 
     This is for testing out new ps1 or bat files
 
@@ -76,6 +76,8 @@ def set_pool_resource_file(in_memory_json_object: str, resource_branch_name: str
     :type resource_branch_name: str
 
     """
+    if not resource_branch_name:
+        return
 
     if in_memory_json_object.get("pool") is not None: 
         if in_memory_json_object.get("pool").get("startTask") is not None: 
@@ -89,8 +91,8 @@ def set_pool_resource_file(in_memory_json_object: str, resource_branch_name: str
 def set_job_resource_file(in_memory_json_object: str, resource_branch_name: str):
     """
     Replaces the github branch name to point to a new branch. 
-    "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
-    "https://raw.githubusercontent.com/Azure/batch-extension-templates/'resource_branch_name'/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
+    "https://raw.../master/..../install-azure-nc-drivers.cmd",
+    "https://raw.../'resource_branch_name'/..../install-azure-nc-drivers.cmd",
 
     This is for testing out new ps1 or bat files
 
@@ -100,6 +102,8 @@ def set_job_resource_file(in_memory_json_object: str, resource_branch_name: str)
     :type resource_branch_name: str
 
     """
+    if not resource_branch_name:
+        return
 
     if in_memory_json_object.get("job") is not None: 
         if in_memory_json_object.get("job").get("properties") is not None: 
