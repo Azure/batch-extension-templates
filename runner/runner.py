@@ -145,7 +145,8 @@ def main():
     branc_file_name = args.templateResourcesBranchFileName
     if args.templateResourcesBranchFileName == "current":
         branc_file_name = Repository('../').head.shorthand
-        logger.info('Pulling resource files from the branch: {}'.format(branc_file_name))
+        
+    logger.info('Pulling resource files from the branch: {}'.format(branc_file_name))
 
     try:
         images_refs = []  # type: List[utils.ImageReference]
