@@ -34,7 +34,7 @@ steps:
     . .azure-pipelines/exec.ps1
     $ErrorActionPreference = "Stop"
     pushd '$(projectRoot)'
-    exec { python runner.py "Tests/TestConfigurationWindows.json" "$(PS_BATCH_ACCOUNT_NAME)" "$(runnerBatchAccountSecret)" "$(PS_BATCH_ACCOUNT_URL)" "$(PS_BATCH_ACCOUNT_SUB)" "$(PS_STORAGE_ACCOUNT_NAME)" "$(StorageAccountKey)"  "$(PS_SERVICE_PRINCIPAL_CREDENTIALS_CLIENT_ID)" "$(ServicePrincipalCredentialsSecret)" "$(PS_SERVICE_PRINCIPAL_CREDENTIALS_TENANT)" "$(PS_SERVICE_PRINCIPAL_CREDENTIALS_RESOUCE)" "-KeyVaultUrl=$(PS_KEYVAULT_URL)" -templateResourcesBranchFileName "current"}
+    exec { python runner.py "Tests/TestConfigurationWindows.json" "$(PS_BATCH_ACCOUNT_NAME)" "$(runnerBatchAccountSecret)" "$(PS_BATCH_ACCOUNT_URL)" "$(PS_BATCH_ACCOUNT_SUB)" "$(PS_STORAGE_ACCOUNT_NAME)" "$(StorageAccountKey)"  "$(PS_SERVICE_PRINCIPAL_CREDENTIALS_CLIENT_ID)" "$(ServicePrincipalCredentialsSecret)" "$(PS_SERVICE_PRINCIPAL_CREDENTIALS_TENANT)" "$(PS_SERVICE_PRINCIPAL_CREDENTIALS_RESOUCE)" "-KeyVaultUrl=$(PS_KEYVAULT_URL)" -templateResourcesBranchFileName "generate-file-paths"}
     cat template.log
     .\checkRunnerOutput.ps1 "Tests/output.xml"
   condition: succeededOrFailed()
