@@ -164,13 +164,12 @@ class JobManager(object):
         ctm.set_image_reference(template, image_references)
         ctm.set_template_pool_id(template, self.pool_id)
         ctm.set_pool_resource_file(template, self.template_resources_branch_file_name)
-
         if VM_image_URL is not None:
             ctm.set_custom_image(template, VM_image_URL, VM_OS_type)
 
         all_pools = [p.id for p in batch_service_client.pool.list()]
 
-        if self.pool_id not in all_pools:             
+        if self.pool_id not in all_pools:
             self.submit_pool(batch_service_client, template)
         else:
             logger.info('pool [{}] already exists'.format(self.pool_id))
