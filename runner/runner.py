@@ -92,6 +92,7 @@ def runner_arguments():
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
     parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
     parser.add_argument("-CleanUpResources", action="store_false")
+    parser.add_argument("-templateResourcesBranchFileName", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
 
     return parser.parse_args()
 
@@ -160,7 +161,8 @@ def main():
                     jobSetting["parameters"],
                     keyvault_client_with_url,
                     jobSetting["expectedOutput"],
-                    application_licenses))
+                    application_licenses,
+                    args.templateResourcesBranchFileName))
 
             for image in template["images"]:
                 images_refs.append(utils.ImageReference(image["osType"], image["offer"], image["version"]))

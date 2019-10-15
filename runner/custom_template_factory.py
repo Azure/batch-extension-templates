@@ -62,6 +62,60 @@ def set_custom_image(in_memory_json_object: str, VM_image_URL: str, VM_image_typ
     # TODO For handling windows and centos the nodeAgentSKUId needs to be changed in the json send object
     # The centos image hasn't been tested so I haven't written logic for handling the VM_image_type
 
+def set_pool_resource_file(in_memory_json_object: str, resource_branch_name: str):
+    """
+    Replaces the github branch name to point to a new branch. 
+    "https://raw.../master/..../install-azure-nc-drivers.cmd",
+    "https://raw.../'resource_branch_name'/..../install-azure-nc-drivers.cmd",
+
+    This is for testing out new ps1 or bat files
+
+    :param in_memory_json_object: The json object that needs to be updated with a repo file path
+    :type in_memory_json_object: str
+    :param resource_branch_name: The value that needs to be set
+    :type resource_branch_name: str
+
+    """
+    if not resource_branch_name:
+        return
+
+    if in_memory_json_object.get("pool") is not None: 
+        if in_memory_json_object.get("pool").get("startTask") is not None: 
+            if in_memory_json_object["pool"]["startTask"]["resourceFiles"] is not None:
+                for index in range(len(in_memory_json_object.get("pool").get("startTask").get("resourceFiles"))):
+                    resource_file = in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index]
+                    for key in resource_file:
+                        resource_file[key] = resource_file[key].replace("/master", "/"+resource_branch_name.strip())
+
+
+def set_job_resource_file(in_memory_json_object: str, resource_branch_name: str):
+    """
+    Replaces the github branch name to point to a new branch. 
+    "https://raw.../master/..../install-azure-nc-drivers.cmd",
+    "https://raw.../'resource_branch_name'/..../install-azure-nc-drivers.cmd",
+
+    This is for testing out new ps1 or bat files
+
+    :param in_memory_json_object: The json object that needs to be updated with a repo file path
+    :type in_memory_json_object: str
+    :param resource_branch_name: The value that needs to be set
+    :type resource_branch_name: str
+
+    """
+    if not resource_branch_name:
+        return
+
+    if in_memory_json_object.get("job") is not None: 
+        if in_memory_json_object.get("job").get("properties") is not None: 
+            if in_memory_json_object.get("job").get("properties").get("taskFactory") is not None: 
+                if in_memory_json_object.get("job").get("properties").get("taskFactory").get("tasks") is not None: 
+                    for index in range(len(in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"][0]["resourceFiles"])):
+                        resource_file = in_memory_json_object.get("job").get("properties").get("taskFactory").get("tasks")[0].get("resourceFiles")[index]
+                        for key in resource_file:
+                            if isinstance(resource_file[key], str):
+                                resource_file[key] = resource_file[key].replace("/master", "/"+resource_branch_name.strip())
+
+
 
 def set_parameter_name(in_memory_json_object: str, job_id: str):
     """

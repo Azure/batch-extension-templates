@@ -40,3 +40,4 @@ jspm_packages
 __pycache__/
 Runner/Tests/output.xml
 .idea
+runner/.vscode/*
