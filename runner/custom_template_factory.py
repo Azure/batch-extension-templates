@@ -78,10 +78,12 @@ def set_pool_resource_file(in_memory_json_object: str, resource_branch_name: str
     """
 
     if in_memory_json_object.get("pool") is not None: 
-        if in_memory_json_object["pool"]["startTask"]["resourceFiles"] is not None:
-            for index in range(len(in_memory_json_object.get("pool").get("startTask").get("resourceFiles"))):
-                for key in in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index]:
-                    in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index][key] = in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index][key].replace("/master", "/"+resource_branch_name.strip())
+        if in_memory_json_object.get("pool").get("startTask") is not None: 
+            if in_memory_json_object["pool"]["startTask"]["resourceFiles"] is not None:
+                for index in range(len(in_memory_json_object.get("pool").get("startTask").get("resourceFiles"))):
+                    resource_file = in_memory_json_object.get("pool").get("startTask").get("resourceFiles")[index]
+                    for key in resource_file:
+                        resource_file[key] = resource_file[key].replace("/master", "/"+resource_branch_name.strip())
 
 
 def set_job_resource_file(in_memory_json_object: str, resource_branch_name: str):
@@ -100,10 +102,14 @@ def set_job_resource_file(in_memory_json_object: str, resource_branch_name: str)
     """
 
     if in_memory_json_object.get("job") is not None: 
-        if in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"] is not None:
-            for index in range(len(in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"][0]["resourceFiles"])):
-                for key in in_memory_json_object.get("job").get("properties").get("taskFactory").get("tasks")[0].get("resourceFiles")[index]:
-                    in_memory_json_object.get("job").get("properties").get("taskFactory").get("tasks")[0].get("resourceFiles")[index][key] = in_memory_json_object.get("job").get("properties").get("taskFactory").get("tasks")[0].get("resourceFiles")[index][key].replace("/", "/"+resource_branch_name.strip())
+        if in_memory_json_object.get("job").get("properties") is not None: 
+            if in_memory_json_object.get("job").get("properties").get("taskFactory") is not None: 
+                if in_memory_json_object.get("job").get("properties").get("taskFactory").get("tasks") is not None: 
+                    for index in range(len(in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"][0]["resourceFiles"])):
+                        resource_file = in_memory_json_object.get("job").get("properties").get("taskFactory").get("tasks")[0].get("resourceFiles")[index]
+                        for key in resource_file:
+                            if isinstance(resource_file[key], str):
+                                resource_file[key] = resource_file[key].replace("/master", "/"+resource_branch_name.strip())
 
 
 
