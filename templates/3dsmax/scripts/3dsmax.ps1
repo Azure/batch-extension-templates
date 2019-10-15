@@ -91,7 +91,7 @@ function SetupDistributedRendering
         ElseIf($renderer -eq "VRayAdv")
         {
             $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender)`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
         }
@@ -106,7 +106,7 @@ function SetupDistributedRendering
         ElseIf($renderer -eq "VRayAdv")
         {
             $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender)`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
         }
@@ -121,7 +121,7 @@ function SetupDistributedRendering
         ElseIf($renderer -eq "VRayAdv")
         {
             $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender)`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
         }
