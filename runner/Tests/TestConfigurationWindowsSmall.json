@@ -1,52 +1,32 @@
 {
   "tests": [
-    {
-        "name": "3dsmax-vray-dr-rt-2018",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.rt.2018.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
+ {
+        "name": "blender-linux",
+        "template": "../templates/blender/render-linux/job.template.json",
+        "poolTemplate": "../templates/blender/render-linux/pool.template.json",
+        "parameters": "Tests/blender/render-linux/job.parameters.json",
+        "expectedOutput":"blender-linux_0001.png"
     },
     {
-        "name": "3dsmax-vray-dr-rt-2019",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.rt.2019.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
+        "name": "blender-windows",
+        "template": "../templates/blender/render-windows/job.template.json",
+        "poolTemplate": "../templates/blender/render-windows/pool.template.json",
+        "parameters": "Tests/blender/render-windows/job.parameters.json",
+        "expectedOutput":"blender-windows_0001.png"
     },
     {
-        "name": "3dsmax-vray-dr-rt-2020",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.rt.2020.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
+        "name": "blender-linux-dr",
+        "template": "../templates/blender/render-linux-dr/job.template.json",
+        "poolTemplate": "../templates/blender/render-linux-dr/pool.template.json",
+        "parameters": "Tests/blender/render-linux-dr/job.parameters.json",
+        "expectedOutput":"tile_001.png"
     },
     {
-        "name": "3dsmax-vray-dr-adv-2018",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.adv.2018.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
-    },
-    {
-        "name": "3dsmax-vray-dr-adv-2019",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.adv.2019.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
-    },
-    {
-        "name": "3dsmax-vray-dr-adv-2020",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.adv.2020.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
+        "name": "blender-windows-dr",
+        "template": "../templates/blender/render-windows-dr/job.template.json",
+        "poolTemplate": "../templates/blender/render-windows-dr/pool.template.json",
+        "parameters": "Tests/blender/render-windows-dr/job.parameters.json",
+        "expectedOutput":"tile_001.png"
     }
   ], 
   "images": [
