@@ -27,7 +27,7 @@ _time = str(datetime.datetime.now().day) + "-" + \
 class JobManager(object):
 
     def __init__(self, template_file: str, pool_template_file: str,
-                 parameters_file: str, keyvault_client_with_url: tuple, expected_output: str, application_licenses: str = None, template_resources_branch_file_name: str = None):
+                 parameters_file: str, keyvault_client_with_url: tuple, expected_output: str, application_licenses: str = None, repository_branch_name: str = None):
         super(JobManager, self).__init__()
         self.raw_job_id = ctm.get_job_id(parameters_file)  # The attribute 'raw_job_id' of type 'str'
         self.job_id = _time + "-" + self.raw_job_id  # The attribute 'job_id' of type 'str'
@@ -36,7 +36,7 @@ class JobManager(object):
         self.parameters_file = parameters_file  # The attribute 'parameters_file' of type 'str '
         self.keyvault_client_with_url = keyvault_client_with_url  # The attribute 'keyvault_client_with_url' of type 'tuple'
         self.application_licenses = application_licenses  # The attribute 'application_licenses' of type 'str'
-        self.template_resources_branch_file_name = template_resources_branch_file_name # The attribute 'template_resources_branch_file_name' of type 'str'
+        self.repository_branch_name = repository_branch_name # The attribute 'repository_branch_name' of type 'str'
         self.expected_output = expected_output  # The attribute 'expected_output' of type 'str'
         self.pool_template_file = pool_template_file  # The attribute 'pool_template_file' of type 'str'
         self.storage_info = None  # The attribute 'storage_info' of type 'utils.StorageInfo'
@@ -101,7 +101,7 @@ class JobManager(object):
         ctm.set_parameter_name(parameters, self.job_id)
         ctm.set_parameter_storage_info(parameters, self.storage_info)
         ctm.set_template_pool_id(parameters, self.pool_id)
-        ctm.set_job_resource_file(template, self.template_resources_branch_file_name)
+        ctm.set_job_resource_file(template, self.repository_branch_name)
 
         # Submits the job
         self.submit_job(batch_client, template, parameters)
@@ -163,7 +163,7 @@ class JobManager(object):
         # Set rendering version
         ctm.set_image_reference(template, image_references)
         ctm.set_template_pool_id(template, self.pool_id)
-        ctm.set_pool_resource_file(template, self.template_resources_branch_file_name)
+        ctm.set_pool_resource_file(template, self.repository_branch_name)
         if VM_image_URL is not None:
             ctm.set_custom_image(template, VM_image_URL, VM_OS_type)
 
