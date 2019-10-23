@@ -101,7 +101,7 @@ class JobManager(object):
         ctm.set_parameter_name(parameters, self.job_id)
         ctm.set_parameter_storage_info(parameters, self.storage_info)
         ctm.set_template_pool_id(parameters, self.pool_id)
-        ctm.set_job_resource_file(template, self.repository_branch_name)
+        ctm.set_job_resource_file_urls_to_branch(template, self.repository_branch_name)
 
         # Submits the job
         self.submit_job(batch_client, template, parameters)
@@ -163,7 +163,7 @@ class JobManager(object):
         # Set rendering version
         ctm.set_image_reference(template, image_references)
         ctm.set_template_pool_id(template, self.pool_id)
-        ctm.set_pool_resource_file(template, self.repository_branch_name)
+        ctm.set_pool_resource_file_urls_to_branch(template, self.repository_branch_name)
         if VM_image_URL is not None:
             ctm.set_custom_image(template, VM_image_URL, VM_OS_type)
 

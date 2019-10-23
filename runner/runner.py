@@ -93,7 +93,7 @@ def runner_arguments():
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
     parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
     parser.add_argument("-CleanUpResources", action="store_false")
-    parser.add_argument("-repositoryBranchName", default=None, help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
+    parser.add_argument("-RepositoryBranchName", default=None, help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
 
     return parser.parse_args()
 
@@ -142,11 +142,11 @@ def main():
     # Clean up any storage container that is older than a 7 days old.
     utils.cleanup_old_resources(blob_client)
 
-    branc_file_name = args.repositoryBranchName
-    if args.repositoryBranchName == "current":
-        branc_file_name = Repository('../').head.shorthand
+    repository_branch_name = args.RepositoryBranchName
+    if repository_branch_name == "current":
+        repository_branch_name = Repository('../').head.shorthand
         
-    logger.info('Pulling resource files from the branch: {}'.format(branc_file_name))
+    logger.info('Pulling resource files from the branch: {}'.format(repository_branch_name))
 
     try:
         images_refs = []  # type: List[utils.ImageReference]
@@ -169,7 +169,7 @@ def main():
                     keyvault_client_with_url,
                     jobSetting["expectedOutput"],
                     application_licenses,
-                    branc_file_name))
+                    repository_branch_name))
 
             for image in template["images"]:
                 images_refs.append(utils.ImageReference(image["osType"], image["offer"], image["version"]))
