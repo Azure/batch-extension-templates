@@ -72,11 +72,13 @@ def update_resource_file_url(resource_files, resource_branch_name):
     :param resource_branch_name: The resource link to an image inside your image repo.
     :type resource_branch_name: 'str'
     """
-    for index in range(len(resource_files)):
-        resource_file = resource_files[index]
-        for key in resource_file:
-            if isinstance(resource_file[key], str):
-                resource_file[key] = resource_file[key].replace("batch-extension-templates/master", "batch-extension-templates/"+resource_branch_name.strip())
+
+    if resource_files
+        for index in range(len(resource_files)):
+            resource_file = resource_files[index]
+            for key in resource_file:
+                if isinstance(resource_file[key], str):
+                    resource_file[key] = resource_file[key].replace("batch-extension-templates/master", "batch-extension-templates/"+resource_branch_name.strip())
 
 
 def set_pool_resource_file_urls_to_branch(in_memory_json_object: str, resource_branch_name: str):
@@ -93,7 +95,8 @@ def set_pool_resource_file_urls_to_branch(in_memory_json_object: str, resource_b
     :type resource_branch_name: str
 
     """
-    if  resource_branch_name:        
+
+    if resource_branch_name:        
         try:
             if in_memory_json_object["pool"]["startTask"]["resourceFiles"]:
                 resource_files = in_memory_json_object["pool"]["startTask"]["resourceFiles"]
@@ -118,17 +121,16 @@ def set_job_resource_file_urls_to_branch(in_memory_json_object: str, resource_br
     :type resource_branch_name: str
 
     """
-    if not resource_branch_name:
-        return
-
-    try:
-        if in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"]: 
-            resource_files = in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"][0]["resourceFiles"]
-            update_resource_file_url(resource_files, resource_branch_name)
-    except KeyError:
-        pass
-    except AttributeError: 
-        pass
+    
+    if resource_branch_name:
+        try:
+            if in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"]: 
+                resource_files = in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"][0]["resourceFiles"]
+                update_resource_file_url(resource_files, resource_branch_name)
+        except KeyError:
+            pass
+        except AttributeError: 
+            pass
 
 def set_parameter_name(in_memory_json_object: str, job_id: str):
     """
