@@ -73,7 +73,7 @@ def update_resource_file_url(resource_files, resource_branch_name):
     :type resource_branch_name: 'str'
     """
 
-    if resource_files
+    if resource_files:
         for index in range(len(resource_files)):
             resource_file = resource_files[index]
             for key in resource_file:
@@ -121,7 +121,7 @@ def set_job_resource_file_urls_to_branch(in_memory_json_object: str, resource_br
     :type resource_branch_name: str
 
     """
-    
+
     if resource_branch_name:
         try:
             if in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"]: 
