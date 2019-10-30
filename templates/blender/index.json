@@ -1,8 +1,8 @@
 [
     {
         "id": "render-linux",
-        "name": "Render frames on Ubuntu 16.04",
-        "description": "Render a Blender scene using Ubuntu 16.04."
+        "name": "Render frames on CentOS",
+        "description": "Render a Blender scene using our CentOS Marketplace image."
     },
     {
         "id": "render-linux-dr",

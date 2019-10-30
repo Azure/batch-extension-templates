@@ -85,7 +85,9 @@ def print_batch_exception(batch_exception: batchmodels.BatchErrorException):
     :type batch_exception: batchmodels.batch_error.BatchErrorException
     """
     logger.error('Exception encountered:')
-    if batch_exception.error \
+    if isinstance(batch_exception, str):
+        logger.error('{}'.format(batch_exception))
+    elif batch_exception.error \
         and batch_exception.error.message \
         and batch_exception.error.message.value:
         logger.error(batch_exception.error.message.value)
