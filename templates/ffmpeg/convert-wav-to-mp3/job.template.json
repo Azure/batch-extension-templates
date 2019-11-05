@@ -55,7 +55,7 @@
                     "commandLine": "set & mkdir converted & ffmpeg -y -i \"{fileName}\" -acodec libmp3lame \"converted/{fileNameWithoutExtension}.mp3\"",
                     "resourceFiles": [
                         {
-                            "blobSource": "{url}",
+                            "httpUrl": "{url}",
                             "filePath": "{fileName}"
                         }
                     ],

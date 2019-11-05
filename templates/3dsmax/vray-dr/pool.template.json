@@ -89,7 +89,8 @@
             },
             "allowedValues":[
                 "2018",
-                "2019"
+                "2019",
+                "2020"
             ]
         },
         "vrayPort": {
@@ -106,7 +107,7 @@
                 "publisher": "batch",
                 "offer": "rendering-windows2016",
                 "sku": "rendering",
-                "version": "1.3.4"
+                "version": "1.3.8"
             },
             "nodeAgentSKUId": "batch.node.windows amd64"
         }
@@ -136,11 +137,11 @@
             },
             "resourceFiles": [
                 {
-                    "blobSource": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
+                    "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
                     "filePath": "install-azure-nc-drivers.cmd"
                 },
                 {
-                    "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/PrepareVrayServices.bat",
+                    "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/PrepareVrayServices.bat",
                     "filePath":"PrepareVrayServices.bat"
                 }
             ]

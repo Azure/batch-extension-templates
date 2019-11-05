@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"maya-linux-default-2019"
+      "value":"maya-arnold-windows-2019"
    },
    "poolId":{
-      "value":"maya-linux-default"
+      "value":"maya-arnold-windows"
    },
    "mayaVersion":{
       "value":"Maya2019"
@@ -13,7 +13,7 @@
    },
    "inputData":{
       "value":"rendering"
-   },
+   },   
    "inputDataSas":{
       "value":"rendering"
    },
@@ -25,9 +25,6 @@
    },
    "outputs":{
       "value":"rendering-output"
-   },
-   "outputFilegroup":{
-      "value":"myfilegroup"
    },
    "dedicatedVmCount":{
       "value":"1"

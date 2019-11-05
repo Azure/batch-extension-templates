@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"maya-linux-default-2019"
+      "value":"maya-windows-default-2019"
    },
    "poolId":{
-      "value":"maya-linux-default"
+      "value":"maya-windows-default"
    },
    "mayaVersion":{
       "value":"Maya2019"
@@ -15,7 +15,7 @@
       "value":"rendering"
    },
    "inputDataSas":{
-      "value":"rendering"
+      "value":"https://myfilegroup"
    },
    "sceneFile":{
       "value":"maya.mb"

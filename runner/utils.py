@@ -77,7 +77,7 @@ class JobState(Enum):
     NOT_COMPLETE = 5
 
 
-def print_batch_exception(batch_exception: batchmodels.batch_error.BatchErrorException):
+def print_batch_exception(batch_exception: batchmodels.BatchErrorException):
     """
     Prints the contents of the specified Batch exception.
 
@@ -85,7 +85,9 @@ def print_batch_exception(batch_exception: batchmodels.batch_error.BatchErrorExc
     :type batch_exception: batchmodels.batch_error.BatchErrorException
     """
     logger.error('Exception encountered:')
-    if batch_exception.error \
+    if isinstance(batch_exception, str):
+        logger.error('{}'.format(batch_exception))
+    elif batch_exception.error \
         and batch_exception.error.message \
         and batch_exception.error.message.value:
         logger.error(batch_exception.error.message.value)
@@ -95,7 +97,7 @@ def print_batch_exception(batch_exception: batchmodels.batch_error.BatchErrorExc
                 logger.error('{}'.format(mesg.value))
 
 
-def expected_exception(batch_exception: batchmodels.batch_error.BatchErrorException, message: str) -> bool:
+def expected_exception(batch_exception: batchmodels.BatchErrorException, message: str) -> bool:
     """
     If the expected exception is hit we want to return True, this is to ignore the errors
     we do not care about.

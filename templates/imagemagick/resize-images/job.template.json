@@ -58,7 +58,7 @@
                     "commandLine": "set & mkdir images & convert {fileName} -resize [parameters('resize')]% \"images/{fileName}\"",
                     "resourceFiles": [
                         {
-                            "blobSource": "{url}",
+                            "httpUrl": "{url}",
                             "filePath": "{fileName}"
                         }
                     ],

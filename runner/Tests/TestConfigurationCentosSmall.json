@@ -8,11 +8,25 @@
         "expectedOutput":"blender-linux-2-8_0001.png"
     },
     {
-        "name": "maya2017-default-linux",
-        "template": "../templates/maya/render-default-linux/job.template.json",
-        "poolTemplate": "../templates/maya/render-default-linux/pool.template.json",
-        "parameters": "Tests/maya/render-default-linux/job.parameters2017.json",
-        "expectedOutput":"maya.exr.0001"
+        "name": "maya2017-vray-linux",
+        "template": "../templates/maya/render-vray-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
+        "parameters": "Tests/maya/render-vray-linux/job.parameters2017.json",
+        "expectedOutput":"maya-vray.0001.png"
+    },
+    {
+        "name": "maya2018-vray-linux",
+        "template": "../templates/maya/render-vray-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
+        "parameters": "Tests/maya/render-vray-linux/job.parameters2018.json",
+        "expectedOutput":"maya-vray.0001.png"
+    },
+    {
+        "name": "maya2019-vray-linux",
+        "template": "../templates/maya/render-vray-linux/job.template.json",
+        "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
+        "parameters": "Tests/maya/render-vray-linux/job.parameters2019.json",
+        "expectedOutput":"maya-vray.0001.png"
     }
   ], 
   "images": [

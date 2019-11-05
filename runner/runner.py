@@ -12,6 +12,7 @@ import azure.storage.blob as azureblob
 import azure.batch.models as batchmodels
 import azext.batch as batch
 import argparse
+from pygit2 import Repository
 
 """
 This python module is used for validating the rendering templates by using the azure CLI. 
@@ -43,7 +44,7 @@ def create_batch_client(args: object) -> batch.BatchExtensionsClient:
     return batch.BatchExtensionsClient(
         credentials=credentials,
         batch_account=args.BatchAccountName,
-        base_url=args.BatchAccountUrl,
+        batch_url=args.BatchAccountUrl,
         subscription_id=args.BatchAccountSub)
 
 def create_keyvault_client(args: object) -> tuple():
@@ -91,6 +92,8 @@ def runner_arguments():
     parser.add_argument("ServicePrincipalCredentialsResouce", help="Service Principal resource")
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
     parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
+    parser.add_argument("-CleanUpResources", action="store_false")
+    parser.add_argument("-RepositoryBranchName", default=None, help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
 
     return parser.parse_args()
 
@@ -139,6 +142,12 @@ def main():
     # Clean up any storage container that is older than a 7 days old.
     utils.cleanup_old_resources(blob_client)
 
+    repository_branch_name = args.RepositoryBranchName
+    if repository_branch_name == "current":
+        repository_branch_name = Repository('../').head.shorthand
+        
+    logger.info('Pulling resource files from the branch: {}'.format(repository_branch_name))
+
     try:
         images_refs = []  # type: List[utils.ImageReference]
         with open(args.TestConfig) as f:
@@ -147,8 +156,6 @@ def main():
             except ValueError as e:
                 logger.err("Failed to read test config file due to the following error", e)
                 raise e
-
-
 
             for jobSetting in template["tests"]:
                 application_licenses = None
@@ -161,22 +168,25 @@ def main():
                     jobSetting["parameters"],
                     keyvault_client_with_url,
                     jobSetting["expectedOutput"],
-                    application_licenses))
+                    application_licenses,
+                    repository_branch_name))
 
             for image in template["images"]:
                 images_refs.append(utils.ImageReference(image["osType"], image["offer"], image["version"]))
 
         run_job_manager_tests(blob_client, batch_client, images_refs, args.VMImageURL)
 
-    except batchmodels.batch_error.BatchErrorException as err:
+    except batchmodels.BatchErrorException as err:
         utils.print_batch_exception(err)
         raise
     finally:
         # Delete all the jobs and containers needed for the job
         # Reties any jobs that failed
-        utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
-        utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
-        utils.execute_parallel_jobmanagers("delete_pool", _job_managers, batch_client)
+
+        if args.CleanUpResources: 
+            utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
+            utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
+            utils.execute_parallel_jobmanagers("delete_pool", _job_managers, batch_client)
         end_time = datetime.datetime.now().replace(microsecond=0)
         logger.print_result(_job_managers)
         logger.export_result(_job_managers, (end_time - start_time))

@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"max2018-vray"
+      "value":"max2020-arnold"
    },
    "poolId":{
-      "value":"max-vray"
+      "value":"max-arnold"
    },
    "inputFilegroup":{
       "value":"rendering"
@@ -12,13 +12,13 @@
       "value":"https://"
    },
    "sceneFile":{
-      "value":"3dsmax-vray.max"
+      "value":"3dsmax-arnold.max"
    },
    "maxVersion":{
-      "value":"2018"
+      "value":"2020"
    },
    "renderer":{
-      "value":"vray"
+      "value":"arnold"
    },
    "outputName":{
       "value":"image.jpg"
