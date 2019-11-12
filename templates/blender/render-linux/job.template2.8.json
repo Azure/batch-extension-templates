@@ -2,7 +2,7 @@
     "parameters": {
         "poolId": {
             "type": "string",
-            "defaultValue": "blender-pool-ubuntu",
+            "defaultValue": "blender-pool-centos",
             "metadata": {
                 "description": "The ID of the pool on which to run the job."
             }

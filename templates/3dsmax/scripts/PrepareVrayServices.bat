@@ -19,6 +19,9 @@ IF "%VRAY_RENDERER%"=="VRayAdv" (
     IF "%MAX_VERSION%"=="2019" (
 	   start /wait "vrayspawner2019" "C:\Autodesk\3dsMax2019\vrayspawner2019.exe" "-port=%VRAY_PORT%"
     )
+	IF "%MAX_VERSION%"=="2020" (
+	   start /wait "vrayspawner2020" "C:\Autodesk\3dsMax2020\vrayspawner2020.exe" "-port=%VRAY_PORT%"
+    )
 )
 
 IF "%VRAY_RENDERER%"=="VRayRT" (
@@ -27,6 +30,9 @@ IF "%VRAY_RENDERER%"=="VRayRT" (
     ) 
     IF "%MAX_VERSION%"=="2019" (
 	   start /wait "vray2019" "C:\server\3dsMax2019Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%"
+    )
+	IF "%MAX_VERSION%"=="2020" (
+	   start /wait "vray2020" "C:\server\3dsMax2020Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%"
     )
 ) 
 
