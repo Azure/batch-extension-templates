@@ -93,7 +93,7 @@ def runner_arguments():
     parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
     parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
     parser.add_argument("-CleanUpResources", action="store_false")
-    parser.add_argument("-RepositoryBranchName", default=None, help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
+    parser.add_argument("-RepositoryBranchName", default="master", help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
 
     return parser.parse_args()
 
