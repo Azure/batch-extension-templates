@@ -6,6 +6,17 @@
                 "description": "Id of the pool"
             }
         },
+        "renderer": {
+            "type": "string",
+            "defaultValue": "arnold",
+            "metadata": {
+                "description": "The renderer to use"
+            },
+            "allowedValues": [
+                "arnold",
+                "vray"
+            ]
+        },
 		"forestPackAppPackageName": {
             "type": "string",
 			"defaultValue": "forestPackLite",
@@ -48,16 +59,19 @@
                 "description": "CommandLine for executing the railClone installer"
             }
         },
-		 "renderer": {
+         "additionalPluginsAppPackageName": {
             "type": "string",
-            "defaultValue": "arnold",
+			"defaultValue": "additionalPlugins",
             "metadata": {
-                "description": "The renderer to use"
-            },
-            "allowedValues": [
-                "arnold",
-                "vray"
-            ]
+                "description": "Name of the AppPackage containing additional files to copy into 3dsmax install directory (or directories)"
+            }
+        },
+        "additionalPluginsAppPackageVersion": {
+            "type": "string",
+            "defaultValue": "1.0.0",
+            "metadata": {
+                "description": "Version of the AppPackage containing additional plugins"
+            }
         },
         "dedicatedVmCount": {
             "type": "int",
@@ -162,17 +176,20 @@
             "[parameters('renderer')]"
         ],
          "applicationPackageReferences": [
-            { 
-				"applicationId": "[parameters('forestPackAppPackageName')]", "version": "[parameters('forestPackAppPackageVersion')]"
-            },
-			{
-				"applicationId": "[parameters('railCloneAppPackageName')]", "version": "[parameters('railCloneAppPackageVersion')]" 
-			}
+          { 
+            "applicationId": "[parameters('forestPackAppPackageName')]", "version": "[parameters('forestPackAppPackageVersion')]"
+          },
+          {
+            "applicationId": "[parameters('railCloneAppPackageName')]", "version": "[parameters('railCloneAppPackageVersion')]" 
+          },
+          {
+            "applicationId": "[parameters('additionalPluginsAppPackageName')]", "version": "[parameters('additionalPluginsAppPackageVersion')]"
+          }
        ],
         "enableAutoScale": false,
         "enableInterNodeCommunication": false,
         "startTask": {
-            "commandLine": "cmd /c REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /f && REG COPY HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /s && REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 /f && %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')]",
+            "commandLine": "cmd /c REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /f && REG COPY HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /s && REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 /f && %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] && robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2019 %3DSMAX_2019%\\\\Plugins & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2020%\\\\Plugins & exit /b 0",
             "waitForSuccess": true,
             "maxTaskRetryCount": 0,
             "userIdentity": {
