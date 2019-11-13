@@ -149,6 +149,7 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
 {
     $irMap = "$workingDirectory\$irradianceMap"
     $irMap = $irMap -replace "\\", "\\"
+    
     Write-Host "Setting IR map to $irMap"
     $pre_render_script_content += "-- Set the IR path`r`n"
     If ($maxVersion -eq "2018")
@@ -382,9 +383,8 @@ Else
     $max_exec = $env:3DSMAX_2020_EXEC
 }
 
-Write-Host "Executing set $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`""
+Write-Host "Executing $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`""
 
-cmd.exe /c set > env.txt
 cmd.exe /c $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -v:5 -outputName:`"$outputName`" $pathFileParam `"$sceneFile`" `>Max_frame.log 2`>`&1
 $result = $lastexitcode
 

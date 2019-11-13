@@ -90,7 +90,8 @@
             "metadata": {
                 "description": "Optional VRay irradiance map",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroup"
+                "dependsOn": "inputFilegroup",
+                "wildcards": "*.vrmap"
             }
         },
         "renderPresetFile": {
