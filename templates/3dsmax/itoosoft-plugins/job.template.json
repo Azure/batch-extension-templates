@@ -119,9 +119,9 @@
         },
         "additionalArgs": {
             "type": "string",
-            "defaultValue": " ",
+            "defaultValue": "-atmospherics:1",
             "metadata": {
-                "description": "Any additional arguments to pass to 3ds Max, e.g. -superBlack:1 -width:800 -height:600"
+                "description": "Any additional arguments to pass to 3ds Max, e.g. -atmospherics:1 -superBlack:1 -width:800 -height:600"
             }
         },
         "frameStart": {
