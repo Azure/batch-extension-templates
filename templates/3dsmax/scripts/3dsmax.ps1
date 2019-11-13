@@ -148,6 +148,7 @@ Write-Host "Using renderer 3ds-Max $maxVersion with $renderer"
 if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
 {
     $irMap = "$workingDirectory\$irradianceMap"
+    $irMap = $irMap -replace "\\", "\\"
     Write-Host "Setting IR map to $irMap"
     $pre_render_script_content += "-- Set the IR path`r`n"
     If ($maxVersion -eq "2018")
