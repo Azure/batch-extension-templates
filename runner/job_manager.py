@@ -16,22 +16,15 @@ This module is responsible for creating, submitting and monitoring the pools and
 
 """
 
-_time = str(datetime.datetime.now().day) + "-" + \
-        str(datetime.datetime.now().hour) + "-" + \
-        str(datetime.datetime.now().minute)
-
-
-
-
-
 class JobManager(object):
 
     def __init__(self, template_file: str, pool_template_file: str,
                  parameters_file: str, keyvault_client_with_url: tuple, expected_output: str, application_licenses: str = None, repository_branch_name: str = None):
         super(JobManager, self).__init__()
         self.raw_job_id = ctm.get_job_id(parameters_file)  # The attribute 'raw_job_id' of type 'str'
-        self.job_id = _time + "-" + self.raw_job_id  # The attribute 'job_id' of type 'str'
-        self.pool_id = _time + "-" + ctm.get_pool_id(parameters_file)  # The attribute 'pool_id' of type 'str'
+        self.run_id = repository_branch_name[:7]          # identifier for this run to append to job and pools and prevent collisions with parallel builds - for PR builds this is the git short sha, otherwise "master"
+        self.job_id = self.run_id + "-" + self.raw_job_id  # The attribute 'job_id' of type 'str'
+        self.pool_id = self.job_id                        # The attribute 'pool_id' of type 'str'
         self.template_file = template_file  # The attribute 'template_file' of type 'str'
         self.parameters_file = parameters_file  # The attribute 'parameters_file' of type 'str '
         self.keyvault_client_with_url = keyvault_client_with_url  # The attribute 'keyvault_client_with_url' of type 'tuple'
