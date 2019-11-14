@@ -8,7 +8,7 @@
         },
         "renderer": {
             "type": "string",
-            "defaultValue": "arnold",
+            "defaultValue": "vray",
             "metadata": {
                 "description": "The renderer to use"
             },
@@ -19,7 +19,7 @@
         },
 		"forestPackAppPackageName": {
             "type": "string",
-			"defaultValue": "forestPackLite",
+			"defaultValue": "forestPackPro",
             "metadata": {
                 "description": "Name of the AppPackage containing forestPack binaries"
             }
@@ -40,7 +40,7 @@
         },
 		 "railCloneAppPackageName": {
             "type": "string",
-			"defaultValue": "railCloneLite",
+			"defaultValue": "railClonePro",
             "metadata": {
                 "description": "Name of the AppPackage containing railClone binaries"
             }
@@ -92,7 +92,7 @@
             "metadata": {
                 "description": "The size of the virtual machines that run the application"
             },
-            "defaultValue": "Standard_D2_v2",
+            "defaultValue": "Standard_D5_v2",
             "allowedValues": [
                 "Standard_A8",
                 "Standard_A9",
