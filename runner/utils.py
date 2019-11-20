@@ -242,7 +242,7 @@ def check_task_output(batch_service_client: batch.BatchExtensionsClient, job_id:
         "Error: Cannot find file {} in job {}".format(expected_file_output_name, job_id)))
 
 
-def cleanup_old_resources(blob_client: azureblob.BlockBlobService, days:int=7):
+def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient, hours:int=12):
     """
     Delete any storage container that has been around for 7 days by default. 
 
@@ -251,16 +251,27 @@ def cleanup_old_resources(blob_client: azureblob.BlockBlobService, days:int=7):
     :param days: If the storage account is older than this number of days delete it, default = 7
     :param int: 
     """
-    # The current time 7 days ago. 
-    timeout = utc.localize(datetime.datetime.now()) + datetime.timedelta(days=-days)
+    #cleanup resources with last-modified before timeout
+    timeout = utc.localize(datetime.datetime.now()) + datetime.timedelta(hours=-hours) 
 
     try:
+        for pool in batch_client.pool.list():
+            if pool.last_modified < timeout:
+                logger.info("Deleting pool {}, it is older than {} hours.".format(pool.id, hours))
+                batch_client.pool.delete(pool.id)
+    
+        for job in batch_client.job.list():
+            if job.last_modified < timeout:
+                logger.info("Deleting job {}, it is older than {} hours.".format(job.id, hours))
+                batch_client.job.delete(job.id)
+
         for container in blob_client.list_containers():
             if container.properties.last_modified < timeout:
                 if 'fgrp' in container.name:
                     logger.info(
-                        "Deleting container {}, it is older than 7 days.".format(container.name))
+                        "Deleting container {}, it is older than {} hours.".format(container.name, hours))
                     blob_client.delete_container(container.name)
+        
     except Exception as e:
         logger.error("Failed to clean up resources due to the error: {}".format(e))
         raise e

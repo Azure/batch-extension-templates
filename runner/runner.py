@@ -139,8 +139,8 @@ def main():
     # Create a keyvault client using AAD    
     keyvault_client_with_url = create_keyvault_client(args)
 
-    # Clean up any storage container that is older than a 7 days old.
-    utils.cleanup_old_resources(blob_client)
+    # Clean up any storage container, pool or job that is older than 24 hours.
+    utils.cleanup_old_resources(blob_client, batch_client)
 
     repository_branch_name = args.RepositoryBranchName
     if repository_branch_name == "current":
