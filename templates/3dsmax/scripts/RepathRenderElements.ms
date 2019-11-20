@@ -17,3 +17,23 @@ if(rem != undefined) then
 		)
 	)
 )
+
+irAutoSavePath = r.adv_irradmap_autoSaveFileName
+if(irAutoSavePath != undefined) then
+(
+    tokens = filterString irAutoSavePath "\\"
+    filename = tokens[tokens.count]
+    prefix = sysEnv.GetEnvironmentVariable "TEMP"
+    newPath = prefix + "\\images\\" + filename
+    r.adv_irradmap_autoSaveFileName = newPath
+)
+
+irSavePath = r.adv_irradmap_saveFileName
+if(irSavePath != undefined) then
+(
+    tokens = filterString irSavePath "\\"
+    filename = tokens[tokens.count]
+    prefix = sysEnv.GetEnvironmentVariable "TEMP"
+    newPath = prefix + "\\images\\" + filename
+    r.adv_irradmap_saveFileName = newPath
+)
