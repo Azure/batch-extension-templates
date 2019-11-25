@@ -242,14 +242,15 @@ def check_task_output(batch_service_client: batch.BatchExtensionsClient, job_id:
         "Error: Cannot find file {} in job {}".format(expected_file_output_name, job_id)))
 
 
-def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient, hours:int=0):
+def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient, hours:int=1):
     """
-    Delete any storage container that has been around for 7 days by default. 
+    Delete any old resources from prior runs (storage containers, pools, jobs) older than "hours"
 
     :param blob_client: A blob service client.
     :type blob_client: `azure.storage.blob.BlockBlobService`
+    :param batch_client: A batch service extensions client.
     :type batch_client: `azext.batch.BatchExtensionsClient`
-    :param days: Delete all resources older than this many hours
+    :param hours: Delete all resources older than this many hours
     :param int: 
     """
     #cleanup resources with last-modified before timeout
