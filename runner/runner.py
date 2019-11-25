@@ -193,7 +193,6 @@ def main():
     logger.info('Sample end: {}'.format(end_time))
     logger.info('Elapsed time: {}'.format(end_time - start_time))
 
-
 if __name__ == '__main__':
     try:
         main()
