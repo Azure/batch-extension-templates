@@ -28,6 +28,7 @@
         },
          "inputData": {
             "type": "string",
+            "defaultValue":"fgrp-assets",
             "metadata": {
                 "description": "The file group where the input data is stored",
                 "advancedType": "file-group"
@@ -43,6 +44,7 @@
         },
         "blendFile": {
             "type": "string",
+            "defaultValue": "shapes.blend",
             "metadata": {
                 "description": "The Blender scene file to be rendered",
                 "advancedType": "file-in-file-group",
@@ -73,6 +75,7 @@
         },
         "outputs": {
             "type": "string",
+            "defaultValue": "fgrp-rendering-output",
             "metadata": {
                 "description": "The file group where outputs will be stored",
                 "advancedType": "file-group"
