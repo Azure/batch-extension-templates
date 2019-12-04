@@ -15,6 +15,17 @@
                 "advancedType": "job-id"
             }
         },
+        "blenderVersion": {
+            "type": "string",
+            "defaultValue": "2.8",
+            "metadata": {
+                "description": "The renderer to use"
+            },
+            "allowedValues":[
+                "2.8",
+                "2.79"
+            ]
+        },
          "inputData": {
             "type": "string",
             "metadata": {
@@ -68,6 +79,16 @@
             }
         }
     },
+    "variables":{
+        "BlenderVersions": {
+            "2.8" : {
+                "environmentValue": "%BLENDER_2.8_EXEC%"
+            },
+            "2.79":{
+                "environmentValue": "%BLENDER_2018_EXEC%"
+            }
+        }
+   },
     "job": {
         "type": "Microsoft.Batch/batchAccounts/jobs",
         "properties": {
@@ -104,7 +125,7 @@
                 ],
                 "repeatTask": {
                     "displayName": "Frame {0}",
-                    "commandLine": "\"%BLENDER_2018_EXEC%\" -b \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\[parameters('blendFile')]\" -o \"%AZ_BATCH_TASK_WORKING_DIR%\\[parameters('jobName')]_####\" -f {0} -t 0 [parameters('optionalParameters')]",
+                    "commandLine": "\"[variables('BlenderVersions')[parameters('blenderVersions')].environmentValue] -b \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\[parameters('blendFile')]\" -o \"%AZ_BATCH_TASK_WORKING_DIR%\\[parameters('jobName')]_####\" -f {0} -t 0 [parameters('optionalParameters')]",
                     "outputFiles": [
                         {
                             "filePattern": "../stdout.txt",
