@@ -63,13 +63,13 @@ def account_info(args: object):
     info("Reading in the list of test in the : {} file".format(args.TestConfig))
 
 
-def export_result(job_managers: 'list[job_manager.JobManager]', total_time: int):
+def export_result(test_managers: 'list[test_manager.TestManager]', total_time: int):
     """
     Exports the a file that is that is similar to a pytest export file. This is consumed by
     Azure pipeline to generate a build report.
 
-    :param job_managers: A collection of jobs that were run
-    :type job_managers: List[job_managers.JobManager]
+    :param test_managers: A collection of jobs that were run
+    :type test_managers: List[test_managers.TestManager]
     :param total_time: The duration for all the tasks to complete
     :type total_time: int
       """
@@ -77,29 +77,29 @@ def export_result(job_managers: 'list[job_manager.JobManager]', total_time: int)
     info("Exporting test output file")
     root = Element('testsuite')
 
-    for job_item in job_managers:
+    for test in test_managers:
         child = SubElement(root, "testcase")
         # Add a message to the error
-        child.attrib["name"] = str(job_item.raw_job_id)
-        if job_item.status.job_state != utils.JobState.COMPLETE:
+        child.attrib["name"] = str(test.raw_job_id)
+        if test.status.job_state != utils.TestState.COMPLETE:
             failed_jobs += 1
             sub_child = SubElement(child, "failure")
             sub_child.attrib["message"] = str("Job [{}] failed due the ERROR: [{}]".format(
-                job_item.job_id, job_item.status.job_state))
+                test.job_id, test.status.job_state))
 
-            sub_child.text = str(job_item.status.message)
+            sub_child.text = str(test.status.message)
 
         # Add the time it took for this test to compete.
-        if job_item.duration is not None:
-            info("Job {} took {} to complete, pool {} took {} to become available".format(job_item.job_id, job_item.duration, job_item.pool_id, job_item.pool_start_duration))
+        if test.duration is not None:
+            info("Job {} took {} to complete, pool {} took {} to become available".format(test.job_id, test.duration, test.pool_id, test.pool_start_duration))
             # If the job failed we set the duration to 0
             job_duration = "0:00:00"
             try:
-                converted_time = time.strptime(str(job_item.duration).split('.')[0], '%H:%M:%S')
+                converted_time = time.strptime(str(test.duration).split('.')[0], '%H:%M:%S')
                 total_seconds = datetime.timedelta(hours=converted_time.tm_hour, minutes=converted_time.tm_min,
                                                seconds=converted_time.tm_sec).total_seconds()
                 child.attrib["time"] = str(total_seconds)
-            except ValueError as e:
+            except ValueError:
                 child.attrib["time"] = job_duration
                     
         # job did not run, so the test did not run
@@ -107,35 +107,35 @@ def export_result(job_managers: 'list[job_manager.JobManager]', total_time: int)
             child.attrib["time"] = "0:00:00"
 
     root.attrib["failures"] = str(failed_jobs)
-    root.attrib["tests"] = str(len(job_managers))
+    root.attrib["tests"] = str(len(test_managers))
 
     root.attrib["time"] = str(total_time.total_seconds())
     tree = ElementTree(root)
     tree.write("Tests/output.xml")
 
 
-def print_result(job_managers: 'list[job_manager.JobManager]'):
+def print_result(test_managers: 'list[test_manager.TestManager]'):
     """
-    Outputs all the results of the jobs into a log file, including their errors and the total number of jobs
+    Outputs all the results of the tests into a log file, including their errors and the total number of tests
     that failed and passed
 
-    :param job_managers: The collection of jobs that were run
-    :type job_managers: List[job_managers.JobManager]
+    :param test_managers: The collection of tests that were run
+    :type test_managers: List[test_managers.TestManager]
     """
-    info("Number of jobs run {}.".format(len(job_managers)))
-    failed_jobs = 0  # type: int
-    for job_item in job_managers:
-        if job_item.status.job_state != utils.JobState.COMPLETE:
-            failed_jobs += 1
+    info("Number of jobs run {}.".format(len(test_managers)))
+    failed_tests = 0  # type: int
+    for test_item in test_managers:
+        if test_item.status.job_state != utils.TestState.COMPLETE:
+            failed_tests += 1
             warning(
                 "job {} failed because {} : {}".format(
-                    job_item.job_id,
-                    job_item.status.job_state,
-                    job_item.status.message))
+                    test_item.job_id,
+                    test_item.status.job_state,
+                    test_item.status.message))
 
-    if failed_jobs == 0:
+    if failed_tests == 0:
         info("All jobs ran successfully.")
 
     else:
         info("Number of jobs passed {} out of {}.".format(
-            len(job_managers) - failed_jobs, len(job_managers)))
+            len(test_managers) - failed_tests, len(test_managers)))

@@ -6,7 +6,7 @@ import datetime
 import sys
 import logger
 import json
-import job_manager
+import test_manager
 import utils
 import azure.storage.blob as azureblob
 import azure.batch.models as batchmodels
@@ -24,8 +24,7 @@ sys.path.append('.')
 sys.path.append('..')
 
 _timeout = 25  # type: int
-_job_managers = []  # type: List[job_manager.JobManager]
-
+_test_managers = []  # type: List[test_manager.TestManager]
 
 def create_batch_client(args: object) -> batch.BatchExtensionsClient:
     """
@@ -70,6 +69,7 @@ def create_keyvault_client(args: object) -> tuple():
 
 def runner_arguments():
     """
+    
     Handles the user's input and what settings are needed when running this module.
 
     :return: Returns the parser that contains all settings this module needs from the user's input
@@ -98,7 +98,7 @@ def runner_arguments():
     return parser.parse_args()
 
 
-def run_job_manager_tests(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient,
+def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient,
                           images_refs: 'List[utils.ImageReference]', VMImageURL: str):
     """
     Creates all resources needed to run the job, including creating the containers and the pool needed to run the job.
@@ -111,15 +111,22 @@ def run_job_manager_tests(blob_client: azureblob.BlockBlobService, batch_client:
     :param batch_client: The batch client needed for making batch operations
     :type batch_client: azure.batch.BatchExtensionsClient
     """
-    logger.info("{} jobs will be created.".format(len(_job_managers)))
-    utils.execute_parallel_jobmanagers("upload_assets", _job_managers, blob_client)
-    logger.info("Creating pools...")
-    utils.execute_parallel_jobmanagers("create_pool", _job_managers, batch_client, images_refs, VMImageURL)
-    logger.info("Submitting jobs...")
-    utils.execute_parallel_jobmanagers("create_and_submit_job", _job_managers, batch_client)
-    logger.info("Waiting for jobs to complete...")
-    utils.execute_parallel_jobmanagers("wait_for_job_results", _job_managers, batch_client, _timeout)
+    logger.info("{} jobs will be created.".format(len(_test_managers)))
+    
+    stop_threads = False
+    threads = [] # type: List[threading.Thread]
+    try:
+        threads = utils.start_test_threads("run_test", _test_managers, blob_client, batch_client, True, _timeout, lambda: stop_threads, images_refs, VMImageURL)
 
+        for thread in _threads:
+            thread.join()
+            
+    except KeyboardInterrupt:
+        #A test has failed and triggered KeyboardInterrupt on main thread, so call stop_threads on all the other threads
+        stop_threads = True
+
+        for thread in _threads:
+            thread.join()
 
 def main():
     args = runner_arguments()
@@ -133,13 +140,13 @@ def main():
         account_name=args.StorageAccountName,
         account_key=args.StorageAccountKey)
 
-    # Create a batch account using AAD    
+    # Create a batch client using AAD    
     batch_client = create_batch_client(args)
 
     # Create a keyvault client using AAD    
     keyvault_client_with_url = create_keyvault_client(args)
 
-    # Clean up any storage container, pool or job that is older than 24 hours.
+    # Clean up any storage container, pool or jobs older than some threshold.
     utils.cleanup_old_resources(blob_client, batch_client)
 
     repository_branch_name = args.RepositoryBranchName
@@ -154,7 +161,7 @@ def main():
             try:
                 template = json.load(f)
             except ValueError as e:
-                logger.err("Failed to read test config file due to the following error", e)
+                logger.error("Failed to read test config file due to the following error: {}".format(e))
                 raise e
 
             for jobSetting in template["tests"]:
@@ -162,7 +169,7 @@ def main():
                 if 'applicationLicense' in jobSetting:
                     application_licenses = jobSetting["applicationLicense"]
 
-                _job_managers.append(job_manager.JobManager(
+                _test_managers.append(test_manager.TestManager(
                     jobSetting["template"],
                     jobSetting["poolTemplate"],
                     jobSetting["parameters"],
@@ -174,22 +181,15 @@ def main():
             for image in template["images"]:
                 images_refs.append(utils.ImageReference(image["osType"], image["offer"], image["version"]))
 
-        run_job_manager_tests(blob_client, batch_client, images_refs, args.VMImageURL)
+        run_test_manager_tests(blob_client, batch_client, images_refs, args.VMImageURL)
 
     except batchmodels.BatchErrorException as err:
         utils.print_batch_exception(err)
         raise
     finally:
-        # Delete all the jobs and containers needed for the job
-        # Reties any jobs that failed
-
-        if args.CleanUpResources: 
-            utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
-            utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
-            utils.execute_parallel_jobmanagers("delete_pool", _job_managers, batch_client)
         end_time = datetime.datetime.now().replace(microsecond=0)
-        logger.print_result(_job_managers)
-        logger.export_result(_job_managers, (end_time - start_time))
+        logger.print_result(_test_managers)
+        logger.export_result(_test_managers, (end_time - start_time))
     logger.info('Sample end: {}'.format(end_time))
     logger.info('Elapsed time: {}'.format(end_time - start_time))
 

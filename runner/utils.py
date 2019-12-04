@@ -10,13 +10,17 @@ from enum import Enum
 import pytz
 import logger
 import threading
+import custom_template_factory as ctm
+import exceptions as ex
+import traceback
+import sys
+import itertools
 
 utc = pytz.utc
 
 """
 Utility module that holds the data objects and some useful methods
 """
-
 
 class StorageInfo(object):
     """Data object to store the StorageInfo for the job's input and output containers"""
@@ -47,35 +51,34 @@ class ImageReference(object):
             self.osType, self.offer, self.version)
 
 
-class JobStatus(object):
-    """The Job state and the error message"""
+class TestStatus(object):
+    """The Test state and the error message"""
 
-    def __init__(self, job_state, message):
-        super(JobStatus, self).__init__()
-        self.job_state = job_state  # The attribute 'job_state' of type 'utils.JobState'
-        self.message = message  # The attribute 'version' of type 'str'
+    def __init__(self, test_state, message):
+        super(TestStatus, self).__init__()
+        self.test_state = test_state
+        self.message = message 
 
     def __str__(self) -> str:
-        return "Job's state: {}, message{}".format(
-            self.job_state, self.message)
+        return "Test's state: {}, message{}".format(
+            self.test_state, self.message)
 
 
-class JobState(Enum):
-    """
-    All the possible states of the job.
-    """
-    # Job never started.
+class TestState(Enum):
     NOT_STARTED = 1
-    # Pool never started due to an resize error.
-    POOL_FAILED = 2
-    # Job ran to completion and the output matched the test configuration file.
+    IN_PROGRESS = 2
     COMPLETE = 3
-    # The output file did not match the expected output described in the test
-    # configuration file.
-    UNEXPECTED_OUTPUT = 4
-    # pool started but the job failed to complete in time.
-    NOT_COMPLETE = 5
+    POOL_FAILED = 4
+    JOB_FAILED = 5
+    TERMINAL_FAILURE = 6
+    STOP_THREAD = 7
+    TIMED_OUT = 8
 
+timeout_delta_pool_resize = datetime.timedelta(minutes=15)
+timeout_delta_node_idle = datetime.timedelta(minutes=10)
+timeout_delta_job_complete = datetime.timedelta(minutes=10)
+
+output_fgrp_postfix = "-output"
 
 def print_batch_exception(batch_exception: batchmodels.BatchErrorException):
     """
@@ -96,7 +99,6 @@ def print_batch_exception(batch_exception: batchmodels.BatchErrorException):
                 logger.error('{}:\t{}'.format(mesg.key, mesg.value))
                 logger.error('{}'.format(mesg.value))
 
-
 def expected_exception(batch_exception: batchmodels.BatchErrorException, message: str) -> bool:
     """
     If the expected exception is hit we want to return True, this is to ignore the errors
@@ -116,7 +118,6 @@ def expected_exception(batch_exception: batchmodels.BatchErrorException, message
             return True
 
     return False
-
 
 def get_container_sas_token(block_blob_client: azureblob.BlockBlobService,
                             container_name: str, blob_permissions: ContainerPermissions) -> str:
@@ -168,79 +169,52 @@ def upload_file_to_container(block_blob_client: azureblob.BlockBlobService, cont
                                             blob_name,
                                             file_path)
 
-
-def wait_for_tasks_to_complete(
-        batch_service_client: batch.BatchExtensionsClient, job_id: str, timeout: datetime.timedelta) -> JobStatus:
+def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str):
     """
-    Returns when all tasks in the specified job reach the Completed state.
-
-    :param batch_service_client: A Batch service client.
-    :type batch_service_client: `batch.BatchExtensionsClient`
-    :param job_id: The id of the job whose tasks should be to monitored.
-    :type job_id: str
-    :param timeout: The duration to wait for task completion. If all
-    :type timeout: datetime.timedelta
-    tasks in the specified job do not reach Completed state within this time
-    period, an error message will be recorded.
-    :return: The job status, with a message saying the state 
-    :rtype: 'utils.JobStatus'
+    Deletes a pool, if the pool has already been deleted or marked for deletion it logs and swallows the exception.
     """
-    # How long we should be checking to see if the job is complete.
-    timeout_expiration = datetime.datetime.now() + timeout
-
-    # Wait for task to complete for as long as the timeout
-    while datetime.datetime.now() < timeout_expiration:
-
-        # Grab all the tasks in the Job.
-        tasks = batch_service_client.task.list(job_id)
-
-        # Check to see how many tasks are incomplete.
-        incomplete_tasks = [task for task in tasks if
-                            task.state != batchmodels.TaskState.completed]
-
-        # if the all the tasks are complete we return a complete message, else
-        # we wait all the tasks are complete
-        if not incomplete_tasks:
-            return JobStatus(JobState.COMPLETE,
-                             "Job {} successfully completed.".format(job_id))
+    logger.info("Deleting pool: {}.".format(pool_id))
+    try:
+        batch_service_client.pool.delete(pool_id)
+    except batchmodels.BatchErrorException as batch_exception:
+        if expected_exception(batch_exception, "The specified pool has been marked for deletion"):
+            logger.warning("The specified pool [{}] had already been marked for deletion when we went to delete ie.".format(pool_id))
+        elif expected_exception(batch_exception, "The specified pool does not exist"):
+            logger.warning("The specified pool [{}] did not exist when we tried to delete it.".format(pool_id))
         else:
-            logger.info("Job [{}] is running".format(job_id))
-            time.sleep(10)
+            traceback.print_exc()
+            print_batch_exception(batch_exception)
 
-    return JobStatus(JobState.NOT_COMPLETE,
-                     "ERROR: Tasks did not reach 'Completed' state within timeout period of: " + str(timeout))
+def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    try:
+        batch_service_client.job.terminate(job_id)
+        batch_service_client.job.delete(job_id)
+    except batchmodels.BatchErrorException as batch_exception:
+        if expected_exception(batch_exception, "The specified job does not exist"):
+            logger.error("The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
+        else:
+            traceback.print_exc()
+            print_batch_exception(batch_exception)
 
+def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, job_id: str, new_pool_id: str):
+    batch_service_client.job.disable(job_id, "requeue")
+    batch_service_client.job.pool.patch(batchmodels.JobPatchParameter(pool_info=batchmodels.PoolInformation(pool_id = new_pool_id)))
+    batch_service_client.job.enable(job_id)  
 
-def check_task_output(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> JobStatus:
-    """Prints the stdout.txt file for each task in the job.
-
-    :param batch_service_client: The batch client to use.
-    :type batch_service_client: `Azure.Batch.BatchExtensionsClient`
-    :param job_id: The id of the job with task output files to print.
-    :type job_id: str
-    :param expected_file_output_name: The file name of the expected output
-    :type expected_file_output_name: str
-    :return: The job status, with a message saying the state 
-    :rtype: 'utils.JobStatus'
-    """
-
+def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> bool:
+    
     tasks = batch_service_client.task.list(job_id)
 
     for task in tasks:
-        all_files = batch_service_client.file.list_from_task(
-            job_id, task.id, recursive=True)
+        all_files = batch_service_client.file.list_from_task(job_id, task.id, recursive=True)
 
         for f in all_files:
             if expected_file_output_name in f.name:
-                logger.info(
-                    "Job [{}] expected output matched {}".format(
-                        job_id, expected_file_output_name))
-                return JobStatus(JobState.COMPLETE,
-                                 "File found {0}".format(expected_file_output_name))
+                logger.info("Job [{}] expected output matched {}".format(job_id, expected_file_output_name))
+                return True
 
-    return JobStatus(JobState.UNEXPECTED_OUTPUT, ValueError(
-        "Error: Cannot find file {} in job {}".format(expected_file_output_name, job_id)))
-
+    logger.info("Error: Cannot find file {} in job {}".format(expected_file_output_name, job_id))
+    return False
 
 def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient, hours:int=1):
     """
@@ -269,36 +243,38 @@ def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client:
 
         for container in blob_client.list_containers():
             if container.properties.last_modified < timeout:
-                if 'fgrp' in container.name:
-                    logger.info(
-                        "Deleting container {}, it is older than {} hours.".format(container.name, hours))
+                if 'fgrp' in container.name and not container.name.endswith(output_fgrp_postfix):   #don't delete output filegroups as we might need them for diagnosis
+                    logger.info("Deleting container {}, it is older than {} hours.".format(container.name, hours))
                     blob_client.delete_container(container.name)
         
     except Exception as e:
         logger.error("Failed to clean up resources due to the error: {}".format(e))
         raise e
 
+def check_for_pool_resize_error(pool_id: str, pool: str) -> bool:
+    if pool.allocation_state.value == "steady" and pool.resize_errors is not None:
+        logger.warning("POOL {} FAILED TO ALLOCATE".format(pool_id))
+        return True
+    return False
 
-def execute_parallel_jobmanagers(method_name: str, job_managers: 'list[job_manager.JobManager]', *args):
+def start_test_threads(method_name: str, test_managers: 'list[test_manager.TestManager]', *args):
     """
-    Executes the specified job manager methods in parallel. This returns once all job manager methods have completed
+    Executes the specified test manager methods in parallel. This returns once all test manager methods have completed
     
-    :param method_name: The job_managers method to be called
+    :param method_name: The test_managers method to be called
     :type method_name: str
-    :param job_managers: a collection of jobs that will be run
-    :type  job_managers: List[job_managers.JobManager]
+    :param test_managers: a collection of tests that will be run
+    :type  test_managers: List[test_managers.TestManager]
     :param args: the arguments the method needs to run 
-    """
-    threads = []  # type: List[threading.Thread]
+    """ 
+    threads = [] # type: List[threading.Thread]
 
-    for j in job_managers:
+    for j in test_managers:
         thread = threading.Thread(target=getattr(j, method_name), args=args)
         threads.append(thread)
         thread.start()
 
-    # Wait for all threads to finish
-    for thread in threads:
-        thread.join()
+    return threads
 
 def update_params_with_values_from_keyvault(parameters: dict(), keyvault_client_with_url: tuple()):
     """
@@ -329,3 +305,143 @@ def update_params_with_values_from_keyvault(parameters: dict(), keyvault_client_
             #update the value in the parameters dict with the secret value returned from keyVault
             parameters[parameter] = secret_bundle.value
 
+def submit_job(batch_service_client: batch.BatchExtensionsClient, template: str, parameters: str, raw_job_id: str):
+    try:
+        job_json = batch_service_client.job.expand_template(
+            template, parameters)
+        job_parameters = batch_service_client.job.jobparameter_from_json(
+            job_json)
+        batch_service_client.job.add(job_parameters)
+    except batchmodels.BatchErrorException as err:
+        logger.error(
+            "Failed to submit job\n{}\n with params\n{}".format(
+                template, parameters))
+        traceback.print_exc()
+        print_batch_exception("Error: {}".format(err))
+        raise
+    except batch.errors.MissingParameterValue as mpv:
+        logger.error("Job {}, failed to submit, because of the error: {}".format(raw_job_id, mpv))
+        raise
+    except:
+        logger.error("Job {}, failed to submit, because of the error: {}".format(raw_job_id, sys.exc_info()[0]))
+        raise
+
+def has_timedout(timeout: datetime.datetime) -> bool:
+    return datetime.datetime.now() > timeout
+
+def check_test_timeout(timeout: datetime.datetime) -> bool:
+    if datetime.datetime.now() > timeout:
+        raise ex.TestTimedOutException("Overall test timeout triggered for thread! Aborting")
+
+def check_stop_thread(stop_thread):
+    if stop_thread():
+        raise ex.StopThreadException()
+
+def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, test_timeout: datetime.datetime, stop_thread):
+    try:
+        wait_for_pool_resize_operation(batch_service_client, pool_id, test_timeout, stop_thread)
+
+    except (ex.PoolResizeFailedException):
+        #double the node count and try again
+        pool = batch_service_client.pool.get(pool_id)
+        new_node_count = pool.target_dedicated_nodes * 2
+        batch_service_client.pool.resize(pool_id, target_dedicated_nodes = new_node_count)
+        wait_for_pool_resize_operation(batch_service_client, pool_id, test_timeout, stop_thread) #if exception thrown again here, will bubble up
+
+    pool = batch_service_client.pool.get(pool_id)
+    max_allowed_failed_nodes = pool.target_dedicated_nodes - min_required_vms
+
+    wait_for_enough_idle_vms(batch_service_client, pool_id, min_required_vms, max_allowed_failed_nodes, pool.state_transition_time, test_timeout, stop_thread)
+
+def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsClient, pool_id: str, test_timeout: datetime.datetime, stop_thread) -> bool:
+    pool = batch_service_client.pool.get(pool_id)
+    timeout_pool_resize = pool.creation_time + timeout_delta_pool_resize
+
+    while pool.allocation_state.value == "resizing":
+        check_test_timeout(test_timeout)
+        check_stop_thread(stop_thread)
+
+        if has_timedout(timeout_pool_resize):
+            raise ex.PoolResizeFailedException("Timed out waiting for resize of pool {}.".format(pool_id))
+
+        time.sleep(10)
+        pool = batch_service_client.pool.get(pool_id)
+
+    if pool.allocation_state.value == "steady" and pool.resize_errors is not None:
+        exception_message = " {} Resize Errors: ".format(len(pool.resize_errors))
+        for error in pool.resize_errors:
+            exception_message += "ErrorCode: {}. ErrorMessage: {}".format(error.code, error.message)
+        raise ex.PoolResizeFailedException(exception_message)
+
+def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, max_allowed_failed_nodes: int, pool_resize_time: datetime.datetime, test_timeout: datetime.datetime, stop_thread) -> bool:
+    nodes = []
+    idle_node_count = itertools.count(0)
+    retryable_failed_node_count = itertools.count(0)
+    terminal_failed_node_count = itertools.count(0)
+
+    retryable_failure_node_states = [batchmodels.ComputeNodeState.unusable]
+    terminal_failure_node_states = [batchmodels.ComputeNodeState.start_task_failed]
+
+    #set the timeout for nodes to go idle following pool resize completing
+    timeout_idle_vms = pool_resize_time + timeout_delta_node_idle 
+
+    while idle_node_count < min_required_vms:
+        check_test_timeout(test_timeout)
+        check_stop_thread(stop_thread)
+
+        if has_timedout(timeout_idle_vms):
+            raise ex.NodesFailedToStartException()
+
+        time.sleep(10)
+        nodes = list(batch_service_client.compute_node.list(pool_id)) # Need to cast since compute_node.list returns a list wrapper
+
+        # if combined errors are more than allowed, throw either 1: a retryable exception (when some nodes failed with retryable errors)
+        # or 2: a terminal exception (when all failures were non-retryable)
+        [(next(terminal_failed_node_count), n) for n in nodes if n.state in terminal_failure_node_states]
+        [(next(retryable_failed_node_count), n) for n in nodes if n.state in retryable_failure_node_states]
+        if retryable_failed_node_count + terminal_failed_node_count > max_allowed_failed_nodes:
+
+            #if we have a single node enter a non-terminal failure state, raise a retryable error
+            if retryable_failed_node_count:
+                raise ex.NodesFailedToStartException()
+
+            #all failures were terminal, treat this as a test-terminal failure
+            exception_message = "Node failure errors: "
+            for n in nodes:
+                exception_message += "Node state: {} ".format(n.state)
+            raise ex.TerminalTestException("Too many nodes failed with terminal errors: {}".format(exception_message))
+
+        [(next(idle_node_count), n) for n in nodes if n.state == batchmodels.ComputeNodeState.idle]
+
+def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_output: str, test_timeout: datetime.datetime, stop_thread):
+
+    timeout_jobs_tasks_complete = datetime.datetime.now() + timeout_delta_job_complete
+
+    # Wait for all tasks in the job to be in a terminal state
+    job_has_completed = False
+    while not job_has_completed:
+        check_test_timeout(test_timeout)
+        check_stop_thread(stop_thread)
+
+        if has_timedout(timeout_jobs_tasks_complete):
+            raise ex.JobTimedoutException()
+
+        tasks = batch_service_client.task.list(job_id)
+        
+        incomplete_tasks = [task for task in tasks if task.state != batchmodels.TaskState.completed]
+        
+        failed_tasks = [task for task in tasks if task.execution_info.failure_info]
+
+        if failed_tasks:
+            exception_message = " {} Task failure Errors: ".format(len(failed_tasks))
+            for failed_task in failed_tasks:
+                exception_message += "ErrorCode: {}. ErrorMessage: {}".format(failed_task.execution_info.failure_info.code, failed_task.execution_info.failure_info.message)
+            raise ex.JobFailedException(exception_message)
+            
+        if not incomplete_tasks:
+            job_has_completed = True
+            if not does_task_output_file_exist(batch_service_client, job_id, expected_output):
+                raise ex.JobFailedException("Failed to find output {}".format(expected_output))
+        else:
+            logger.info("Job [{}] is running".format(job_id))
+            time.sleep(5)

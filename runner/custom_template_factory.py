@@ -289,6 +289,19 @@ def get_scene_file(parameters_file: str) -> str:
 
     return scene_file
 
+def get_dedicated_vm_count(parameters_file: str) -> str:
+
+    if parameters_file is None:
+        return 1
+    dedicatedVmCount = ""
+
+    with open(parameters_file) as f:
+        parameters = json.load(f)
+        if 'dedicatedVmCount' in parameters:
+            dedicatedVmCount = parameters["dedicatedVmCount"]["value"]
+
+    return dedicatedVmCount
+
 
 def load_file(template_file_location: str) -> str:
     """
