@@ -300,6 +300,9 @@ def get_dedicated_vm_count(parameters_file: str) -> str:
         if 'dedicatedVmCount' in parameters:
             dedicatedVmCount = parameters["dedicatedVmCount"]["value"]
 
+    if not dedicated_vm_count: 
+        return 1
+        
     return dedicatedVmCount
 
 
