@@ -28,7 +28,6 @@
         },
          "inputData": {
             "type": "string",
-            "defaultValue":"fgrp-assets",
             "metadata": {
                 "description": "The file group where the input data is stored",
                 "advancedType": "file-group"
@@ -44,7 +43,6 @@
         },
         "blendFile": {
             "type": "string",
-            "defaultValue": "shapes.blend",
             "metadata": {
                 "description": "The Blender scene file to be rendered",
                 "advancedType": "file-in-file-group",
@@ -75,23 +73,12 @@
         },
         "outputs": {
             "type": "string",
-            "defaultValue": "fgrp-rendering-output",
             "metadata": {
                 "description": "The file group where outputs will be stored",
                 "advancedType": "file-group"
             }
         }
     },
-    "variables":{
-        "BlenderVersions": {
-            "2.8" : {
-                "environmentValue": "%BLENDER_2.8_EXEC%"
-            },
-            "2.79":{
-                "environmentValue": "%BLENDER_2018_EXEC%"
-            }
-        }
-   },
     "job": {
         "type": "Microsoft.Batch/batchAccounts/jobs",
         "properties": {
@@ -128,7 +115,7 @@
                 ],
                 "repeatTask": {
                     "displayName": "Frame {0}",
-                    "commandLine": "\"[variables('BlenderVersions')[parameters('blenderVersion')].environmentValue]\" -b \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\[parameters('blendFile')]\" -o \"%AZ_BATCH_TASK_WORKING_DIR%\\[parameters('jobName')]_####\" -t 0 -E \"CYCLES\" -f {0} [parameters('optionalParameters')]",
+                    "commandLine": "IF \"[parameters('blenderVersion')]\" == \"2.8\" (\"%BLENDER_2.8_EXEC%\" -b \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\[parameters('blendFile')]\" -o \"%AZ_BATCH_TASK_WORKING_DIR%\\[parameters('jobName')]_####\" -t 0 -E \"CYCLES\" -f {0} [parameters('optionalParameters')]) ELSE (\"%BLENDER_2018_EXEC%\" -b \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\[parameters('blendFile')]\" -o \"%AZ_BATCH_TASK_WORKING_DIR%\\[parameters('jobName')]_####\" -f {0} -t 0 [parameters('optionalParameters')])",
                     "outputFiles": [
                         {
                             "filePattern": "../stdout.txt",
