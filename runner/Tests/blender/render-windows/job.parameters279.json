@@ -1,9 +1,12 @@
 {
    "jobName":{
-      "value":"blender-windows"
+      "value":"blender-windows279"
    },
    "poolId":{
       "value":"blender-windows"
+   },
+   "blenderVersion":{
+      "value": "2.79",
    },
    "inputData":{
       "value":"rendering"
