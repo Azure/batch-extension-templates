@@ -182,7 +182,6 @@ def main():
     finally:
         # Delete all the jobs and containers needed for the job
         # Reties any jobs that failed
-
         if args.CleanUpResources: 
             utils.execute_parallel_jobmanagers("retry", _job_managers, batch_client, blob_client, _timeout / 2)
             utils.execute_parallel_jobmanagers("delete_resources", _job_managers, batch_client, blob_client)
