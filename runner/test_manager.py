@@ -68,7 +68,7 @@ class TestManager(object):
 
             self.monitor_job_and_retry_if_needed(batch_service_client, test_timeout, stop_thread)
 
-            self.on_test_completed_successfully(batch_service_client)
+            self.on_test_completed_successfully(batch_service_client, blob_client)
 
         except (ex.PoolResizeFailedException, ex.NodesFailedToStartException) as e:
             self.status = utils.TestStatus(utils.TestState.POOL_FAILED, e)
@@ -96,13 +96,12 @@ class TestManager(object):
 
         except (ex.PoolResizeFailedException, ex.NodesFailedToStartException):
             #pool failed to get enough nodes to idle from both initial allocation and any secondary pool resize too - try create a whole new pool and change job to target it
-            failed_pool_id = self.pool_id
+            utils.delete_pool(batch_service_client, self.pool_id)
             self.pool_id = self.pool_id + "-retry"
 
             self.create_and_submit_pool(batch_service_client, image_references, VM_image_URL, VM_OS_type)
             utils.retarget_job_to_new_pool(batch_service_client, self.job_id, self.pool_id)
 
-            utils.delete_pool(batch_service_client, failed_pool_id)
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
 
     def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime, stop_thread):
@@ -124,8 +123,12 @@ class TestManager(object):
             logger.error("Calling thread.interrupt_main")
             _thread.interrupt_main()
 
-    def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient):
+    def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):
+        logger.info("Test Succeeded, Pool: {}, Job: ".format(self.pool_id, self.job_id))
+
         self.duration = datetime.now(timezone.utc) - self.start_time
+        
+        self.delete_resources(batch_service_client, blob_client, False)
         self.status = utils.TestStatus(utils.TestState.COMPLETE, "Test completed successfully.")
 
     def create_and_submit_job(self, batch_client: batch.BatchExtensionsClient):
