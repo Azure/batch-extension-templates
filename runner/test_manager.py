@@ -109,7 +109,7 @@ class TestManager(object):
             utils.wait_for_job_and_check_result(batch_service_client, self.job_id, self.expected_output, test_timeout, stop_thread)
         except ex.JobFailedException:
             failed_job_id = self.job_id
-            utils.delete_job(batch_service_client, failed_job_id)
+            utils.terminate_and_delete_job(batch_service_client, failed_job_id)
 
             self.job_id = self.job_id + "-retry"
             self.create_and_submit_job(batch_service_client)
@@ -124,7 +124,7 @@ class TestManager(object):
             _thread.interrupt_main()
 
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):
-        logger.info("Test Succeeded, Pool: {}, Job: ".format(self.pool_id, self.job_id))
+        logger.info("Test Succeeded, Pool: {}, Job: {}".format(self.pool_id, self.job_id))
 
         self.duration = datetime.now(timezone.utc) - self.start_time
         
@@ -276,7 +276,7 @@ class TestManager(object):
 
     def delete_resources(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService, delete_storage_containers: bool):
         # delete the job
-        utils.delete_job(batch_service_client, self.job_id)
+        utils.terminate_and_delete_job(batch_service_client, self.job_id)
 
         # delete the pool
         utils.delete_pool(batch_service_client, self.pool_id)

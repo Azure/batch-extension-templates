@@ -185,18 +185,41 @@ def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str)
             traceback.print_exc()
             print_batch_exception(batch_exception)
 
-def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     try:
         batch_service_client.job.terminate(job_id)
-        batch_service_client.job.delete(job_id)
+
     except batchmodels.BatchErrorException as batch_exception:
+
         if expected_exception(batch_exception, "The specified job does not exist"):
-            logger.error("The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
+            logger.info("The specified Job [{}] did not exist when we tried to terminate it.".format(job_id))
+            return
+        if expected_exception(batch_exception, "The specified job is being terminated"):
+            logger.info("The specified Job [{}] was already being terminated when we tried to terminate it.".format(job_id))
+            return
+        traceback.print_exc()
+        print_batch_exception(batch_exception)
+
+def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    try:
+        batch_service_client.job.delete(job_id)
+
+    except batchmodels.BatchErrorException as batch_exception:
+
+        if expected_exception(batch_exception, "The specified job does not exist"):
+            logger.info("The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
+            return
+
         if expected_exception(batch_exception, "The specified job is already in a completed state"):
-            logger.error("The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
-        else:
-            traceback.print_exc()
-            print_batch_exception(batch_exception)
+            logger.info("The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
+            return
+
+        traceback.print_exc()
+        print_batch_exception(batch_exception)
+
+def terminate_and_delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    terminate_job(batch_service_client, job_id)
+    delete_job(batch_service_client, job_id)
 
 def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, job_id: str, new_pool_id: str):
     batch_service_client.job.disable(job_id, "requeue")
@@ -237,20 +260,12 @@ def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client:
         for pool in pools:
             if pool.last_modified < timeout:
                 logger.info("Deleting pool {}, it is older than {} hours.".format(pool.id, hours))
-                try:
-                    batch_client.pool.delete(pool.id)
-                except batchmodels.BatchErrorException as batch_exception:
-                    if expected_exception(batch_exception, "The specified pool has been marked for deletion and is being reclaimed."):
-                        logger.info("Pool [{}] was already being deleted.".format(pool.id))      
+                delete_pool(pool.id)  
 
         for job in batch_client.job.list():
             if job.last_modified < timeout:
                 logger.info("Deleting job {}, it is older than {} hours.".format(job.id, hours))
-                try:
-                    batch_client.job.delete(job.id)
-                except batchmodels.BatchErrorException as batch_exception:
-                    if expected_exception(batch_exception, "The specified job has been marked for deletion and is being garbage collected."):
-                        logger.info("Job [{}] was already being deleted.".format(job.id))      
+                delete_job(job.id)
 
         for container in blob_client.list_containers():
             if container.properties.last_modified < timeout:
