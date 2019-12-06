@@ -2,7 +2,7 @@ from xml.etree.ElementTree import Element, SubElement, ElementTree
 import logging
 import utils
 import time
-import datetime
+from datetime import datetime, timedelta
 
 logger = logging.getLogger('rendering-log')
 logger.setLevel(logging.DEBUG)
@@ -81,11 +81,11 @@ def export_result(test_managers: 'list[test_manager.TestManager]', total_time: i
         child = SubElement(root, "testcase")
         # Add a message to the error
         child.attrib["name"] = str(test.raw_job_id)
-        if test.status.job_state != utils.TestState.COMPLETE:
+        if test.status.test_state != utils.TestState.COMPLETE:
             failed_jobs += 1
             sub_child = SubElement(child, "failure")
             sub_child.attrib["message"] = str("Job [{}] failed due the ERROR: [{}]".format(
-                test.job_id, test.status.job_state))
+                test.job_id, test.status.test_state))
 
             sub_child.text = str(test.status.message)
 
@@ -96,7 +96,7 @@ def export_result(test_managers: 'list[test_manager.TestManager]', total_time: i
             job_duration = "0:00:00"
             try:
                 converted_time = time.strptime(str(test.duration).split('.')[0], '%H:%M:%S')
-                total_seconds = datetime.timedelta(hours=converted_time.tm_hour, minutes=converted_time.tm_min,
+                total_seconds = timedelta(hours=converted_time.tm_hour, minutes=converted_time.tm_min,
                                                seconds=converted_time.tm_sec).total_seconds()
                 child.attrib["time"] = str(total_seconds)
             except ValueError:
@@ -125,12 +125,12 @@ def print_result(test_managers: 'list[test_manager.TestManager]'):
     info("Number of jobs run {}.".format(len(test_managers)))
     failed_tests = 0  # type: int
     for test_item in test_managers:
-        if test_item.status.job_state != utils.TestState.COMPLETE:
+        if test_item.status.test_state != utils.TestState.COMPLETE:
             failed_tests += 1
             warning(
                 "job {} failed because {} : {}".format(
                     test_item.job_id,
-                    test_item.status.job_state,
+                    test_item.status.test_state,
                     test_item.status.message))
 
     if failed_tests == 0:

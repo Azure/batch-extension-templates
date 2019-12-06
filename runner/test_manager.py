@@ -7,12 +7,13 @@ import traceback
 import itertools
 import utils
 import os
-import datetime
+from datetime import datetime, timezone, timedelta
 import time
 import custom_template_factory as ctm
 import logger
 import exceptions as ex
 import threading
+import _thread
 
 """
 This module is responsible for creating, submitting and monitoring the pools and jobs
@@ -21,10 +22,10 @@ This module is responsible for creating, submitting and monitoring the pools and
 class TestManager(object):
 
     def __init__(self, template_file: str, pool_template_file: str,
-                 parameters_file: str, keyvault_client_with_url: tuple, expected_output: str, application_licenses: str = None, repository_branch_name: str = None):
+                 parameters_file: str, keyvault_client_with_url: tuple, expected_output: str, application_licenses: str = None, repository_branch_name: str = None, run_unique_id: str = None):
         super(TestManager, self).__init__()
         self.raw_job_id = ctm.get_job_id(parameters_file)  # The attribute 'raw_job_id' of type 'str'
-        self.run_id = repository_branch_name[:7]          # identifier for this run to append to job and pools and prevent collisions with parallel builds - for PR builds this is the git short sha, otherwise "master"
+        self.run_id = "{}-{}".format(repository_branch_name[:7], run_unique_id) # identifier for this run to append to job and pools and prevent collisions with parallel builds - for PR builds this is the git short sha, otherwise "master"
         self.job_id = self.run_id + "-" + self.raw_job_id  # The attribute 'job_id' of type 'str'
         self.pool_id = self.job_id                        # The attribute 'pool_id' of type 'str'
         self.template_file = template_file  # The attribute 'template_file' of type 'str'
@@ -39,7 +40,7 @@ class TestManager(object):
         self.duration = None  # The attribute 'duration' of type 'timedelta'
         self.pool_start_duration = None  # The attribute 'pool_start_duration' of type 'timedelta'
         self.min_required_vms = int(ctm.get_dedicated_vm_count(parameters_file)) # the minimum number of nodes which the test job needs in order to run
-        self.start_time = datetime.datetime.now()
+        self.start_time = datetime.now(timezone.utc)
 
     def __str__(self) -> str:
         return "job_id: [{}] pool_id: [{}] ".format(self.job_id, self.pool_id)
@@ -55,15 +56,15 @@ class TestManager(object):
         VM_OS_type=None):
 
         self.status = utils.TestStatus(utils.TestState.IN_PROGRESS, "Test starting for {}".format(self.job_id))
-
-        test_timeout = datetime.datetime.now() + datetime.timedelta(minutes=timeout)
+        
+        test_timeout = datetime.now(timezone.utc)+ timedelta(minutes=timeout)
 
         self.upload_assets(blob_client)
-        self.create_and_submit_pool(batch_service_client, VM_image_URL, VM_OS_type)
+        self.create_and_submit_pool(batch_service_client, image_references, VM_image_URL, VM_OS_type)
         self.create_and_submit_job(batch_service_client)
 
         try:
-            self.monitor_pool_and_retry_if_needed(batch_service_client, test_timeout, stop_thread, VM_image_URL, VM_OS_type)
+            self.monitor_pool_and_retry_if_needed(batch_service_client, image_references, test_timeout, stop_thread, VM_image_URL, VM_OS_type)
 
             self.monitor_job_and_retry_if_needed(batch_service_client, test_timeout, stop_thread)
 
@@ -89,7 +90,7 @@ class TestManager(object):
             self.status = utils.TestStatus(utils.TestState.TERMINAL_FAILURE, e)
             self.on_test_failed(batch_service_client, blob_client, interrupt_main_on_failure)
 
-    def monitor_pool_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime.datetime, stop_thread, VM_image_URL, VM_OS_type):
+    def monitor_pool_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, image_references: 'List[utils.ImageReference]', test_timeout: datetime, stop_thread, VM_image_URL, VM_OS_type):
         try:
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
 
@@ -98,13 +99,13 @@ class TestManager(object):
             failed_pool_id = self.pool_id
             self.pool_id = self.pool_id + "-retry"
 
-            self.create_and_submit_pool(batch_service_client, VM_image_URL, VM_OS_type)
+            self.create_and_submit_pool(batch_service_client, image_references, VM_image_URL, VM_OS_type)
             utils.retarget_job_to_new_pool(batch_service_client, self.job_id, self.pool_id)
 
             utils.delete_pool(batch_service_client, failed_pool_id)
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
 
-    def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime.datetime, stop_thread):
+    def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime, stop_thread):
         try:
             utils.wait_for_job_and_check_result(batch_service_client, self.job_id, self.expected_output, test_timeout, stop_thread)
         except ex.JobFailedException:
@@ -121,10 +122,10 @@ class TestManager(object):
 
         if interrupt_main:
             logger.error("Calling thread.interrupt_main")
-            threading._thread.interrupt_main()
+            _thread.interrupt_main()
 
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient):
-        self.duration = datetime.datetime.now() - self.start_time
+        self.duration = datetime.now(timezone.utc) - self.start_time
         self.status = utils.TestStatus(utils.TestState.COMPLETE, "Test completed successfully.")
 
     def create_and_submit_job(self, batch_client: batch.BatchExtensionsClient):

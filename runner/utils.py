@@ -3,7 +3,7 @@ import azure.storage.blob as azureblob
 from azure.storage.blob.models import ContainerPermissions
 from azure.keyvault import KeyVaultClient
 import azext.batch as batch
-import datetime
+from datetime import datetime, timezone, timedelta
 import time
 import os
 from enum import Enum
@@ -74,9 +74,9 @@ class TestState(Enum):
     STOP_THREAD = 7
     TIMED_OUT = 8
 
-timeout_delta_pool_resize = datetime.timedelta(minutes=15)
-timeout_delta_node_idle = datetime.timedelta(minutes=10)
-timeout_delta_job_complete = datetime.timedelta(minutes=10)
+timeout_delta_pool_resize = timedelta(minutes=15)
+timeout_delta_node_idle = timedelta(minutes=10)
+timeout_delta_job_complete = timedelta(minutes=10)
 
 output_fgrp_postfix = "-output"
 
@@ -142,7 +142,7 @@ def get_container_sas_token(block_blob_client: azureblob.BlockBlobService,
         block_blob_client.generate_container_shared_access_signature(
             container_name,
             permission=blob_permissions,
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2))
+            expiry=datetime.now(timezone.utc) + timedelta(hours=2))
 
     return container_sas_token
 
@@ -192,6 +192,8 @@ def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     except batchmodels.BatchErrorException as batch_exception:
         if expected_exception(batch_exception, "The specified job does not exist"):
             logger.error("The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
+        if expected_exception(batch_exception, "The specified job is already in a completed state"):
+            logger.error("The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
         else:
             traceback.print_exc()
             print_batch_exception(batch_exception)
@@ -228,25 +230,34 @@ def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client:
     :param int: 
     """
     #cleanup resources with last-modified before timeout
-    timeout = utc.localize(datetime.datetime.now()) + datetime.timedelta(hours=-hours) 
+    timeout = datetime.now(timezone.utc) + timedelta(hours=-hours) 
 
-    try:
-        for pool in batch_client.pool.list():
+    try: 
+        pools = batch_client.pool.list()
+        for pool in pools:
             if pool.last_modified < timeout:
                 logger.info("Deleting pool {}, it is older than {} hours.".format(pool.id, hours))
-                batch_client.pool.delete(pool.id)
-    
+                try:
+                    batch_client.pool.delete(pool.id)
+                except batchmodels.BatchErrorException as batch_exception:
+                    if expected_exception(batch_exception, "The specified pool has been marked for deletion and is being reclaimed."):
+                        logger.info("Pool [{}] was already being deleted.".format(pool.id))      
+
         for job in batch_client.job.list():
             if job.last_modified < timeout:
                 logger.info("Deleting job {}, it is older than {} hours.".format(job.id, hours))
-                batch_client.job.delete(job.id)
+                try:
+                    batch_client.job.delete(job.id)
+                except batchmodels.BatchErrorException as batch_exception:
+                    if expected_exception(batch_exception, "The specified job has been marked for deletion and is being garbage collected."):
+                        logger.info("Job [{}] was already being deleted.".format(job.id))      
 
         for container in blob_client.list_containers():
             if container.properties.last_modified < timeout:
                 if 'fgrp' in container.name and not container.name.endswith(output_fgrp_postfix):   #don't delete output filegroups as we might need them for diagnosis
                     logger.info("Deleting container {}, it is older than {} hours.".format(container.name, hours))
                     blob_client.delete_container(container.name)
-        
+   
     except Exception as e:
         logger.error("Failed to clean up resources due to the error: {}".format(e))
         raise e
@@ -326,18 +337,18 @@ def submit_job(batch_service_client: batch.BatchExtensionsClient, template: str,
         logger.error("Job {}, failed to submit, because of the error: {}".format(raw_job_id, sys.exc_info()[0]))
         raise
 
-def has_timedout(timeout: datetime.datetime) -> bool:
-    return datetime.datetime.now() > timeout
+def has_timedout(timeout: datetime) -> bool:
+    return datetime.now(timezone.utc) > timeout
 
-def check_test_timeout(timeout: datetime.datetime) -> bool:
-    if datetime.datetime.now() > timeout:
+def check_test_timeout(timeout: datetime) -> bool:
+    if datetime.now(timezone.utc) > timeout:
         raise ex.TestTimedOutException("Overall test timeout triggered for thread! Aborting")
 
 def check_stop_thread(stop_thread):
     if stop_thread():
         raise ex.StopThreadException()
 
-def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, test_timeout: datetime.datetime, stop_thread):
+def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, test_timeout: datetime, stop_thread):
     try:
         wait_for_pool_resize_operation(batch_service_client, pool_id, test_timeout, stop_thread)
 
@@ -353,7 +364,7 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
 
     wait_for_enough_idle_vms(batch_service_client, pool_id, min_required_vms, max_allowed_failed_nodes, pool.state_transition_time, test_timeout, stop_thread)
 
-def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsClient, pool_id: str, test_timeout: datetime.datetime, stop_thread) -> bool:
+def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsClient, pool_id: str, test_timeout: datetime, stop_thread) -> bool:
     pool = batch_service_client.pool.get(pool_id)
     timeout_pool_resize = pool.creation_time + timeout_delta_pool_resize
 
@@ -373,11 +384,11 @@ def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsCl
             exception_message += "ErrorCode: {}. ErrorMessage: {}".format(error.code, error.message)
         raise ex.PoolResizeFailedException(exception_message)
 
-def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, max_allowed_failed_nodes: int, pool_resize_time: datetime.datetime, test_timeout: datetime.datetime, stop_thread) -> bool:
+def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, max_allowed_failed_nodes: int, pool_resize_time: datetime, test_timeout: datetime, stop_thread) -> bool:
     nodes = []
-    idle_node_count = itertools.count(0)
-    retryable_failed_node_count = itertools.count(0)
-    terminal_failed_node_count = itertools.count(0)
+    idle_node_count = 0
+    retryable_failed_node_count = 0
+    terminal_failed_node_count = 0
 
     retryable_failure_node_states = [batchmodels.ComputeNodeState.unusable]
     terminal_failure_node_states = [batchmodels.ComputeNodeState.start_task_failed]
@@ -394,11 +405,11 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
 
         time.sleep(10)
         nodes = list(batch_service_client.compute_node.list(pool_id)) # Need to cast since compute_node.list returns a list wrapper
-
+      
         # if combined errors are more than allowed, throw either 1: a retryable exception (when some nodes failed with retryable errors)
         # or 2: a terminal exception (when all failures were non-retryable)
-        [(next(terminal_failed_node_count), n) for n in nodes if n.state in terminal_failure_node_states]
-        [(next(retryable_failed_node_count), n) for n in nodes if n.state in retryable_failure_node_states]
+        terminal_failed_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state in terminal_failure_node_states])
+        retryable_failed_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state in retryable_failure_node_states])
         if retryable_failed_node_count + terminal_failed_node_count > max_allowed_failed_nodes:
 
             #if we have a single node enter a non-terminal failure state, raise a retryable error
@@ -411,11 +422,11 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
                 exception_message += "Node state: {} ".format(n.state)
             raise ex.TerminalTestException("Too many nodes failed with terminal errors: {}".format(exception_message))
 
-        [(next(idle_node_count), n) for n in nodes if n.state == batchmodels.ComputeNodeState.idle]
+        idle_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state == batchmodels.ComputeNodeState.idle])
 
-def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_output: str, test_timeout: datetime.datetime, stop_thread):
+def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_output: str, test_timeout: datetime, stop_thread):
 
-    timeout_jobs_tasks_complete = datetime.datetime.now() + timeout_delta_job_complete
+    timeout_jobs_tasks_complete = datetime.now(timezone.utc) + timeout_delta_job_complete
 
     # Wait for all tasks in the job to be in a terminal state
     job_has_completed = False

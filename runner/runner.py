@@ -2,7 +2,7 @@ from __future__ import print_function
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.keyvault import KeyVaultClient
 import traceback
-import datetime
+from datetime import datetime, timezone, timedelta
 import sys
 import logger
 import json
@@ -13,6 +13,7 @@ import azure.batch.models as batchmodels
 import azext.batch as batch
 import argparse
 from pygit2 import Repository
+import uuid
 
 """
 This python module is used for validating the rendering templates by using the azure CLI. 
@@ -23,7 +24,7 @@ create pools and jobs based on this file.
 sys.path.append('.')
 sys.path.append('..')
 
-_timeout = 25  # type: int
+_timeout = 60  # type: int
 _test_managers = []  # type: List[test_manager.TestManager]
 
 def create_batch_client(args: object) -> batch.BatchExtensionsClient:
@@ -44,7 +45,7 @@ def create_batch_client(args: object) -> batch.BatchExtensionsClient:
         credentials=credentials,
         batch_account=args.BatchAccountName,
         batch_url=args.BatchAccountUrl,
-        subscription_id=args.BatchAccountSub)
+        subscription_id=args.BatchAccountSub,)
 
 def create_keyvault_client(args: object) -> tuple():
     """
@@ -116,7 +117,7 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
     stop_threads = False
     threads = [] # type: List[threading.Thread]
     try:
-        threads = utils.start_test_threads("run_test", _test_managers, blob_client, batch_client, True, _timeout, lambda: stop_threads, images_refs, VMImageURL)
+        threads = utils.start_test_threads("run_test", _test_managers, blob_client, batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL)
 
         for thread in threads:
             thread.join()
@@ -127,12 +128,16 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
 
         for thread in threads:
             thread.join()
+            
 
 def main():
     args = runner_arguments()
     logger.account_info(args)
-    start_time = datetime.datetime.now().replace(microsecond=0)
+    start_time = datetime.now(timezone.utc).replace(microsecond=0)
     logger.info('Template runner start time: [{}]'.format(start_time))
+
+    #generate unique id for this run to prevent collisions
+    run_unique_id = str(uuid.uuid4())[0:7]
 
     # Create the blob client, for use in obtaining references to
     # blob storage containers and uploading files to containers.
@@ -146,14 +151,14 @@ def main():
     # Create a keyvault client using AAD    
     keyvault_client_with_url = create_keyvault_client(args)
 
-    # Clean up any storage container, pool or jobs older than some threshold.
-    utils.cleanup_old_resources(blob_client, batch_client)
-
     repository_branch_name = args.RepositoryBranchName
     if repository_branch_name == "current":
         repository_branch_name = Repository('../').head.shorthand
         
-    logger.info('Pulling resource files from the branch: {}'.format(repository_branch_name))
+    logger.info('Pulling resource files from commit: {}'.format(repository_branch_name))
+
+    #Clean up any storage container, pool or jobs older than some threshold.
+    utils.cleanup_old_resources(blob_client, batch_client)
 
     try:
         images_refs = []  # type: List[utils.ImageReference]
@@ -176,7 +181,8 @@ def main():
                     keyvault_client_with_url,
                     jobSetting["expectedOutput"],
                     application_licenses,
-                    repository_branch_name))
+                    repository_branch_name,
+                    run_unique_id))
 
             for image in template["images"]:
                 images_refs.append(utils.ImageReference(image["osType"], image["offer"], image["version"]))
@@ -187,7 +193,7 @@ def main():
         utils.print_batch_exception(err)
         raise
     finally:
-        end_time = datetime.datetime.now().replace(microsecond=0)
+        end_time = datetime.now(timezone.utc).replace(microsecond=0)
         logger.print_result(_test_managers)
         logger.export_result(_test_managers, (end_time - start_time))
     logger.info('Sample end: {}'.format(end_time))
