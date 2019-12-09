@@ -124,11 +124,12 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
 
     except KeyboardInterrupt:
         #A test has failed and triggered KeyboardInterrupt on main thread, so call stop_threads on all the other threads
+        logger.error("Keyboard Interrupt triggered in main thread, calling stop_threads")
         stop_threads = True
 
         for thread in threads:
             thread.join()
-            
+
 
 def main():
     args = runner_arguments()

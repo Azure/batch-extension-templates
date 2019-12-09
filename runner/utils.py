@@ -173,7 +173,7 @@ def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str)
     """
     Deletes a pool, if the pool has already been deleted or marked for deletion it logs and swallows the exception.
     """
-    logger.info("Deleting pool: {}.".format(pool_id))
+    logger.info("Deleting pool: {}".format(pool_id))
     try:
         batch_service_client.pool.delete(pool_id)
     except batchmodels.BatchErrorException as batch_exception:
@@ -360,11 +360,11 @@ def has_timedout(timeout: datetime) -> bool:
 
 def check_test_timeout(timeout: datetime) -> bool:
     if datetime.now(timezone.utc) > timeout:
-        raise ex.TestTimedOutException("Overall test timeout triggered for thread! Aborting")
+        raise ex.TestTimedOutException("Raising TestTimedOutException.")
 
 def check_stop_thread(stop_thread):
     if stop_thread():
-        raise ex.StopThreadException()
+        raise ex.StopThreadException("Raising StopThreadException.")
 
 def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, test_timeout: datetime, stop_thread):
     try:
@@ -374,6 +374,7 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
         #double the node count and try again
         pool = batch_service_client.pool.get(pool_id)
         new_node_count = pool.target_dedicated_nodes * 2
+        logger.info("Resizing pool '{}' to '{}' nodes".format(pool_id, new_node_count))
         batch_service_client.pool.resize(pool_id, target_dedicated_nodes = new_node_count)
         wait_for_pool_resize_operation(batch_service_client, pool_id, test_timeout, stop_thread) #if exception thrown again here, will bubble up
 
@@ -391,7 +392,7 @@ def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsCl
         check_stop_thread(stop_thread)
 
         if has_timedout(timeout_pool_resize):
-            raise ex.PoolResizeFailedException("Timed out waiting for resize of pool {}.".format(pool_id))
+            raise ex.PoolResizeFailedException(pool_id, "Timed out waiting for resize of pool.")
 
         time.sleep(10)
         pool = batch_service_client.pool.get(pool_id)
@@ -400,7 +401,7 @@ def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsCl
         exception_message = " {} Resize Errors: ".format(len(pool.resize_errors))
         for error in pool.resize_errors:
             exception_message += "ErrorCode: {}. ErrorMessage: {}".format(error.code, error.message)
-        raise ex.PoolResizeFailedException(exception_message)
+        raise ex.PoolResizeFailedException(pool_id, exception_message)
 
 def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, max_allowed_failed_nodes: int, pool_resize_time: datetime, test_timeout: datetime, stop_thread) -> bool:
     nodes = []
@@ -419,7 +420,7 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
         check_stop_thread(stop_thread)
 
         if has_timedout(timeout_idle_vms):
-            raise ex.NodesFailedToStartException()
+            raise ex.NodesFailedToStartException(pool_id, "Timed out waiting for nodes to go idle following resize.")
 
         time.sleep(10)
         nodes = list(batch_service_client.compute_node.list(pool_id)) # Need to cast since compute_node.list returns a list wrapper
@@ -430,15 +431,17 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
         retryable_failed_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state in retryable_failure_node_states])
         if retryable_failed_node_count + terminal_failed_node_count > max_allowed_failed_nodes:
 
-            #if we have a single node enter a non-terminal failure state, raise a retryable error
-            if retryable_failed_node_count:
-                raise ex.NodesFailedToStartException()
-
-            #all failures were terminal, treat this as a test-terminal failure
             exception_message = "Node failure errors: "
             for n in nodes:
                 exception_message += "Node state: {} ".format(n.state)
-            raise ex.TerminalTestException("Too many nodes failed with terminal errors: {}".format(exception_message))
+            
+            #if we have at least a single node in a non-terminal failure state, raise a retryable error
+            if retryable_failed_node_count:
+                raise ex.NodesFailedToStartException(pool_id, exception_message)
+
+            #all failures were terminal, treat this as a test-terminal failure
+           
+            raise ex.TerminalTestException("For pool '{}', too many nodes failed with terminal errors: {}".format(pool_id, exception_message))
 
         idle_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state == batchmodels.ComputeNodeState.idle])
 
@@ -453,7 +456,7 @@ def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsCli
         check_stop_thread(stop_thread)
 
         if has_timedout(timeout_jobs_tasks_complete):
-            raise ex.JobTimedoutException()
+            raise ex.JobTimedoutException(job_id, "Timed out waiting for job to complete.")
 
         tasks = batch_service_client.task.list(job_id)
         
@@ -465,12 +468,12 @@ def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsCli
             exception_message = " {} Task failure Errors: ".format(len(failed_tasks))
             for failed_task in failed_tasks:
                 exception_message += "ErrorCode: {}. ErrorMessage: {}".format(failed_task.execution_info.failure_info.code, failed_task.execution_info.failure_info.message)
-            raise ex.JobFailedException(exception_message)
+            raise ex.JobFailedException(job_id, exception_message)
             
         if not incomplete_tasks:
             job_has_completed = True
             if not does_task_output_file_exist(batch_service_client, job_id, expected_output):
-                raise ex.JobFailedException("Failed to find output {}".format(expected_output))
+                raise ex.JobFailedException(job_id, "Failed to find output {}".format(expected_output))
         else:
             logger.info("Job [{}] is running".format(job_id))
             time.sleep(5)

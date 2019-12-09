@@ -3,6 +3,7 @@ import logging
 import utils
 import time
 from datetime import datetime, timedelta
+import threading
 
 logger = logging.getLogger('rendering-log')
 logger.setLevel(logging.DEBUG)
@@ -27,8 +28,7 @@ def info(message: str):
     :param message: The info message that will be added to the logger file
     :type message: str
     """
-    logger.info(message)
-
+    logger.info(message_with_thread(message))
 
 def error(error_message: str):
     """
@@ -37,7 +37,7 @@ def error(error_message: str):
     :param error_message: The info message that will be added to the logger file
     :type error_message: str
     """
-    logger.error(error_message)
+    logger.error(message_with_thread(error_message))
 
 
 def warning(warning_message: str):
@@ -47,7 +47,7 @@ def warning(warning_message: str):
     :param warning_message: The info message that will be added to the logger file
     :type warning_message: str
     """
-    logger.warning(warning_message)
+    logger.warning(message_with_thread(warning_message))
 
 
 def account_info(args: object):
@@ -139,3 +139,6 @@ def print_result(test_managers: 'list[test_manager.TestManager]'):
     else:
         info("Number of jobs passed {} out of {}.".format(
             len(test_managers) - failed_tests, len(test_managers)))
+
+def message_with_thread(message: str):
+    return "Thread:{} - {}".format(threading.currentThread().ident, message)
