@@ -265,7 +265,7 @@ def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client:
         for job in batch_client.job.list():
             if job.last_modified < timeout:
                 logger.info("Deleting job {}, it is older than {} hours.".format(job.id, hours))
-                delete_job(job.id)
+                delete_job(batch_client, job.id)
 
         for container in blob_client.list_containers():
             if container.properties.last_modified < timeout:
