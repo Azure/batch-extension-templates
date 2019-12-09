@@ -197,6 +197,9 @@ def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str
         if expected_exception(batch_exception, "The specified job is being terminated"):
             logger.info("The specified Job [{}] was already being terminated when we tried to terminate it.".format(job_id))
             return
+        if expected_exception(batch_exception, "The specified job is already in a completed state"):
+            logger.info("The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
+            return
         traceback.print_exc()
         print_batch_exception(batch_exception)
 
