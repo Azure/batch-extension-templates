@@ -225,9 +225,11 @@ def terminate_and_delete_job(batch_service_client: batch.BatchExtensionsClient, 
     delete_job(batch_service_client, job_id)
 
 def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, job_id: str, new_pool_id: str):
+    logger.info("Retargeting job [{}] to new pool [{}]")
     batch_service_client.job.disable(job_id, "requeue")
     batch_service_client.job.pool.patch(batchmodels.JobPatchParameter(pool_info=batchmodels.PoolInformation(pool_id = new_pool_id)))
     batch_service_client.job.enable(job_id)  
+    logger.info("Successfully retargeted job [{}] to pool [{}]")
 
 def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> bool:
     
@@ -420,7 +422,7 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
         check_stop_thread(stop_thread)
 
         if has_timedout(timeout_idle_vms):
-            raise ex.NodesFailedToStartException(pool_id, "Timed out waiting for nodes to go idle following resize.")
+            raise ex.NodesFailedToStartException(pool_id, "Timed out waiting for nodes to go idle following resize")
 
         time.sleep(10)
         nodes = list(batch_service_client.compute_node.list(pool_id)) # Need to cast since compute_node.list returns a list wrapper

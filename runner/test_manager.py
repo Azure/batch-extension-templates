@@ -96,8 +96,7 @@ class TestManager(object):
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
             self.pool_start_duration = datetime.now(timezone.utc) - self.start_time
 
-        except (ex.PoolResizeFailedException, ex.NodesFailedToStartException) as e:
-            logger.warning("")
+        except (ex.PoolResizeFailedException, ex.NodesFailedToStartException):
             #pool failed to get enough nodes to idle from both initial allocation and any secondary pool resize too - try create a whole new pool and change job to target it
             utils.delete_pool(batch_service_client, self.pool_id)
             self.pool_id = self.pool_id + "-retry"
@@ -135,6 +134,8 @@ class TestManager(object):
         
         self.delete_resources(batch_service_client, blob_client, False)
         self.status = utils.TestStatus(utils.TestState.COMPLETE, "Test completed successfully.")
+        logger.info("Successful Test Cleanup Done. Pool: {}, Job: {}".format(self.pool_id, self.job_id))
+
 
     def create_and_submit_job(self, batch_client: batch.BatchExtensionsClient):
         """
