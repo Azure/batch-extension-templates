@@ -16,7 +16,7 @@ class StopThreadException(Exception):
 class NonTerminalException(Exception):
     """Base class for non-terminal exceptions, define standard logging behaviour here."""
     def __init__(self, identifier, message):
-        logger.warning("NonTerminalException thrown for id: '{}'.\nException: '{}.\nStackTrace '{}'."
+        logger.warning("NonTerminalException thrown for id: [{}].\nException: '{}.\nStackTrace '{}'."
             .format(identifier, message,  traceback.format_exc()))
 
 class JobFailedException(NonTerminalException):

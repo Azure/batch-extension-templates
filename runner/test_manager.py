@@ -125,7 +125,7 @@ class TestManager(object):
         self.delete_resources(batch_service_client, blob_client, False)
 
         if interrupt_main:
-            logger.error("Calling thread.interrupt_main for failed test with id '{}'".format(self.job_id))
+            logger.error("Calling thread.interrupt_main for failed test with id [{}]".format(self.job_id))
             _thread.interrupt_main()
 
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):

@@ -374,7 +374,7 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
         #double the node count and try again
         pool = batch_service_client.pool.get(pool_id)
         new_node_count = pool.target_dedicated_nodes * 2
-        logger.info("Resizing pool '{}' to '{}' nodes".format(pool_id, new_node_count))
+        logger.info("Resizing pool [{}] to '{}' nodes".format(pool_id, new_node_count))
         batch_service_client.pool.resize(pool_id, target_dedicated_nodes = new_node_count)
         wait_for_pool_resize_operation(batch_service_client, pool_id, test_timeout, stop_thread) #if exception thrown again here, will bubble up
 
@@ -441,7 +441,7 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
 
             #all failures were terminal, treat this as a test-terminal failure
            
-            raise ex.TerminalTestException("For pool '{}', too many nodes failed with terminal errors: {}".format(pool_id, exception_message))
+            raise ex.TerminalTestException("For pool [{}], too many nodes failed with terminal errors: {}".format(pool_id, exception_message))
 
         idle_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state == batchmodels.ComputeNodeState.idle])
 
