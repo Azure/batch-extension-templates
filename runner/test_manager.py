@@ -37,8 +37,9 @@ class TestManager(object):
         self.pool_template_file = pool_template_file  # The attribute 'pool_template_file' of type 'str'
         self.storage_info = None  # The attribute 'storage_info' of type 'utils.StorageInfo'
         self.status = utils.TestStatus(utils.TestState.NOT_STARTED, "Test hasn't started yet.")  # The attribute 'status' of type 'utils.JobState'
-        self.duration = None  # The attribute 'duration' of type 'timedelta'
+        self.total_duration = None  # The attribute 'duration' of type 'timedelta'
         self.pool_start_duration = None  # The attribute 'pool_start_duration' of type 'timedelta'
+        self.job_run_duration = None # The attribute 'pool_start_duration' of type 'timedelta'
         self.min_required_vms = int(ctm.get_dedicated_vm_count(parameters_file)) # the minimum number of nodes which the test job needs in order to run
         self.start_time = datetime.now(timezone.utc)
 
@@ -57,7 +58,7 @@ class TestManager(object):
 
         self.status = utils.TestStatus(utils.TestState.IN_PROGRESS, "Test starting for {}".format(self.job_id))
         
-        test_timeout = datetime.now(timezone.utc)+ timedelta(minutes=timeout)
+        test_timeout = datetime.now(timezone.utc) + timedelta(minutes=timeout)
 
         self.upload_assets(blob_client)
         self.create_and_submit_pool(batch_service_client, image_references, VM_image_URL, VM_OS_type)
@@ -93,8 +94,10 @@ class TestManager(object):
     def monitor_pool_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, image_references: 'List[utils.ImageReference]', test_timeout: datetime, stop_thread, VM_image_URL, VM_OS_type):
         try:
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
+            self.pool_start_duration = datetime.now(timezone.utc) - self.start_time
 
-        except (ex.PoolResizeFailedException, ex.NodesFailedToStartException):
+        except (ex.PoolResizeFailedException, ex.NodesFailedToStartException) as e:
+            logger.warning("")
             #pool failed to get enough nodes to idle from both initial allocation and any secondary pool resize too - try create a whole new pool and change job to target it
             utils.delete_pool(batch_service_client, self.pool_id)
             self.pool_id = self.pool_id + "-retry"
@@ -107,6 +110,8 @@ class TestManager(object):
     def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime, stop_thread):
         try:
             utils.wait_for_job_and_check_result(batch_service_client, self.job_id, self.expected_output, test_timeout, stop_thread)
+            self.job_run_duration = datetime.now(timezone.utc) - self.pool_start_duration
+
         except (ex.JobFailedException, ex.JobTimedoutException):
             failed_job_id = self.job_id
             utils.terminate_and_delete_job(batch_service_client, failed_job_id)
@@ -120,7 +125,7 @@ class TestManager(object):
         self.delete_resources(batch_service_client, blob_client, False)
 
         if interrupt_main:
-            logger.error("Calling thread.interrupt_main for failed test with id {}".format(self.job_id))
+            logger.error("Calling thread.interrupt_main for failed test with id '{}'".format(self.job_id))
             _thread.interrupt_main()
 
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):

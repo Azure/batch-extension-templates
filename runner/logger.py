@@ -91,7 +91,8 @@ def export_result(test_managers: 'list[test_manager.TestManager]', total_time: i
 
         # Add the time it took for this test to compete.
         if test.duration is not None:
-            info("Job {} took {} to complete, pool {} took {} to become available".format(test.job_id, test.duration, test.pool_id, test.pool_start_duration))
+            info("Total Test duration '{}', Pool [{}] took '{}' to become available, Job [{}] ran for '{}', "
+                .format(test.duration, test.pool_id, test.pool_start_duration, test.job_id, test.job_duration))
             # If the job failed we set the duration to 0
             job_duration = "0:00:00"
             try:
