@@ -90,13 +90,13 @@ def export_result(test_managers: 'list[test_manager.TestManager]', total_time: i
             sub_child.text = str(test.status.message)
 
         # Add the time it took for this test to compete.
-        if test.duration is not None:
+        if test.total_duration is not None:
             info("Total Test duration '{}', Pool [{}] took '{}' to become available, Job [{}] ran for '{}', "
-                .format(test.duration, test.pool_id, test.pool_start_duration, test.job_id, test.job_run_duration))
+                .format(test.total_duration, test.pool_id, test.pool_start_duration, test.job_id, test.job_run_duration))
             # If the job failed we set the duration to 0
             test_duration = "0:00:00"
             try:
-                converted_time = time.strptime(str(test.duration).split('.')[0], '%H:%M:%S')
+                converted_time = time.strptime(str(test.total_duration).split('.')[0], '%H:%M:%S')
                 total_seconds = timedelta(hours=converted_time.tm_hour, minutes=converted_time.tm_min,
                                                seconds=converted_time.tm_sec).total_seconds()
                 child.attrib["time"] = str(total_seconds)

@@ -109,7 +109,7 @@ class TestManager(object):
     def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime, stop_thread):
         try:
             utils.wait_for_job_and_check_result(batch_service_client, self.job_id, self.expected_output, test_timeout, stop_thread)
-            self.job_run_duration = datetime.now(timezone.utc) - self.pool_start_duration
+            self.job_run_duration = datetime.now(timezone.utc) - (self.start_time + self.pool_start_duration)
 
         except (ex.JobFailedException, ex.JobTimedoutException):
             failed_job_id = self.job_id
@@ -130,7 +130,7 @@ class TestManager(object):
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):
         logger.info("Test Succeeded, Pool: {}, Job: {}".format(self.pool_id, self.job_id))
 
-        self.duration = datetime.now(timezone.utc) - self.start_time
+        self.total_duration = datetime.now(timezone.utc) - self.start_time
         
         self.delete_resources(batch_service_client, blob_client, False)
         self.status = utils.TestStatus(utils.TestState.COMPLETE, "Test completed successfully.")
