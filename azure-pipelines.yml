@@ -1,6 +1,24 @@
 pool:
   vmImage: 'Ubuntu 16.04'
 steps:
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'curl https://raw.githubusercontent.com/Azure/batchexplorer/master/python/requirements.txt -o berequirements.txt'
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+    architecture: 'x64'
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'inline'
+    script: 'pip install merge-requirements'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script:
+      python -m merge-requirements.main berequirements.txt runner/requirements.txt
 - task: CopyFiles@2
   inputs:
     Contents: '**'
@@ -11,4 +29,5 @@ steps:
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: batch-extension-templates
+
    
