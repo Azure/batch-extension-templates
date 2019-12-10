@@ -229,11 +229,11 @@ def terminate_and_delete_job(batch_service_client: batch.BatchExtensionsClient, 
     delete_job(batch_service_client, job_id)
 
 def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, job_id: str, new_pool_id: str):
-    logger.info("Retargeting job [{}] to new pool [{}]")
+    logger.info("Retargeting job [{}] to new pool [{}]".format(job_id, new_pool_id))
     batch_service_client.job.disable(job_id, "requeue")
-    batch_service_client.job.pool.patch(batchmodels.JobPatchParameter(pool_info=batchmodels.PoolInformation(pool_id = new_pool_id)))
+    batch_service_client.job.patch(job_id, batchmodels.JobPatchParameter(pool_info=batchmodels.PoolInformation(pool_id = new_pool_id)))
     batch_service_client.job.enable(job_id)  
-    logger.info("Successfully retargeted job [{}] to pool [{}]")
+    logger.info("Successfully retargeted job [{}] to pool [{}]".format(job_id, new_pool_id))
 
 def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> bool:
     
