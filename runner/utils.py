@@ -220,6 +220,10 @@ def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
         traceback.print_exc()
         print_batch_exception(batch_exception)
 
+    except Exception as e:
+        logger.info("Exception thrown when deleting job [{}] - e".format(job_id, e))
+        traceback.print_exc()
+
 def terminate_and_delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     terminate_job(batch_service_client, job_id)
     delete_job(batch_service_client, job_id)
