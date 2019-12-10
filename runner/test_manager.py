@@ -107,7 +107,7 @@ class TestManager(object):
     def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime, stop_thread):
         try:
             utils.wait_for_job_and_check_result(batch_service_client, self.job_id, self.expected_output, test_timeout, stop_thread)
-        except ex.JobFailedException:
+        except (ex.JobFailedException, ex.JobTimedoutException):
             failed_job_id = self.job_id
             utils.terminate_and_delete_job(batch_service_client, failed_job_id)
 
@@ -120,7 +120,7 @@ class TestManager(object):
         self.delete_resources(batch_service_client, blob_client, False)
 
         if interrupt_main:
-            logger.error("Calling thread.interrupt_main for failed test with id{}".format(self.job_id))
+            logger.error("Calling thread.interrupt_main for failed test with id {}".format(self.job_id))
             _thread.interrupt_main()
 
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):
