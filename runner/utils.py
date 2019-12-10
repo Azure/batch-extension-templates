@@ -386,6 +386,7 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
     wait_for_enough_idle_vms(batch_service_client, pool_id, min_required_vms, max_allowed_failed_nodes, pool.state_transition_time, test_timeout, stop_thread)
 
 def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsClient, pool_id: str, test_timeout: datetime, stop_thread) -> bool:
+    time.sleep(10)  #make sure pool has time to change out of steady state
     pool = batch_service_client.pool.get(pool_id)
     timeout_pool_resize = pool.creation_time + timeout_delta_pool_resize
 
