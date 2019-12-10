@@ -76,7 +76,7 @@ class TestState(Enum):
 
 timeout_delta_pool_resize = timedelta(minutes=15)
 timeout_delta_node_idle = timedelta(minutes=10)
-timeout_delta_job_complete = timedelta(minutes=10)
+timeout_delta_job_complete = timedelta(minutes=15)
 
 output_fgrp_postfix = "-output"
 
