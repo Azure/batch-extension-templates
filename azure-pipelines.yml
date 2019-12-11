@@ -7,18 +7,18 @@ steps:
     script: 'curl https://raw.githubusercontent.com/Azure/batchexplorer/master/python/requirements.txt -o berequirements.txt'
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.x'
+    versionSpec: '2.7.x'
     addToPath: true
     architecture: 'x64'
-- task: PythonScript@0
+- task: Bash@3
   inputs:
-    scriptSource: 'inline'
-    script: 'pip install merge-requirements'
+    targetType: 'inline'
+    script: 'python -m pip install merge-requirements'
 - task: Bash@3
   inputs:
     targetType: 'inline'
     script:
-      python -m merge-requirements.main berequirements.txt runner/requirements.txt
+      python -m merge_requirements.main berequirements.txt runner/requirements.txt
 - task: CopyFiles@2
   inputs:
     Contents: '**'
@@ -29,5 +29,3 @@ steps:
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: batch-extension-templates
-
-   
