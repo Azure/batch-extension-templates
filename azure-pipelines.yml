@@ -10,10 +10,10 @@ steps:
     versionSpec: '3.x'
     addToPath: true
     architecture: 'x64'
-- task: PythonScript@0
+- task: Bash@3
   inputs:
-    scriptSource: 'inline'
-    script: 'pip install merge-requirements'
+    targetType: 'inline'
+    script: 'python -m pip install merge-requirements'
 - task: Bash@3
   inputs:
     targetType: 'inline'
