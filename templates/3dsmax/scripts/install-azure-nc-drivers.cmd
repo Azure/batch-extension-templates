@@ -16,14 +16,6 @@ set driver_filename=%driver_version%-tesla-desktop-winserver2016-international.e
 rem If already installed, skip
 if exist %AZ_BATCH_NODE_SHARED_DIR%\init.txt exit /b 0
 
-rem Install Chocolatey - https://chocolatey.org 
-@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-if %errorlevel% neq 0 exit /b %errorlevel%
-
-rem Install 7zip
-choco install -y 7zip
-if %errorlevel% neq 0 exit /b %errorlevel%
-
 rem Download NVIDIA Tesla/CUDA drivers
 powershell.exe Invoke-WebRequest -Uri "http://us.download.nvidia.com/Windows/Quadro_Certified/%driver_version%/%driver_filename%" -OutFile "%driver_filename%"
 if %errorlevel% neq 0 exit /b %errorlevel%
