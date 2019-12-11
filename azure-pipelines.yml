@@ -4,7 +4,7 @@ steps:
 - task: Bash@3
   inputs:
     targetType: 'inline'
-    script: 'curl https://raw.githubusercontent.com/Azure/batchexplorer/master/python/requirements.txt -o berequirements.txt'
+    script: 'curl https://raw.githubusercontent.com/Azure/batchexplorer/master/python/requirements.txt -o runner/berequirements.txt'
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '2.7.x'
@@ -16,9 +16,10 @@ steps:
     script: 'python -m pip install merge-requirements'
 - task: Bash@3
   inputs:
+    workingDirectory: 'runner'
     targetType: 'inline'
     script:
-      python -m merge_requirements.main berequirements.txt runner/requirements.txt
+      python -m merge_requirements.main berequirements.txt requirements.txt
 - task: CopyFiles@2
   inputs:
     Contents: '**'
