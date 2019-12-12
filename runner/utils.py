@@ -381,7 +381,7 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
         pool = batch_service_client.pool.get(pool_id)
         new_node_count = pool.target_dedicated_nodes * 2
         logger.info("Resizing pool [{}] to '{}' nodes".format(pool_id, new_node_count))
-        batch_service_client.pool.resize(pool_id, batchmodels.pool_resize_parameter(target_dedicated_nodes = new_node_count))
+        batch_service_client.pool.resize(pool_id, batchmodels.PoolResizeParameter(target_dedicated_nodes = new_node_count))
         wait_for_pool_resize_operation(batch_service_client, pool_id, test_timeout, stop_thread) #if exception thrown again here, will bubble up
 
     pool = batch_service_client.pool.get(pool_id)
