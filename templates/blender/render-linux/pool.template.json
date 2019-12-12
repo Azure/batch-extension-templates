@@ -92,7 +92,7 @@
         }
     },
     "pool": {
-        "id": "[parameters('poolName')]",
+        "id": "[parameters('poolId')]",
         "displayName": "Blender rendering pool for CentOS",
         "vmSize": "[parameters('nodeSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
