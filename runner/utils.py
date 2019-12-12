@@ -80,7 +80,7 @@ timeout_delta_job_complete = timedelta(minutes=15)
 
 # The number of seconds given for the batch service to update state, 
 # e.g when we need to delay between disabling a job and patching it
-service_state_transition_seconds = 10 
+service_state_transition_seconds = 30
 
 output_fgrp_postfix = "-output"
 
