@@ -4,6 +4,7 @@ from azure.keyvault import KeyVaultClient
 import traceback
 from datetime import datetime, timezone, timedelta
 import sys
+import os
 import logger
 import json
 import test_manager
@@ -199,7 +200,9 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-        exit(0)
+        logger.info("Exit code 0")
+        os._exit(0)
     except Exception as err:
         traceback.print_exc()
-        exit(1)
+        logger.info("Exit code 1")
+        os._exit(1)
