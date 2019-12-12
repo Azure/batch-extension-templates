@@ -88,13 +88,16 @@ class TestManager(object):
             self.on_test_failed(batch_service_client, blob_client, False)
 
         except (Exception, ex.TerminalTestException) as e:
+            logger.error("TerminalException thrown for job id: [{}]. Exception: {} - '{}'. StackTrace '{}'."
+                .format(self.job_id, e.__class__.__name__, e,  traceback.format_exc()))
+
             self.status = utils.TestStatus(utils.TestState.TERMINAL_FAILURE, e)
             self.on_test_failed(batch_service_client, blob_client, interrupt_main_on_failure)
 
     def monitor_pool_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, image_references: 'List[utils.ImageReference]', test_timeout: datetime, stop_thread, VM_image_URL, VM_OS_type):
         try:
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
-            self.pool_start_duration = datetime.now(timezone.utc) - self.start_time
+            self.pool_start_duration = timedelta_since(self.start_time)
 
         except (ex.PoolResizeFailedException, ex.NodesFailedToStartException):
             #pool failed to get enough nodes to idle from both initial allocation and any secondary pool resize too - try create a whole new pool and change job to target it
@@ -105,6 +108,7 @@ class TestManager(object):
             utils.retarget_job_to_new_pool(batch_service_client, self.job_id, self.pool_id)
 
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
+            self.pool_start_duration = timedelta_since(self.start_time)
 
     def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime, stop_thread):
         try:

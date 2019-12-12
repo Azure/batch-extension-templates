@@ -484,3 +484,6 @@ def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsCli
         else:
             logger.info("Job [{}] is running".format(job_id))
             time.sleep(5)
+
+def timedelta_since(start_time: datetime):
+    return datetime.now(timezone.utc) - start_time
