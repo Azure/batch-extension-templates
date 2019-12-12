@@ -78,6 +78,10 @@ timeout_delta_pool_resize = timedelta(minutes=15)
 timeout_delta_node_idle = timedelta(minutes=10)
 timeout_delta_job_complete = timedelta(minutes=15)
 
+# The number of seconds given for the batch service to update state, 
+# e.g when we need to delay between disabling a job and patching it
+service_state_transition_seconds = 10 
+
 output_fgrp_postfix = "-output"
 
 def print_batch_exception(batch_exception: batchmodels.BatchErrorException):
@@ -231,6 +235,9 @@ def terminate_and_delete_job(batch_service_client: batch.BatchExtensionsClient, 
 def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, job_id: str, new_pool_id: str):
     logger.info("Retargeting job [{}] to new pool [{}]".format(job_id, new_pool_id))
     batch_service_client.job.disable(job_id, "requeue")
+    
+    time.sleep(service_state_transition_seconds) #give the job time to move to disabled state before we try Patch it
+
     batch_service_client.job.patch(job_id, batchmodels.JobPatchParameter(pool_info=batchmodels.PoolInformation(pool_id = new_pool_id)))
     batch_service_client.job.enable(job_id)  
     logger.info("Successfully retargeted job [{}] to pool [{}]".format(job_id, new_pool_id))
