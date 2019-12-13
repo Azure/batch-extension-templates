@@ -127,11 +127,25 @@
         "expectedOutput":"blender-linux_0001.png"
     },
     {
-        "name": "blender-windows",
+        "name": "blender-windows279",
         "template": "../templates/blender/render-windows/job.template.json",
         "poolTemplate": "../templates/blender/render-windows/pool.template.json",
-        "parameters": "Tests/blender/render-windows/job.parameters.json",
-        "expectedOutput":"blender-windows_0001.png"
+        "parameters": "Tests/blender/render-windows/job.parameters279.json",
+        "expectedOutput":"blender-windows279_0001.png"
+    },
+    {
+        "name": "blender-windows28multi",
+        "template": "../templates/blender/render-windows/job.template.json",
+        "poolTemplate": "../templates/blender/render-windows/pool.template.json",
+        "parameters": "Tests/blender/render-windows/job.parameters28multi.json",
+        "expectedOutput":"blender-windows28multi_0001.png"
+    },
+    {
+        "name": "blender-windows28",
+        "template": "../templates/blender/render-windows/job.template.json",
+        "poolTemplate": "../templates/blender/render-windows/pool.template.json",
+        "parameters": "Tests/blender/render-windows/job.parameters28.json",
+        "expectedOutput":"blender-windows28_0001.png"
     },
     {
         "name": "blender-linux-dr",
