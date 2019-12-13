@@ -1,5 +1,6 @@
 import azure.batch.models as batchmodels
 import azure.storage.blob as azureblob
+from msrest.exceptions import ClientRequestError as ClientRequestError
 from azure.storage.blob.models import ContainerPermissions
 from azure.keyvault import KeyVaultClient
 import azext.batch as batch
@@ -15,6 +16,7 @@ import exceptions as ex
 import traceback
 import sys
 import itertools
+import random
 
 utc = pytz.utc
 
@@ -179,7 +181,7 @@ def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str)
     """
     logger.info("Deleting pool: {}".format(pool_id))
     try:
-        batch_service_client.pool.delete(pool_id)
+        run_with_503_jitter_retry(batch_service_client.pool.delete, pool_id)
     except batchmodels.BatchErrorException as batch_exception:
         if expected_exception(batch_exception, "The specified pool has been marked for deletion"):
             logger.warning("The specified pool [{}] had already been marked for deletion when we went to delete ie.".format(pool_id))
@@ -191,7 +193,7 @@ def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str)
 
 def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     try:
-        batch_service_client.job.terminate(job_id)
+        run_with_503_jitter_retry(batch_service_client.job.terminate, job_id)
 
     except batchmodels.BatchErrorException as batch_exception:
 
@@ -209,7 +211,7 @@ def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str
 
 def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     try:
-        batch_service_client.job.delete(job_id)
+        run_with_503_jitter_retry(batch_service_client.job.delete, job_id)
 
     except batchmodels.BatchErrorException as batch_exception:
 
@@ -494,3 +496,14 @@ def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsCli
 
 def timedelta_since(start_time: datetime):
     return datetime.now(timezone.utc) - start_time
+
+def run_with_503_jitter_retry(method, args, retry_count = 0):
+    max_retry_count = 10
+    try:
+        method(*args)
+    except ClientRequestError as e:
+        if e.message.contains("too many 503") and retry_count < max_retry_count:
+            logger.info("Retrying call due to 503 received from service.")
+            time.sleep(random.uniform(0.1, 1))  #jitter the next request a bit
+            run_with_503_jitter_retry(method, args, retry_count + 1)
+        raise
