@@ -497,7 +497,7 @@ def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsCli
 def timedelta_since(start_time: datetime):
     return datetime.now(timezone.utc) - start_time
 
-def run_with_503_jitter_retry(method, args, retry_count = 0):
+def run_with_503_jitter_retry(method, *args, retry_count = 0):
     max_retry_count = 10
     try:
         method(*args)
