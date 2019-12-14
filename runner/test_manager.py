@@ -184,7 +184,7 @@ class TestManager(object):
         pool = batch_service_client.pool.poolparameter_from_json(pool_json)
         logger.info('Creating pool [{}]...'.format(pool))
         try:
-            batch_service_client.pool.add(pool)
+            utils.run_with_503_jitter_retry(batch_service_client.pool.add, pool)
         except batchmodels.BatchErrorException as err:
             if utils.expected_exception(
                     err, "The specified pool already exists"):

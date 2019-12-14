@@ -369,7 +369,7 @@ def submit_job(batch_service_client: batch.BatchExtensionsClient, template: str,
             template, parameters)
         job_parameters = batch_service_client.job.jobparameter_from_json(
             job_json)
-        batch_service_client.job.add(job_parameters)
+        run_with_503_jitter_retry(batch_service_client.job.add, job_parameters)
     except batchmodels.BatchErrorException as err:
         logger.error(
             "Failed to submit job\n{}\n with params\n{}".format(
