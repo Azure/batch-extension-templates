@@ -240,7 +240,21 @@ def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, 
     
     time.sleep(service_state_transition_seconds) #give the job time to move to disabled state before we try Patch it
 
-    batch_service_client.job.patch(job_id, batchmodels.JobPatchParameter(pool_info=batchmodels.PoolInformation(pool_id = new_pool_id)))
+    looping_job_patch = True
+    job_patch_retry_count = 0
+    while looping_job_patch:
+        try:
+            batch_service_client.job.patch(job_id, batchmodels.JobPatchParameter(pool_info=batchmodels.PoolInformation(pool_id = new_pool_id)))
+            looping_job_patch = False
+        except batchmodels.BatchErrorException as batch_exception:
+            if expected_exception(batch_exception, "The specified operation is not valid for the current state of the resource"):
+                if job_patch_retry_count > 10:
+                    logger.error("Exhausted retries and Failed to patch job [{}] due to the current state of the resource".format(job_id))
+                    raise
+                logger.info("Failed to patch job [{}] due to the current state of the resource, retrying....".format(job_id))
+                time.sleep(5)
+                job_patch_retry_count =  job_patch_retry_count + 1
+    
     batch_service_client.job.enable(job_id)  
     logger.info("Successfully retargeted job [{}] to pool [{}]".format(job_id, new_pool_id))
 
