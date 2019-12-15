@@ -518,13 +518,13 @@ def run_with_jitter_retry(method, *args, retry_count = 0):
         method(*args)
     except ClientRequestError as e:
         if e.message.contains("too many 503") and retry_count < max_retry_count:
-            logger.info("Retrying call due to 503 received from service. - retryCount:{} of {}".format(retry_count, max_retry_count))
+            logger.info("Retrying call due to 503 received from service - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  #jitter the next request a bit
             run_with_jitter_retry(method, args, retry_count + 1)
         raise
     except requests_ConnectionError as e: 
         if 'Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message:
-            logger.info("Retrying call as connection forcibly closed by remote host.")
+            logger.info("Retrying call as connection forcibly closed by remote host - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  #jitter the next request a bit
             run_with_jitter_retry(method, args, retry_count + 1)
         raise
