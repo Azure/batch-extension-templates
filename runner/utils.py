@@ -1,6 +1,7 @@
 import azure.batch.models as batchmodels
 import azure.storage.blob as azureblob
 from msrest.exceptions import ClientRequestError as ClientRequestError
+from requests.exceptions import ConnectionError as requests_ConnectionError
 from azure.storage.blob.models import ContainerPermissions
 from azure.keyvault import KeyVaultClient
 import azext.batch as batch
@@ -181,7 +182,7 @@ def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str)
     """
     logger.info("Deleting pool: {}".format(pool_id))
     try:
-        run_with_503_jitter_retry(batch_service_client.pool.delete, pool_id)
+        run_with_jitter_retry(batch_service_client.pool.delete, pool_id)
     except batchmodels.BatchErrorException as batch_exception:
         if expected_exception(batch_exception, "The specified pool has been marked for deletion"):
             logger.warning("The specified pool [{}] had already been marked for deletion when we went to delete ie.".format(pool_id))
@@ -193,7 +194,7 @@ def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str)
 
 def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     try:
-        run_with_503_jitter_retry(batch_service_client.job.terminate, job_id)
+        run_with_jitter_retry(batch_service_client.job.terminate, job_id)
 
     except batchmodels.BatchErrorException as batch_exception:
 
@@ -211,7 +212,7 @@ def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str
 
 def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     try:
-        run_with_503_jitter_retry(batch_service_client.job.delete, job_id)
+        run_with_jitter_retry(batch_service_client.job.delete, job_id)
 
     except batchmodels.BatchErrorException as batch_exception:
 
@@ -369,7 +370,7 @@ def submit_job(batch_service_client: batch.BatchExtensionsClient, template: str,
             template, parameters)
         job_parameters = batch_service_client.job.jobparameter_from_json(
             job_json)
-        run_with_503_jitter_retry(batch_service_client.job.add, job_parameters)
+        run_with_jitter_retry(batch_service_client.job.add, job_parameters)
     except batchmodels.BatchErrorException as err:
         logger.error(
             "Failed to submit job\n{}\n with params\n{}".format(
@@ -511,13 +512,19 @@ def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsCli
 def timedelta_since(start_time: datetime):
     return datetime.now(timezone.utc) - start_time
 
-def run_with_503_jitter_retry(method, *args, retry_count = 0):
+def run_with_jitter_retry(method, *args, retry_count = 0):
     max_retry_count = 10
     try:
         method(*args)
     except ClientRequestError as e:
         if e.message.contains("too many 503") and retry_count < max_retry_count:
-            logger.info("Retrying call due to 503 received from service.")
+            logger.info("Retrying call due to 503 received from service. - retryCount:{} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  #jitter the next request a bit
-            run_with_503_jitter_retry(method, args, retry_count + 1)
+            run_with_jitter_retry(method, args, retry_count + 1)
+        raise
+    except requests_ConnectionError as e: 
+        if 'Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message:
+            logger.info("Retrying call as connection forcibly closed by remote host.")
+            time.sleep(random.uniform(0.1, 1))  #jitter the next request a bit
+            run_with_jitter_retry(method, args, retry_count + 1)
         raise
