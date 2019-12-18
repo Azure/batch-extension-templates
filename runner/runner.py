@@ -122,23 +122,19 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
         test.create_and_submit_pool(batch_client, images_refs, VMImageURL)
         test.create_and_submit_job(batch_client)
     
+    logger.info("Finished submitting jobs and pools, starting test monitor threads.")
     stop_threads = False
     threads = [] # type: List[threading.Thread]
     try:
         threads = utils.start_test_threads("run_test", _test_managers, blob_client, batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL)
 
-        waiting = True
-        while waiting:
-            waiting = False
-            for thread in threads:
-                if thread.isAlive():
-                    waiting = True
-                    thread.join(1)
+        utils.wait_for_threads_to_finish(threads)
 
     except KeyboardInterrupt:
         #A test has failed and triggered KeyboardInterrupt on main thread, so call stop_threads on all the other threads
         logger.error("Keyboard Interrupt triggered in main thread, calling stop_threads")
         stop_threads = True
+        utils.wait_for_threads_to_finish(threads)
         
 def main():
     args = runner_arguments()

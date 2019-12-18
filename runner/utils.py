@@ -528,3 +528,12 @@ def run_with_jitter_retry(method, *args, retry_count = 0):
             time.sleep(random.uniform(0.1, 1))  #jitter the next request a bit
             run_with_jitter_retry(method, args, retry_count + 1)
         raise
+
+def wait_for_threads_to_finish(threads: 'List[threading.thread]'):
+    waiting = True
+    while waiting:
+        waiting = False
+        for thread in threads:
+            if thread.isAlive():
+                waiting = True
+                thread.join(1)
