@@ -21,8 +21,16 @@ This module is responsible for creating, submitting and monitoring the pools and
 """
 class TestManager(object):
 
-    def __init__(self, template_file: str, pool_template_file: str,
-                 parameters_file: str, keyvault_client_with_url: tuple, expected_output: str, application_licenses: str = None, repository_branch_name: str = None, run_unique_id: str = None):
+    def __init__(self, 
+                template_file: str, 
+                pool_template_file: str,
+                parameters_file: str, 
+                keyvault_client_with_url: tuple, 
+                expected_output: str, 
+                application_licenses: str = None, 
+                repository_branch_name: str = None, 
+                run_unique_id: str = None,
+                VM_OS_type=None):
         super(TestManager, self).__init__()
         self.raw_job_id = ctm.get_job_id(parameters_file)  # The attribute 'raw_job_id' of type 'str'
         self.run_id = "{}-{}".format(repository_branch_name[:7], run_unique_id) # identifier for this run to append to job and pools and prevent collisions with parallel builds - for PR builds this is the git short sha, otherwise "master"
@@ -42,6 +50,7 @@ class TestManager(object):
         self.job_run_duration = None # The attribute 'pool_start_duration' of type 'timedelta'
         self.min_required_vms = int(ctm.get_dedicated_vm_count(parameters_file)) # the minimum number of nodes which the test job needs in order to run
         self.start_time = datetime.now(timezone.utc)
+        self.VM_OS_type = VM_OS_type
 
     def __str__(self) -> str:
         return "job_id: [{}] pool_id: [{}] ".format(self.job_id, self.pool_id)
@@ -53,19 +62,14 @@ class TestManager(object):
         interrupt_main_on_failure: bool, #should this test raise thread.interrupt_main() if it fails
         timeout: int,
         stop_thread, 
-        VM_image_URL=None, 
-        VM_OS_type=None):
+        VM_image_URL=None):
 
         self.status = utils.TestStatus(utils.TestState.IN_PROGRESS, "Test starting for {}".format(self.job_id))
         
         test_timeout = datetime.now(timezone.utc) + timedelta(minutes=timeout)
 
-        self.upload_assets(blob_client)
-        self.create_and_submit_pool(batch_service_client, image_references, VM_image_URL, VM_OS_type)
-        self.create_and_submit_job(batch_service_client)
-
         try:
-            self.monitor_pool_and_retry_if_needed(batch_service_client, image_references, test_timeout, stop_thread, VM_image_URL, VM_OS_type)
+            self.monitor_pool_and_retry_if_needed(batch_service_client, image_references, test_timeout, stop_thread, VM_image_URL, self.VM_OS_type)
 
             self.monitor_job_and_retry_if_needed(batch_service_client, test_timeout, stop_thread)
 

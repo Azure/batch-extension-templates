@@ -113,7 +113,14 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
     :param batch_client: The batch client needed for making batch operations
     :type batch_client: azure.batch.BatchExtensionsClient
     """
-    logger.info("{} jobs will be created.".format(len(_test_managers)))
+    logger.info("{} tests will be run.".format(len(_test_managers)))
+
+    for test in _test_managers:
+        test.status = utils.TestStatus(utils.TestState.IN_PROGRESS, "Test starting for {}".format(test.job_id))
+
+        test.upload_assets(blob_client)
+        test.create_and_submit_pool(batch_client, images_refs, VMImageURL)
+        test.create_and_submit_job(batch_client)
     
     stop_threads = False
     threads = [] # type: List[threading.Thread]
