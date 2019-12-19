@@ -256,8 +256,11 @@ def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, 
                 time.sleep(5)
                 job_patch_retry_count =  job_patch_retry_count + 1
     
-    batch_service_client.job.enable(job_id)  
     logger.info("Successfully retargeted job [{}] to pool [{}]".format(job_id, new_pool_id))
+
+def enable_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    batch_service_client.job.enable(job_id) 
+    logger.info("Successfully re-enabled job [{}]".format(job_id)) 
 
 def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> bool:
     

@@ -112,6 +112,8 @@ class TestManager(object):
             utils.retarget_job_to_new_pool(batch_service_client, self.job_id, self.pool_id)
 
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
+            utils.enable_job(batch_service_client, self.job_id)
+            
             self.pool_start_duration = utils.timedelta_since(self.start_time)
 
     def monitor_job_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, test_timeout: datetime, stop_thread):
