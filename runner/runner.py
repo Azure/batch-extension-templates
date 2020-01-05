@@ -25,7 +25,7 @@ create pools and jobs based on this file.
 sys.path.append('.')
 sys.path.append('..')
 
-_timeout = 60  # type: int
+_timeout = 50  # type: int
 _test_managers = []  # type: List[test_manager.TestManager]
 
 def create_batch_client(args: object) -> batch.BatchExtensionsClient:
