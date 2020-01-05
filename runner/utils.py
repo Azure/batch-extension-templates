@@ -503,7 +503,6 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
                 raise ex.NodesFailedToStartException(pool_id, exception_message)
 
             #all failures were terminal, treat this as a test-terminal failure
-           
             raise ex.TerminalTestException("For pool [{}], too many nodes failed with terminal errors: {}".format(pool_id, exception_message))
 
         idle_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state == batchmodels.ComputeNodeState.idle])
