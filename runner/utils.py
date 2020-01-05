@@ -193,6 +193,9 @@ def delete_pool(batch_service_client: batch.BatchExtensionsClient, pool_id: str)
             print_batch_exception(batch_exception)
 
 def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    """
+    Terminates a pool, if the pool has already been completed, terminated or marked for termination it logs and swallows the exception.
+    """
     try:
         run_with_jitter_retry(batch_service_client.job.terminate, job_id)
 
@@ -211,6 +214,9 @@ def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str
         print_batch_exception(batch_exception)
 
 def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    """
+    Deletes a job, if the job was not found or is already completed it logs and swallows the exception.
+    """
     try:
         run_with_jitter_retry(batch_service_client.job.delete, job_id)
 
@@ -232,10 +238,16 @@ def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
         traceback.print_exc()
 
 def terminate_and_delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    """
+    Terminated then deletes a job.
+    """
     terminate_job(batch_service_client, job_id)
     delete_job(batch_service_client, job_id)
 
 def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, job_id: str, new_pool_id: str):
+    """
+    Disables a job with task requeue, then patches it to target a new pool.
+    """
     logger.info("Retargeting job [{}] to new pool [{}]".format(job_id, new_pool_id))
     batch_service_client.job.disable(job_id, "requeue")
     
@@ -259,11 +271,16 @@ def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, 
     logger.info("Successfully retargeted job [{}] to pool [{}]".format(job_id, new_pool_id))
 
 def enable_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
+    """
+    Enables a job.
+    """
     batch_service_client.job.enable(job_id) 
     logger.info("Successfully re-enabled job [{}]".format(job_id)) 
 
 def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> bool:
-    
+    """
+    Checks if a specified task output file was created by a task.
+    """
     tasks = batch_service_client.task.list(job_id)
 
     for task in tasks:
@@ -314,18 +331,27 @@ def cleanup_old_resources(blob_client: azureblob.BlockBlobService, batch_client:
         raise e
 
 def check_for_pool_resize_error(pool_id: str, pool: str) -> bool:
+    """
+    Returns true if pool is in steady state with no pool resize errors. 
+    Otherwise returns false.
+
+    :param pool_id: The pool id.
+    :type str:
+    :param pool: The pool object.
+    :type str:
+    """
     if pool.allocation_state.value == "steady" and pool.resize_errors is not None:
         logger.warning("POOL {} FAILED TO ALLOCATE".format(pool_id))
         return True
     return False
 
-def start_test_threads(method_name: str, test_managers: 'list[test_manager.TestManager]', *args):
+def start_test_threads(method_name: str, test_managers: 'list[test_manager.TestManager]', *args) -> 'List[threading.thread]':
     """
-    Executes the specified test manager methods in parallel. This returns once all test manager methods have completed
+    Executes the specified test manager methods in parallel and returns the list of threads.
     
     :param method_name: The test_managers method to be called
     :type method_name: str
-    :param test_managers: a collection of tests that will be run
+    :param test_managers: a collection of tests for which to execute method_name 
     :type  test_managers: List[test_managers.TestManager]
     :param args: the arguments the method needs to run 
     """ 
@@ -368,6 +394,9 @@ def update_params_with_values_from_keyvault(parameters: dict(), keyvault_client_
             parameters[parameter] = secret_bundle.value
 
 def submit_job(batch_service_client: batch.BatchExtensionsClient, template: str, parameters: str, raw_job_id: str):
+    """
+
+    """
     try:
         job_json = batch_service_client.job.expand_template(
             template, parameters)
@@ -388,18 +417,10 @@ def submit_job(batch_service_client: batch.BatchExtensionsClient, template: str,
         logger.error("Job {}, failed to submit, because of the error: {}".format(raw_job_id, sys.exc_info()[0]))
         raise
 
-def has_timedout(timeout: datetime) -> bool:
-    return datetime.now(timezone.utc) > timeout
-
-def check_test_timeout(timeout: datetime) -> bool:
-    if datetime.now(timezone.utc) > timeout:
-        raise ex.TestTimedOutException("Raising TestTimedOutException.")
-
-def check_stop_thread(stop_thread):
-    if stop_thread():
-        raise ex.StopThreadException("Raising StopThreadException.")
-
 def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, test_timeout: datetime, stop_thread):
+    """
+    Waits for a pool to go to steady state and then for the nodes to go to idle
+    """
     try:
         wait_for_pool_resize_operation(batch_service_client, pool_id, test_timeout, stop_thread)
 
@@ -417,6 +438,10 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
     wait_for_enough_idle_vms(batch_service_client, pool_id, min_required_vms, max_allowed_failed_nodes, pool.state_transition_time, test_timeout, stop_thread)
 
 def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsClient, pool_id: str, test_timeout: datetime, stop_thread) -> bool:
+    """
+    Waits for a pool resize operation to complete and pool allocation state to go to steady.
+    Raises a retryable exception on resize errors.
+    """
     time.sleep(10)  #make sure pool has time to change out of steady state
     pool = batch_service_client.pool.get(pool_id)
     timeout_pool_resize = pool.creation_time + timeout_delta_pool_resize
@@ -438,6 +463,10 @@ def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsCl
         raise ex.PoolResizeFailedException(pool_id, exception_message)
 
 def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, pool_id: str, min_required_vms: int, max_allowed_failed_nodes: int, pool_resize_time: datetime, test_timeout: datetime, stop_thread) -> bool:
+    """
+    Waits for a minimum number of VM's in the pool to enter idle state. 
+    Raising retryable or terminal exceptions if errors are encountered.
+    """
     nodes = []
     idle_node_count = 0
     retryable_failed_node_count = 0
@@ -480,7 +509,10 @@ def wait_for_enough_idle_vms(batch_service_client: batch.BatchExtensionsClient, 
         idle_node_count = len([(i, n) for i, n in enumerate(nodes, 1) if n.state == batchmodels.ComputeNodeState.idle])
 
 def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_output: str, test_timeout: datetime, stop_thread):
-
+    """
+    Waits for all tasks in a job to enter TaskState.completed, then checks all expected task outputs are present in storage before returning.
+    Any tasks which fail throw an exception immediately.
+    """
     timeout_jobs_tasks_complete = datetime.now(timezone.utc) + timeout_delta_job_complete
 
     # Wait for all tasks in the job to be in a terminal state
@@ -513,9 +545,15 @@ def wait_for_job_and_check_result(batch_service_client: batch.BatchExtensionsCli
             time.sleep(5)
 
 def timedelta_since(start_time: datetime):
+    """
+    Returns the timedelta between utcnow and arg start_time
+    """
     return datetime.now(timezone.utc) - start_time
 
 def run_with_jitter_retry(method, *args, retry_count = 0):
+    """
+    Retries a webservice call with retry timing jitter when the call fails with 503 or 'connection forcibly closed'
+    """
     max_retry_count = 10
     try:
         method(*args)
@@ -533,6 +571,9 @@ def run_with_jitter_retry(method, *args, retry_count = 0):
         raise
 
 def wait_for_threads_to_finish(threads: 'List[threading.thread]'):
+    """
+    Polls and waits until all threads in a list are no longer alive
+    """
     waiting = True
     while waiting:
         waiting = False
@@ -540,3 +581,14 @@ def wait_for_threads_to_finish(threads: 'List[threading.thread]'):
             if thread.isAlive():
                 waiting = True
                 thread.join(1)
+
+def has_timedout(timeout: datetime) -> bool:
+    return datetime.now(timezone.utc) > timeout
+
+def check_test_timeout(timeout: datetime) -> bool:
+    if datetime.now(timezone.utc) > timeout:
+        raise ex.TestTimedOutException("Raising TestTimedOutException.")
+
+def check_stop_thread(stop_thread):
+    if stop_thread():
+        raise ex.StopThreadException("Raising StopThreadException.")
