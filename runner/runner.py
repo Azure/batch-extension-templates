@@ -28,6 +28,7 @@ sys.path.append('..')
 _timeout = 50  # type: int
 _test_managers = []  # type: List[test_manager.TestManager]
 
+
 def create_batch_client(args: object) -> batch.BatchExtensionsClient:
     """
     Create a batch client using AAD.
@@ -48,6 +49,7 @@ def create_batch_client(args: object) -> batch.BatchExtensionsClient:
         batch_url=args.BatchAccountUrl,
         subscription_id=args.BatchAccountSub,)
 
+
 def create_keyvault_client(args: object) -> tuple():
     """
     Create keyvault client namedTuple with url
@@ -60,9 +62,9 @@ def create_keyvault_client(args: object) -> tuple():
         return (None, None)
 
     credentials = ServicePrincipalCredentials(
-        client_id = args.ServicePrincipalCredentialsClientID,
-        secret = args.ServicePrincipalCredentialsSecret,
-        tenant = args.ServicePrincipalCredentialsTenant)
+        client_id=args.ServicePrincipalCredentialsClientID,
+        secret=args.ServicePrincipalCredentialsSecret,
+        tenant=args.ServicePrincipalCredentialsTenant)
 
     client = KeyVaultClient(credentials)
 
@@ -71,7 +73,6 @@ def create_keyvault_client(args: object) -> tuple():
 
 def runner_arguments():
     """
-    
     Handles the user's input and what settings are needed when running this module.
 
     :return: Returns the parser that contains all settings this module needs from the user's input
@@ -88,20 +89,27 @@ def runner_arguments():
     parser.add_argument("BatchAccountSub", help="The batch account sub ")
     parser.add_argument("StorageAccountName", help="Storage name ")
     parser.add_argument("StorageAccountKey", help="storage key")
-    parser.add_argument("ServicePrincipalCredentialsClientID", help="Service Principal id")
-    parser.add_argument("ServicePrincipalCredentialsSecret", help="Service Principal secret")
-    parser.add_argument("ServicePrincipalCredentialsTenant", help="Service Principal tenant")
-    parser.add_argument("ServicePrincipalCredentialsResouce", help="Service Principal resource")
-    parser.add_argument("-VMImageURL", default=None, help="The custom image resource URL, if you want the temlates to run on a custom image")
-    parser.add_argument("-KeyVaultUrl", default=None, help="Azure Key vault to fetch secrets from, service principal must have access")
+    parser.add_argument("ServicePrincipalCredentialsClientID",
+                        help="Service Principal id")
+    parser.add_argument("ServicePrincipalCredentialsSecret",
+                        help="Service Principal secret")
+    parser.add_argument("ServicePrincipalCredentialsTenant",
+                        help="Service Principal tenant")
+    parser.add_argument("ServicePrincipalCredentialsResouce",
+                        help="Service Principal resource")
+    parser.add_argument("-VMImageURL", default=None,
+                        help="The custom image resource URL, if you want the temlates to run on a custom image")
+    parser.add_argument("-KeyVaultUrl", default=None,
+                        help="Azure Key vault to fetch secrets from, service principal must have access")
     parser.add_argument("-CleanUpResources", action="store_false")
-    parser.add_argument("-RepositoryBranchName", default="master", help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
+    parser.add_argument("-RepositoryBranchName", default="master",
+                        help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
 
     return parser.parse_args()
 
 
 def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient,
-                          images_refs: 'List[utils.ImageReference]', VMImageURL: str):
+                           images_refs: 'List[utils.ImageReference]', VMImageURL: str):
     """
     Creates all resources needed to run the job, including creating the containers and the pool needed to run the job.
     Then creates job and checks if the expected output is correct.
@@ -116,32 +124,38 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
     logger.info("{} tests will be run.".format(len(_test_managers)))
 
     for test in _test_managers:
-        test.status = utils.TestStatus(utils.TestState.IN_PROGRESS, "Test starting for {}".format(test.job_id))
+        test.status = utils.TestStatus(
+            utils.TestState.IN_PROGRESS, "Test starting for {}".format(test.job_id))
 
         test.upload_assets(blob_client)
         test.create_and_submit_pool(batch_client, images_refs, VMImageURL)
         test.create_and_submit_job(batch_client)
-    
-    logger.info("Finished submitting jobs and pools, starting test monitor threads.")
+
+    logger.info(
+        "Finished submitting jobs and pools, starting test monitor threads.")
     stop_threads = False
-    threads = [] # type: List[threading.Thread]
+    threads = []  # type: List[threading.Thread]
     try:
-        threads = utils.start_test_threads("run_test", _test_managers, blob_client, batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL)
+        threads = utils.start_test_threads("run_test", _test_managers, blob_client,
+                                           batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL)
         utils.wait_for_threads_to_finish(threads)
 
     except KeyboardInterrupt:
-        #A test has failed and triggered KeyboardInterrupt on main thread, so call stop_threads on all the other threads
-        logger.error("Keyboard Interrupt triggered in main thread, calling stop_threads")
+        # A test has failed and triggered KeyboardInterrupt on main thread, so
+        # call stop_threads on all the other threads
+        logger.error(
+            "Keyboard Interrupt triggered in main thread, calling stop_threads")
         stop_threads = True
         utils.wait_for_threads_to_finish(threads)
-        
+
+
 def main():
     args = runner_arguments()
     logger.account_info(args)
     start_time = datetime.now(timezone.utc).replace(microsecond=0)
     logger.info('Template runner start time: [{}]'.format(start_time))
 
-    #generate unique id for this run to prevent collisions
+    # generate unique id for this run to prevent collisions
     run_unique_id = str(uuid.uuid4())[0:7]
 
     # Create the blob client, for use in obtaining references to
@@ -150,19 +164,20 @@ def main():
         account_name=args.StorageAccountName,
         account_key=args.StorageAccountKey)
 
-    # Create a batch client using AAD    
+    # Create a batch client using AAD
     batch_client = create_batch_client(args)
 
-    # Create a keyvault client using AAD    
+    # Create a keyvault client using AAD
     keyvault_client_with_url = create_keyvault_client(args)
 
     repository_branch_name = args.RepositoryBranchName
     if repository_branch_name == "current":
         repository_branch_name = Repository('../').head.shorthand
-        
-    logger.info('Pulling resource files from commit: {}'.format(repository_branch_name))
 
-    #Clean up any storage container, pool or jobs older than some threshold.
+    logger.info('Pulling resource files from commit: {}'.format(
+        repository_branch_name))
+
+    # Clean up any storage container, pool or jobs older than some threshold.
     utils.cleanup_old_resources(blob_client, batch_client)
 
     try:
@@ -171,7 +186,8 @@ def main():
             try:
                 template = json.load(f)
             except ValueError as e:
-                logger.error("Failed to read test config file due to the following error: {}".format(e))
+                logger.error(
+                    "Failed to read test config file due to the following error: {}".format(e))
                 raise e
 
             for jobSetting in template["tests"]:
@@ -190,9 +206,11 @@ def main():
                     run_unique_id))
 
             for image in template["images"]:
-                images_refs.append(utils.ImageReference(image["osType"], image["offer"], image["version"]))
+                images_refs.append(utils.ImageReference(
+                    image["osType"], image["offer"], image["version"]))
 
-        run_test_manager_tests(blob_client, batch_client, images_refs, args.VMImageURL)
+        run_test_manager_tests(blob_client, batch_client,
+                               images_refs, args.VMImageURL)
 
     except batchmodels.BatchErrorException as err:
         utils.print_batch_exception(err)
