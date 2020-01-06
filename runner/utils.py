@@ -83,7 +83,7 @@ class TestState(Enum):
     TIMED_OUT = 8
 
 timeout_delta_pool_resize = timedelta(minutes=15)
-timeout_delta_node_idle = timedelta(minutes=10)
+timeout_delta_node_idle = timedelta(minutes=15)
 timeout_delta_job_complete = timedelta(minutes=15)
 
 # The number of seconds given for the batch service to update state,
@@ -293,7 +293,23 @@ def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, 
     """
     logger.info("Retargeting job [{}] to new pool [{}]".format(
         job_id, new_pool_id))
-    batch_service_client.job.disable(job_id, "requeue")
+
+    try:
+
+        batch_service_client.job.disable(job_id, "requeue")
+
+    except batchmodels.BatchErrorException as batch_exception:
+        # potential race condition where the nodes have gone idle and the job has 'Completed' between our internal 
+        # node-idle-timeout check and the call to disable the job. Just return in this case 
+        if expected_exception(batch_exception, "The specified job does not exist"):
+            logger.info(
+                "The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
+            raise ex.JobAlreadyCompleteException(job_id, "Job already complete and deleted.")
+
+        if expected_exception(batch_exception, "The specified job is already in a completed state"):
+            logger.info(
+                "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
+            raise ex.JobAlreadyCompleteException(job_id, "Job already complete.")
 
     # give the job time to move to disabled state before we try Patch it
     time.sleep(service_state_transition_seconds)

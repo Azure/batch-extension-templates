@@ -48,3 +48,10 @@ class NodesFailedToStartException(NonTerminalException):
     def __init__(self, identifier, message):
         super().__init__(identifier, message)
 
+
+class JobAlreadyCompleteException(NonTerminalException):
+    """Raised when we timeout waiting for idle nodes and we try retarget the job to a new pool, but hit the race 
+    condition where the nodes have since gone idle and the job already completed."""
+
+    def __init__(self, identifier, message):
+        super().__init__(identifier, message)
