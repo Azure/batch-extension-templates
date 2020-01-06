@@ -283,6 +283,9 @@ class TestManager(object):
             utils.wait_for_job_and_check_result(batch_service_client, self.job_id, self.expected_output, test_timeout, stop_thread)
 
     def on_test_failed(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService, interrupt_main: bool):
+        """
+        Called when the test enters failed state
+        """
         logger.error("Test failed: {}".format(self.job_id))
         self.delete_resources(batch_service_client, blob_client, False)
 
@@ -291,6 +294,9 @@ class TestManager(object):
             _thread.interrupt_main()
 
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):
+        """
+        Called when the test completes successfully
+        """
         logger.info("Test Succeeded, Pool: {}, Job: {}".format(self.pool_id, self.job_id))
 
         self.total_duration = datetime.now(timezone.utc) - self.start_time
