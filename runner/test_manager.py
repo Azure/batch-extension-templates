@@ -252,6 +252,27 @@ class TestManager(object):
                 utils.print_batch_exception(err)
 
     def monitor_pool_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, image_references: 'List[utils.ImageReference]', test_timeout: datetime, stop_thread, VM_image_URL, VM_OS_type):
+        """
+        Monitors a pool to reach steady state, if it fails to resize or too many nodes fail to start then create a new pool named "<oldPool>-retry" and shift the job over to run on it.
+
+        :param batch_service_client: The batch client used for making batch operations
+        :type batch_service_client: `azure.batch.BatchExtensionsClient`
+
+        :param image_references: A list of image references that job can run
+        :type image_references: List['utils.ImageReference`]
+
+        :param test_timeout: The time at which the test will timeout and be failed.
+        :type datetime: `datetime.datetime`
+
+        :param stop_thread: Lambda method which returns a bool when we want to trigger the test to immediately fail and perform cleanup.
+        :type stop_thread: Func['bool']
+
+        :param VM_image_URL: VM Image URL for the pool - only set if a Custom Image is being used.
+        :type VM_image_URL: str
+
+        :param VM_OS_type: The OS type of the VM to use for the pool.
+        :type VM_OS_type: str
+        """
         try:
             utils.wait_for_steady_nodes(batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
             self.pool_start_duration = utils.timedelta_since(self.start_time)
