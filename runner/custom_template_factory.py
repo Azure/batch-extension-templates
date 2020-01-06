@@ -67,10 +67,6 @@ def set_custom_image(in_memory_json_object: str, VM_image_URL: str, VM_image_typ
         in_memory_json_object["variables"]["osType"][
             "imageReference"]["virtualMachineImageId"] = VM_image_URL
 
-    # TODO For handling windows and centos the nodeAgentSKUId needs to be changed in the json send object
-    # The centos image hasn't been tested so I haven't written logic for
-    # handling the VM_image_type
-
 
 def update_resource_file_url(resource_files, resource_branch_name):
     """
@@ -312,8 +308,9 @@ def get_scene_file(parameters_file: str) -> str:
 
 
 def get_dedicated_vm_count(parameters_file: str) -> str:
-    """[summary]
-    
+    """
+    Reads and returns the dedicated vm count from the parameters file
+
     :param parameters_file: Path of the parameters file
     :type parameters_file: str
     :return: The dedicatedVmCount as a str
