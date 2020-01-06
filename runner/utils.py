@@ -395,7 +395,7 @@ def update_params_with_values_from_keyvault(parameters: dict(), keyvault_client_
 
 def submit_job(batch_service_client: batch.BatchExtensionsClient, template: str, parameters: str, raw_job_id: str):
     """
-
+    Constructs job json by combining template and parameters then submits the job to the batch service
     """
     try:
         job_json = batch_service_client.job.expand_template(
@@ -552,6 +552,9 @@ def timedelta_since(start_time: datetime):
 def run_with_jitter_retry(method, *args, retry_count = 0):
     """
     Retries a webservice call with retry timing jitter when the call fails with 503 or 'connection forcibly closed'
+
+    This was found necessary when running job and pool submission to batch service naively multithreaded across 'n' threads where 'n' equals the number of tests, (should probably use threadpool if revisiting this).
+    Jitter is to desync multiple failures so they aren't all retried at identical times and the batch FE's drop us again.
     """
     max_retry_count = 10
     try:
