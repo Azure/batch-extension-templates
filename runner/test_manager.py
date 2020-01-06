@@ -341,6 +341,7 @@ class TestManager(object):
                     self.start_time)
                 return
 
+
             utils.wait_for_steady_nodes(
                 batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
             utils.enable_job(batch_service_client, self.job_id)
