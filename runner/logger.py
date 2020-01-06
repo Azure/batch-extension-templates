@@ -11,7 +11,8 @@ logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler('template.log')
 file_handler.setLevel(logging.DEBUG)
 # create formatter and add it to the handlers
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
 # add the handlers to logger
 logger.addHandler(file_handler)
@@ -21,6 +22,7 @@ consoleHandler = logging.StreamHandler()
 consoleHandler.setFormatter(formatter)
 logger.addHandler(consoleHandler)
 
+
 def info(message: str):
     """
     Log 'msg % args' with severity 'INFO' to the logger file
@@ -29,6 +31,7 @@ def info(message: str):
     :type message: str
     """
     logger.info(message_with_thread(message))
+
 
 def error(error_message: str):
     """
@@ -92,17 +95,18 @@ def export_result(test_managers: 'list[test_manager.TestManager]', total_time: i
         # Add the time it took for this test to compete.
         if test.total_duration is not None:
             info("Total Test duration '{}', Pool [{}] took '{}' to become available, Job [{}] ran for '{}', "
-                .format(test.total_duration, test.pool_id, test.pool_start_duration, test.job_id, test.job_run_duration))
+                 .format(test.total_duration, test.pool_id, test.pool_start_duration, test.job_id, test.job_run_duration))
             # If the job failed we set the duration to 0
             test_duration = "0:00:00"
             try:
-                converted_time = time.strptime(str(test.total_duration).split('.')[0], '%H:%M:%S')
+                converted_time = time.strptime(
+                    str(test.total_duration).split('.')[0], '%H:%M:%S')
                 total_seconds = timedelta(hours=converted_time.tm_hour, minutes=converted_time.tm_min,
-                                               seconds=converted_time.tm_sec).total_seconds()
+                                          seconds=converted_time.tm_sec).total_seconds()
                 child.attrib["time"] = str(total_seconds)
             except ValueError:
                 child.attrib["time"] = test_duration
-                    
+
         # job did not run, so the test did not run
         else:
             child.attrib["time"] = "0:00:00"
@@ -141,5 +145,13 @@ def print_result(test_managers: 'list[test_manager.TestManager]'):
         info("Number of jobs passed {} out of {}.".format(
             len(test_managers) - failed_tests, len(test_managers)))
 
+
 def message_with_thread(message: str):
+    """Add the thread ident to the start of a log message.
+    
+    :param message: The original log message
+    :type message: str
+    :return: The log message with the thread ident prefixed
+    :rtype: str
+    """
     return "Thread:{} - {}".format(threading.currentThread().ident, message)
