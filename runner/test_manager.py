@@ -332,8 +332,15 @@ class TestManager(object):
 
             self.create_and_submit_pool(
                 batch_service_client, image_references, VM_image_URL, VM_OS_type)
-            utils.retarget_job_to_new_pool(
-                batch_service_client, self.job_id, self.pool_id)
+
+            try:
+                utils.retarget_job_to_new_pool(
+                    batch_service_client, self.job_id, self.pool_id)
+            except ex.JobAlreadyCompleteException:
+                self.pool_start_duration = utils.timedelta_since(
+                    self.start_time)
+                return
+
 
             utils.wait_for_steady_nodes(
                 batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
