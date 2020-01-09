@@ -28,11 +28,18 @@
                 "Standard_D4_v2"
             ]
         },
-        "vmCount": {
+        "dedicatedVmCount": {
             "type": "int",
             "defaultValue": 2,
             "metadata": {
-                "description": "The number of the virtual machines"
+                "description": "The number of dedicated nodes in the Azure Batch pool"
+            }
+        },
+        "lowPriorityVmCount": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The number of low priority nodes in the Azure Batch pool"
             }
         }
     },
@@ -53,7 +60,8 @@
                 "nodeAgentSKUId": "batch.node.ubuntu 16.04"
             },
             "vmSize": "[parameters('vmSize')]",
-            "targetDedicatedNodes": "[parameters('vmCount')]",
+            "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
+            "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
             "enableAutoScale": false
         }
     }
