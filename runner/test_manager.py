@@ -279,6 +279,10 @@ class TestManager(object):
         """
         parameters = ctm.load_file(self.parameters_file)
 
+        #swap the dedicated vm count to low pri and zero out the dedicated count (to reduce testing COGS)
+        ctm.set_low_priority_vm_count(template, str(self.min_required_vms))
+        ctm.set_dedicated_vm_count(parameters, 0)
+
         # updates any placeholder parameter values with the values from
         # keyVault, if required
         utils.update_params_with_values_from_keyvault(
