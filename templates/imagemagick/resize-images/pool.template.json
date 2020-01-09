@@ -7,7 +7,7 @@
                 "description": "The ID of Azure Batch pool"
             }
         },
-       "dedicatedVmCount": {
+        "dedicatedVmCount": {
             "type": "int",
             "defaultValue": 1,
             "metadata": {
