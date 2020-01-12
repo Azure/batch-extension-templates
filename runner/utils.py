@@ -348,8 +348,8 @@ def enable_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     logger.info("Successfully re-enabled job [{}]".format(job_id))
 
 
-def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> bool:
-    """   Checks if a specified task output file was created by a task.
+def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str, retry_count = 0) -> bool:
+    """   Checks if a specified task output file was created by a task,
     
     :param batch_service_client: The batch client used for making batch operations
     :type batch_service_client: `azure.batch.BatchExtensionsClient`
@@ -360,6 +360,8 @@ def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClien
     :return: True if the task output file is found, otherwise false
     :rtype: bool
     """
+    max_retries = 10
+
     tasks = batch_service_client.task.list(job_id)
 
     for task in tasks:
@@ -372,7 +374,15 @@ def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClien
                     job_id, expected_file_output_name))
                 return True
 
-    logger.info("Error: Cannot find file {} in job {}".format(
+    logger.warning("Did not find file {} in job {}".format(
+        expected_file_output_name, job_id))
+
+    if retry_count < max_retries:
+        retry_count = retry_count + 1
+        time.sleep(5)
+        return does_task_output_file_exist(batch_service_client, job_id, expected_file_output_name, retry_count)
+
+    logger.error("Error: Did not find output file {} in job {}".format(
         expected_file_output_name, job_id))
     return False
 
