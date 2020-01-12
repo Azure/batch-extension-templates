@@ -281,7 +281,10 @@ class TestManager(object):
 
         #swap the dedicated vm count to low pri and zero out the dedicated count (to reduce testing COGS)
         ctm.set_low_priority_vm_count(template, str(self.min_required_vms))
+
+        #some tests set the dedicated vm count in the test parameters file, and some use the default in the template, so override both to 0
         ctm.set_dedicated_vm_count(parameters, 0)
+        ctm.set_dedicated_vm_count(template, 0)
 
         # updates any placeholder parameter values with the values from
         # keyVault, if required
