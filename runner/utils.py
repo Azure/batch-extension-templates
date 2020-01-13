@@ -348,8 +348,8 @@ def enable_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     logger.info("Successfully re-enabled job [{}]".format(job_id))
 
 
-def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str) -> bool:
-    """   Checks if a specified task output file was created by a task.
+def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str, retry_count = 0) -> bool:
+    """   Checks if a specified task output file was created by a task,
     
     :param batch_service_client: The batch client used for making batch operations
     :type batch_service_client: `azure.batch.BatchExtensionsClient`
@@ -360,6 +360,8 @@ def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClien
     :return: True if the task output file is found, otherwise false
     :rtype: bool
     """
+    max_retries = 10
+
     tasks = batch_service_client.task.list(job_id)
 
     for task in tasks:
@@ -372,7 +374,15 @@ def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClien
                     job_id, expected_file_output_name))
                 return True
 
-    logger.info("Error: Cannot find file {} in job {}".format(
+    logger.warning("Did not find file {} in job {}".format(
+        expected_file_output_name, job_id))
+
+    if retry_count < max_retries:
+        retry_count = retry_count + 1
+        time.sleep(5)
+        return does_task_output_file_exist(batch_service_client, job_id, expected_file_output_name, retry_count)
+
+    logger.error("Error: Did not find output file {} in job {}".format(
         expected_file_output_name, job_id))
     return False
 
@@ -547,17 +557,17 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
     except (ex.PoolResizeFailedException):
         # double the node count and try again
         pool = batch_service_client.pool.get(pool_id)
-        new_node_count = pool.target_dedicated_nodes * 2
+        new_node_count = pool.target_low_priority_nodes * 2
         logger.info("Resizing pool [{}] to '{}' nodes".format(
             pool_id, new_node_count))
         batch_service_client.pool.resize(pool_id, batchmodels.PoolResizeParameter(
-            target_dedicated_nodes=new_node_count))
+            target_low_priority_nodes=new_node_count))
         # if exception thrown again here, will bubble up
         wait_for_pool_resize_operation(
             batch_service_client, pool_id, test_timeout, stop_thread)
 
     pool = batch_service_client.pool.get(pool_id)
-    max_allowed_failed_nodes = pool.target_dedicated_nodes - min_required_vms
+    max_allowed_failed_nodes = pool.target_low_priority_nodes - min_required_vms
 
     wait_for_enough_idle_vms(batch_service_client, pool_id, min_required_vms,
                              max_allowed_failed_nodes, pool.state_transition_time, test_timeout, stop_thread)
@@ -758,14 +768,14 @@ def run_with_jitter_retry(method, *args, retry_count=0):
     try:
         method(*args)
     except ClientRequestError as e:
-        if e.message.contains("too many 503") and retry_count < max_retry_count:
+        if 'too many 503' in e.message and retry_count < max_retry_count:
             logger.info(
                 "Retrying call due to 503 received from service - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
             run_with_jitter_retry(method, args, retry_count + 1)
         raise
     except requests_ConnectionError as e:
-        if 'Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message:
+        if ('too many 503' in e.message or 'Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
             logger.info(
                 "Retrying call as connection forcibly closed by remote host - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit

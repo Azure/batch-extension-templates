@@ -241,6 +241,36 @@ def set_image_reference(in_memory_json_object: str, image_ref: 'List[utils.Image
                 set_image_reference_properties(image_reference, image_ref[i])
 
 
+def set_low_priority_vm_count(in_memory_json_object: str, low_priority_vm_count):
+    """
+    Sets the low priority vm count from the parameters file
+
+    :param in_memory_json_object: The json object that needs to be updated
+    :type in_memory_json_object: str
+    :param low_priority_vm_count: The value to set the low pri vm count to
+    :type low_priority_vm_count: str
+    """
+    if in_memory_json_object.get("parameters") is not None:
+        if in_memory_json_object.get("parameters").get("lowPriorityVmCount"):
+            in_memory_json_object["parameters"]["lowPriorityVmCount"]["defaultValue"] = low_priority_vm_count
+
+def set_dedicated_vm_count(in_memory_json_object: str, dedicated_vm_count):
+    """
+    Sets the dedicated vm count from the parameters file
+
+    :param in_memory_json_object: The json object that needs to be updated
+    :type in_memory_json_object: str
+    :param low_priority_vm_count: The value to set the dedicated vm count to
+    :type low_priority_vm_count: str
+    """
+    if in_memory_json_object.get("parameters") is not None:
+        if in_memory_json_object.get("parameters").get("dedicatedVmCount"):
+            if in_memory_json_object.get("parameters").get("dedicatedVmCount").get("defaultValue"): 
+                in_memory_json_object["parameters"]["dedicatedVmCount"]["defaultValue"] = dedicated_vm_count
+    elif in_memory_json_object.get("dedicatedVmCount"): 
+        in_memory_json_object["dedicatedVmCount"]["value"] = dedicated_vm_count
+
+
 def get_job_id(parameters_file: str) -> str:
     """
     Gets the job id from the parameters json file. 
