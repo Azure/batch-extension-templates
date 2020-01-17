@@ -37,14 +37,6 @@
                 "advancedType": "file-group"
             }
         },
-        "inputDataSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputData"
-            }
-        },
         "sceneFile": {
             "type": "string",
             "metadata": {
@@ -111,13 +103,19 @@
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
+                "commandLine":"cmd.exe /c tree /A /F & dir /s",
+                "resourceFiles": [
+                    {
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
+                        "filePath": "assets"
+                    }
+                ],
                 "userIdentity": {
                     "autoUser": {
-                        "scope": "pool",
-                        "elevationLevel": "admin"
+                        "elevationLevel": "nonAdmin",
+                        "scope": "pool"
                     }
-                },
-                "commandLine": "cmd.exe /c set & echo --- & azcopy /source:\"[parameters('inputDataSas')]\" /dest:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" /S /Y /V:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\azcopy.log\" || exit /b %errorlevel%"
+                }
             },
             "jobReleaseTask": {
                 "userIdentity": {

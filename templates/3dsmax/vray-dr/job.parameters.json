@@ -5,11 +5,8 @@
     "poolId":{
         "value":"mypool"
     },
-    "inputFilegroup":{
+    "inputData":{
         "value":"myfilegroup"
-    },
-    "inputFilegroupSas":{
-        "value":""
     },
     "maxVersion":{
       "value":"2019"
