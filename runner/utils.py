@@ -1,6 +1,7 @@
 import azure.batch.models as batchmodels
 import azure.storage.blob as azureblob
 from msrest.exceptions import ClientRequestError as ClientRequestError
+from urllib3.exceptions import MaxRetryError as UrlLibMaxRetryError
 from requests.exceptions import ConnectionError as requests_ConnectionError
 from azure.storage.blob.models import ContainerPermissions
 from azure.keyvault import KeyVaultClient
@@ -767,15 +768,15 @@ def run_with_jitter_retry(method, *args, retry_count=0):
     max_retry_count = 10
     try:
         method(*args)
-    except ClientRequestError as e:
-        if 'too many 503' in e.message and retry_count < max_retry_count:
+    except UrlLibMaxRetryError as e:
+        if ('too many 503 error' in e.message) and retry_count < max_retry_count:
             logger.info(
                 "Retrying call due to 503 received from service - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
             run_with_jitter_retry(method, args, retry_count + 1)
         raise
     except requests_ConnectionError as e:
-        if ('too many 503' in e.message or 'Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
+        if ('Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
             logger.info(
                 "Retrying call as connection forcibly closed by remote host - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
