@@ -17,7 +17,7 @@
                 "advancedType": "job-id"
             }
         },
-        "inputFilegroup": {
+        "inputData": {
             "type": "string",
             "metadata": {
                 "description": "The file group where the input files are stored.",
@@ -48,7 +48,7 @@
             "taskFactory": {
                 "type": "taskPerFile",
                 "source": {
-                    "fileGroup": "[parameters('inputFilegroup')]"
+                    "fileGroup": "[parameters('inputData')]"
                 },
                 "repeatTask": {
                     "displayName": "convert file {fileName}",
