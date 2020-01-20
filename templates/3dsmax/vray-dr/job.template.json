@@ -116,7 +116,7 @@
                 "description": "Any additional arguments to pass to 3ds Max, e.g. -superBlack:1"
             }
         },
-        "nodeCount":{
+        "dedicatedVmCount":{
             "type":"int",
             "defaultValue":2,
             "metadata":{
@@ -184,7 +184,7 @@
                     {
                         "id":"Render",
                         "displayName":"Frame",
-                        "commandLine":"powershell.exe -File 3dsmax.ps1 -maxVersion \"[parameters('maxVersion')]\" -start [parameters('frameStart')] -end [parameters('frameEnd')] -outputName \"images\\[parameters('outputName')]\" -sceneFile \"[parameters('sceneFile')]\" -pathFile \"[parameters('pathFile')]\" -renderer [parameters('vrayRenderer')] -preRenderScript \"[parameters('preRenderScript')]\" -camera \"[parameters('camera')]\" -additionalArgs \" [parameters('additionalArgs')]\" -irradianceMap \"[parameters('irradianceMapFile')]\" -nodeCount [parameters('nodeCount')] -renderPresetFile \"[parameters('renderPresetFile')]\" -dr -vrayPort [parameters('vrayPort')]",
+                        "commandLine":"powershell.exe -File 3dsmax.ps1 -maxVersion \"[parameters('maxVersion')]\" -start [parameters('frameStart')] -end [parameters('frameEnd')] -outputName \"images\\[parameters('outputName')]\" -sceneFile \"[parameters('sceneFile')]\" -pathFile \"[parameters('pathFile')]\" -renderer [parameters('vrayRenderer')] -preRenderScript \"[parameters('preRenderScript')]\" -camera \"[parameters('camera')]\" -additionalArgs \" [parameters('additionalArgs')]\" -irradianceMap \"[parameters('irradianceMapFile')]\" -nodeCount [parameters('dedicatedVmCount')] -renderPresetFile \"[parameters('renderPresetFile')]\" -dr -vrayPort [parameters('vrayPort')]",
                         "userIdentity": {
                             "autoUser": {
                                 "elevationLevel": "admin",
@@ -192,7 +192,7 @@
                             }
                         },
                         "multiInstanceSettings":{
-                            "numberOfInstances":"[parameters('nodeCount')]",
+                            "numberOfInstances":"[parameters('dedicatedVmCount')]",
                             "coordinationCommandLine":"cmd.exe /c echo noop"
                         },
                         "resourceFiles":[

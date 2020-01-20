@@ -26,7 +26,7 @@
     "outputs":{
         "value":"rendering-outputs"
     },
-    "nodeCount":{
-        "value":1
+    "dedicatedVmCount":{
+        "value":2
     }
 }
