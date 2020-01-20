@@ -6,7 +6,7 @@
         "value":"mypool"
     },
     "inputData":{
-        "value":"myfilegroup"
+        "value":"rendering"
     },
     "maxVersion":{
       "value":"2019"
@@ -24,7 +24,7 @@
         "value":1
     },
     "outputs":{
-        "value":"myfilegroup"
+        "value":"rendering-outputs"
     },
     "nodeCount":{
         "value":1

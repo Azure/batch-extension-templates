@@ -6,7 +6,7 @@
         "value":"mypool"
     },
     "inputData":{
-        "value":"myfilegroup"
+        "value":"rendering"
     },
     "sceneFile":{
         "value":"MyScene.max"
@@ -21,7 +21,7 @@
         "value":1
     },
     "outputs":{
-        "value":"myfilegroup"
+        "value":"rendering-outputs"
     },
     "nodeCount":{
         "value":1
