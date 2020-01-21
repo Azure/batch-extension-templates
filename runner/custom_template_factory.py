@@ -171,23 +171,9 @@ def set_parameter_storage_info(in_memory_json_object: str, storage_info: str):
     if in_memory_json_object.get("inputData") is not None:
         in_memory_json_object["inputData"][
             "value"] = storage_info.input_container.replace("fgrp-", "")
-    elif in_memory_json_object.get("inputFilegroup") is not None:
-        in_memory_json_object["inputFilegroup"][
-            "value"] = storage_info.input_container.replace("fgrp-", "")
-
-    # Set file group SAS input
-    if in_memory_json_object.get("inputFilegroupSas") is not None:
-        in_memory_json_object["inputFilegroupSas"][
-            "value"] = storage_info.input_container_SAS
-    elif in_memory_json_object.get("inputDataSas") is not None:
-        in_memory_json_object["inputDataSas"][
-            "value"] = storage_info.input_container_SAS
 
     # Set output file group
-    if in_memory_json_object.get("outputFilegroup") is not None:
-        in_memory_json_object["outputFilegroup"][
-            "value"] = storage_info.output_container.replace("fgrp-", "")
-    elif in_memory_json_object.get("outputs") is not None:
+    if in_memory_json_object.get("outputs") is not None:
         in_memory_json_object["outputs"][
             "value"] = storage_info.output_container.replace("fgrp-", "")
 
