@@ -93,8 +93,7 @@
                 "commandLine":"/bin/bash -c \"ls -l -R\"",
                 "resourceFiles": [
                     {
-                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
-                        "filePath": "assets"
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]"
                     }
                 ],
                 "userIdentity": {

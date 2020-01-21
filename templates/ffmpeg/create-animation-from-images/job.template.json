@@ -101,8 +101,7 @@
                 "commandLine":"cmd.exe /c tree /A /F & dir /s",
                 "resourceFiles": [
                     {
-                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
-                        "filePath": "assets",
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]"
                         "blobPrefix": "[parameters('inputDataPrefix')]/[parameters('imagePrefix')]"
                     }
                 ],
