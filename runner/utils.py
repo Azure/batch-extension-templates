@@ -260,6 +260,10 @@ def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
             logger.info(
                 "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
             return
+        if expected_exception(batch_exception, "The specified job has been marked for deletion and is being garbage collected."):
+            logger.info(
+                "The specified Job [{}] had already been marked for deletion when we went to delete it.".format(job_id))
+            return
 
         traceback.print_exc()
         print_batch_exception(batch_exception)
@@ -768,8 +772,8 @@ def run_with_jitter_retry(method, *args, retry_count=0):
     max_retry_count = 10
     try:
         method(*args)
-    except UrlLibMaxRetryError as e:
-        if ('too many 503 error' in e.message) and retry_count < max_retry_count:
+    except ClientRequestError as e:
+        if any('too many 503 error' in arg for arg in e.args) and retry_count < max_retry_count:
             logger.info(
                 "Retrying call due to 503 received from service - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
