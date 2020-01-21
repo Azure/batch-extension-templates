@@ -216,6 +216,11 @@ def main():
         utils.print_batch_exception(err)
         raise
     finally:
+        #try run delete on pools / jobs again single threaded in case the thread-per-test cleanup failed 
+        #(which it still does sometimes)
+        for test_manager in _test_managers:
+            test_manager.delete_resources(batch_client, blob_client, False)
+
         end_time = datetime.now(timezone.utc).replace(microsecond=0)
         logger.print_result(_test_managers)
         logger.export_result(_test_managers, (end_time - start_time))
