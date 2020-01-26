@@ -1,6 +1,6 @@
 {
     "parameters": {
-        "poolName": {
+        "poolId": {
             "type": "string",
             "defaultValue": "image-magick-pool",
             "metadata": {
@@ -104,7 +104,7 @@
         }
     },
     "pool": {
-        "id": "[parameters('poolName')]",
+        "id": "[parameters('poolId')]",
         "displayName": "ImageMagick pool",
         "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",

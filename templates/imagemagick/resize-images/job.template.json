@@ -24,6 +24,13 @@
                 "advancedType": "file-group"
             }
         },
+        "inputDataPrefix": {
+            "type": "string",
+            "defaultValue": "parent-folder/outputs",
+            "metadata": {
+                "description": "The relative path with '/' slashes in the filegroup where the individual frames reside"
+            }
+        },
         "resize": {
             "type": "int",
             "defaultValue": 50,
@@ -51,7 +58,8 @@
             "taskFactory": {
                 "type": "taskPerFile",
                 "source": {
-                    "fileGroup": "[parameters('inputData')]"
+                    "fileGroup": "[parameters('inputData')]",
+                    "prefix": "[parameters('inputDataPrefix')]"
                 },
                 "repeatTask": {
                     "displayName": "Convert image {fileName}",
