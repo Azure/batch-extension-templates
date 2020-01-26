@@ -31,13 +31,6 @@
                 "description": "The relative path with '/' slashes in the filegroup where the individual frames reside"
             }
         },
-        "imageFolder": {
-            "type": "string",
-            "defaultValue": "parent-folder\\\\outputs",
-            "metadata": {
-                "description": "Generally the same as the input data prefix, but with '\\\\' slashes, not '/'. '/' doesn't work with AZ Copy"
-            }
-        },
         "imagePrefix": {
             "type": "string",
             "defaultValue": "image",
@@ -101,7 +94,7 @@
                 "commandLine":"cmd.exe /c tree /A /F & dir /s",
                 "resourceFiles": [
                     {
-                        "autoStorageContainerName": "fgrp-[parameters('inputData')]"
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
                         "blobPrefix": "[parameters('inputDataPrefix')]/[parameters('imagePrefix')]"
                     }
                 ],
@@ -117,7 +110,7 @@
                 "tasks": [
                     {
                         "id": "ffmpeg", 
-                        "commandLine": "cmd.exe /c \"ffmpeg -y -r [parameters('framesPerSecond')] -start_number [parameters('sequenceStart')] -i \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\[parameters('imageFolder')]\\[parameters('imagePattern')]\" -c:v libx264 -vf fps=[parameters('framesPerSecond')] -pix_fmt yuv420p -s [parameters('width')]x[parameters('height')] [parameters('jobName')].mp4\"",
+                        "commandLine": "cmd.exe /c \"ffmpeg -y -r [parameters('framesPerSecond')] -start_number [parameters('sequenceStart')] -i \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\[parameters('inputDataPrefix')]\\[parameters('imagePattern')]\" -c:v libx264 -vf fps=[parameters('framesPerSecond')] -pix_fmt yuv420p -s [parameters('width')]x[parameters('height')] [parameters('jobName')].mp4\"",
                         "userIdentity": {
                             "autoUser": {
                                 "elevationLevel": "admin",

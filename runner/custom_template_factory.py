@@ -302,6 +302,24 @@ def get_pool_id(parameters_file: str) -> str:
 
     return pool_id
 
+def try_get_input_data_prefix(parameters_file: str) -> str:
+    """
+    Returns the inputDataPrefix if the parameters file contains one, otherwise None
+
+    :param parameters_file: The parameters json file we want to load.
+    :type parameters_file: str
+    :return: The name of the inputDataPrefix that is in the parameters file
+    :rtype: str
+    """
+    with open(parameters_file) as f:
+        parameters = json.load(f)
+        if 'inputDataPrefix' in parameters:
+            input_data_prefix = parameters["inputDataPrefix"]["value"]
+
+            return input_data_prefix
+        
+        return ''
+
 
 def get_scene_file(parameters_file: str) -> str:
     """
@@ -319,6 +337,9 @@ def get_scene_file(parameters_file: str) -> str:
 
         elif 'blendFile' in parameters:
             scene_file = parameters["blendFile"]["value"]
+
+        elif 'wavFile' in parameters:
+            scene_file = parameters["wavFile"]["value"]
 
     return scene_file
 

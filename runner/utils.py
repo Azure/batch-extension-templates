@@ -19,6 +19,7 @@ import traceback
 import sys
 import itertools
 import random
+import pathlib
 
 utc = pytz.utc
 
@@ -174,7 +175,11 @@ def upload_file_to_container(block_blob_client: azureblob.BlockBlobService, cont
     :param str file_path: The local path to the file.
     :type file_path: str
     """
-    blob_name = os.path.basename(file_path)
+    #blob_name needs to trim the first directory off the path
+    p = pathlib.Path(file_path)
+    blob_name = str(pathlib.Path(*p.parts[1:]))
+    
+    os.path.basename(file_path)
 
     logger.info(
         'Uploading file [{}] to container [{}]...'.format(
@@ -234,8 +239,17 @@ def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str
             logger.info(
                 "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
             return
+        if expected_exception(batch_exception, "The specified job has been marked for deletion and is being garbage collected"):
+            logger.info(
+                "The specified Job [{}] was marked for deletion and being garbage collected when we tried to delete it.".format(job_id))
+            return
         traceback.print_exc()
         print_batch_exception(batch_exception)
+    
+    except Exception as e:
+        logger.info(
+            "Exception thrown when deleting job [{}] - e".format(job_id, e))
+        traceback.print_exc()
 
 
 def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
@@ -255,7 +269,6 @@ def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
             logger.info(
                 "The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
             return
-
         if expected_exception(batch_exception, "The specified job is already in a completed state"):
             logger.info(
                 "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
