@@ -1,0 +1,32 @@
+{
+   "jobName":{
+      "value":"ffmpeg-animation-from-images"
+   },
+   "poolId":{
+      "value":"ffmpeg-animation-from-images"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "inputDataPrefix":{
+      "value":"animationFrames"
+   },
+   "framesPerSecond":{
+      "value":4
+   },
+   "width":{
+      "value":640
+   },
+   "height":{
+      "value":480
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
+   }
+}

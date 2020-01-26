@@ -1,6 +1,27 @@
 {
   "tests": [
     {
+        "name": "ffmpeg-wav-to-mp3",
+        "template": "../templates/ffmpeg/convert-wav-to-mp3/job.template.json",
+        "poolTemplate": "../templates/ffmpeg/convert-wav-to-mp3/pool.template.json",
+        "parameters": "Tests/ffmpeg/convert-wav-to-mp3/job.parameters.json",
+        "expectedOutput":"ffmpeg.mp3"
+    },
+    {
+        "name": "ffmpeg-animation-from-images",
+        "template": "../templates/ffmpeg/create-animation-from-images/job.template.json",
+        "poolTemplate": "../templates/ffmpeg/create-animation-from-images/pool.template.json",
+        "parameters": "Tests/ffmpeg/create-animation-from-images/job.parameters.json",
+        "expectedOutput":"ffmpeg-animation-from-images.mp4"
+    },
+    {
+        "name": "imagemagick-resize-images",
+        "template": "../templates/imagemagick/resize-images/job.template.json",
+        "poolTemplate": "../templates/imagemagick/resize-images/pool.template.json",
+        "parameters": "Tests/imagemagick/resize-images/job.parameters.json",
+        "expectedOutput":"image0001.jpg"
+    },
+    {
         "name": "maya2017-default-windows",
         "template": "../templates/maya/render-default-windows/job.template.json",
         "poolTemplate": "../templates/maya/render-default-windows/pool.template.json",

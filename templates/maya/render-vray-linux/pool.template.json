@@ -21,7 +21,7 @@
                 "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
-        "nodeSize": {
+        "vmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the virtual machines that run the application"
@@ -90,7 +90,7 @@
     "pool": {
         "id": "[parameters('poolName')]",
         "displayName": "Maya V-Ray rendering pool for CentOS",
-        "vmSize": "[parameters('nodeSize')]",
+        "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",

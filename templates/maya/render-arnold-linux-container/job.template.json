@@ -90,15 +90,19 @@
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
+                "commandLine":"/bin/bash -c \"ls -l -R\"",
                 "resourceFiles": [
                     {
-                        "source": {
-                            "fileGroup": "[parameters('inputData')]"
-                        },
-                        "filePath": "assets/"
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
+                        "filePath": "assets"
                     }
                 ],
-                "commandLine": "ls"
+                "userIdentity": {
+                    "autoUser": {
+                        "elevationLevel": "nonAdmin",
+                        "scope": "pool"
+                    }
+                }
             },
             "taskFactory": {
                 "type": "parametricSweep",

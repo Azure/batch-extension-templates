@@ -5,11 +5,8 @@
     "poolId":{
         "value":"mypool"
     },
-    "inputFilegroup":{
-        "value":"myfilegroup"
-    },
-    "inputFilegroupSas":{
-        "value":""
+    "inputData":{
+        "value":"rendering"
     },
     "maxVersion":{
       "value":"2019"
@@ -27,9 +24,9 @@
         "value":1
     },
     "outputs":{
-        "value":"myfilegroup"
+        "value":"rendering-outputs"
     },
-    "nodeCount":{
-        "value":1
+    "dedicatedVmCount":{
+        "value":2
     }
 }

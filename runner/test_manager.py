@@ -260,13 +260,32 @@ class TestManager(object):
             full_sas_url_input,
             full_sas_url_output)
 
-        # Upload the asset file that will be rendered
-        scenefile = ctm.get_scene_file(self.parameters_file)
-        for file in os.listdir("Assets"):
-            if scenefile == file:
-                file_path = Path("Assets/" + file)
-                utils.upload_file_to_container(
-                    blob_client, input_container_name, file_path)
+        assets_directory = "Assets"
+        asset_files = []
+
+        # Upload the asset file(s) for the test
+        input_data_prefix = ctm.try_get_input_data_prefix(self.parameters_file)
+        
+        if input_data_prefix:
+            #input_data_prefix can either be part of the filename OR a subdirectory
+            prefix_in_assets_dir = os.path.join(assets_directory, input_data_prefix)
+            listOfFiles = list()
+            for (dirpath, dirnames, filenames) in os.walk(assets_directory):
+                listOfFiles += [os.path.join(dirpath, file) for file in filenames]
+            for file in listOfFiles:
+                if file.startswith(prefix_in_assets_dir):
+                    asset_files.append(file)
+        else:   
+            #input_data_prefix is none, read the scene file instead
+            scenefile = ctm.get_scene_file(self.parameters_file)
+            for file in os.listdir(assets_directory):
+                if scenefile == file:
+                    file_path = Path(assets_directory + "/" + file)
+                    asset_files.append(file_path)
+
+        for file_path in asset_files:
+            utils.upload_file_to_container(
+                blob_client, input_container_name, file_path)
 
     def submit_pool(self, batch_service_client: batch.BatchExtensionsClient, template: str):
         """

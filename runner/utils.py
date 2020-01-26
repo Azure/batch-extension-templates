@@ -1,6 +1,7 @@
 import azure.batch.models as batchmodels
 import azure.storage.blob as azureblob
 from msrest.exceptions import ClientRequestError as ClientRequestError
+from urllib3.exceptions import MaxRetryError as UrlLibMaxRetryError
 from requests.exceptions import ConnectionError as requests_ConnectionError
 from azure.storage.blob.models import ContainerPermissions
 from azure.keyvault import KeyVaultClient
@@ -18,6 +19,7 @@ import traceback
 import sys
 import itertools
 import random
+import pathlib
 
 utc = pytz.utc
 
@@ -173,7 +175,11 @@ def upload_file_to_container(block_blob_client: azureblob.BlockBlobService, cont
     :param str file_path: The local path to the file.
     :type file_path: str
     """
-    blob_name = os.path.basename(file_path)
+    #blob_name needs to trim the first directory off the path
+    p = pathlib.Path(file_path)
+    blob_name = str(pathlib.Path(*p.parts[1:]))
+    
+    os.path.basename(file_path)
 
     logger.info(
         'Uploading file [{}] to container [{}]...'.format(
@@ -233,8 +239,17 @@ def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str
             logger.info(
                 "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
             return
+        if expected_exception(batch_exception, "The specified job has been marked for deletion and is being garbage collected"):
+            logger.info(
+                "The specified Job [{}] was marked for deletion and being garbage collected when we tried to delete it.".format(job_id))
+            return
         traceback.print_exc()
         print_batch_exception(batch_exception)
+    
+    except Exception as e:
+        logger.info(
+            "Exception thrown when deleting job [{}] - e".format(job_id, e))
+        traceback.print_exc()
 
 
 def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
@@ -254,10 +269,13 @@ def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
             logger.info(
                 "The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
             return
-
         if expected_exception(batch_exception, "The specified job is already in a completed state"):
             logger.info(
                 "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
+            return
+        if expected_exception(batch_exception, "The specified job has been marked for deletion and is being garbage collected."):
+            logger.info(
+                "The specified Job [{}] had already been marked for deletion when we went to delete it.".format(job_id))
             return
 
         traceback.print_exc()
@@ -768,14 +786,14 @@ def run_with_jitter_retry(method, *args, retry_count=0):
     try:
         method(*args)
     except ClientRequestError as e:
-        if 'too many 503' in e.message and retry_count < max_retry_count:
+        if any('too many 503 error' in arg for arg in e.args) and retry_count < max_retry_count:
             logger.info(
                 "Retrying call due to 503 received from service - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
             run_with_jitter_retry(method, args, retry_count + 1)
         raise
     except requests_ConnectionError as e:
-        if ('too many 503' in e.message or 'Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
+        if ('Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
             logger.info(
                 "Retrying call as connection forcibly closed by remote host - retryCount: {} of {}".format(retry_count, max_retry_count))
             time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit

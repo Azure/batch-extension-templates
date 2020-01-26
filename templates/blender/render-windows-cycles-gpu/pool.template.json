@@ -21,7 +21,7 @@
                 "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
-        "nodeSize": {
+        "vmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the virtual machines that run the application (GPU options only)"
@@ -54,14 +54,14 @@
     "pool": {
         "id": "[parameters('poolId')]",
         "displayName": "Blender Windows GPU pool",
-        "vmSize": "[parameters('nodeSize')]",
+        "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
         "enableAutoScale": false,
         "enableInterNodeCommunication": false,
         "startTask": {
-            "commandLine": "cmd.exe /c install-azure-nc-drivers.cmd [parameters('nodeSize')]",
+            "commandLine": "cmd.exe /c install-azure-nc-drivers.cmd [parameters('vmSize')]",
             "waitForSuccess": true,
             "maxTaskRetryCount": 0,
             "userIdentity": {

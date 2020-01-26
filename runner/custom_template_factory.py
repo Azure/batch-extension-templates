@@ -171,23 +171,9 @@ def set_parameter_storage_info(in_memory_json_object: str, storage_info: str):
     if in_memory_json_object.get("inputData") is not None:
         in_memory_json_object["inputData"][
             "value"] = storage_info.input_container.replace("fgrp-", "")
-    elif in_memory_json_object.get("inputFilegroup") is not None:
-        in_memory_json_object["inputFilegroup"][
-            "value"] = storage_info.input_container.replace("fgrp-", "")
-
-    # Set file group SAS input
-    if in_memory_json_object.get("inputFilegroupSas") is not None:
-        in_memory_json_object["inputFilegroupSas"][
-            "value"] = storage_info.input_container_SAS
-    elif in_memory_json_object.get("inputDataSas") is not None:
-        in_memory_json_object["inputDataSas"][
-            "value"] = storage_info.input_container_SAS
 
     # Set output file group
-    if in_memory_json_object.get("outputFilegroup") is not None:
-        in_memory_json_object["outputFilegroup"][
-            "value"] = storage_info.output_container.replace("fgrp-", "")
-    elif in_memory_json_object.get("outputs") is not None:
+    if in_memory_json_object.get("outputs") is not None:
         in_memory_json_object["outputs"][
             "value"] = storage_info.output_container.replace("fgrp-", "")
 
@@ -316,6 +302,24 @@ def get_pool_id(parameters_file: str) -> str:
 
     return pool_id
 
+def try_get_input_data_prefix(parameters_file: str) -> str:
+    """
+    Returns the inputDataPrefix if the parameters file contains one, otherwise None
+
+    :param parameters_file: The parameters json file we want to load.
+    :type parameters_file: str
+    :return: The name of the inputDataPrefix that is in the parameters file
+    :rtype: str
+    """
+    with open(parameters_file) as f:
+        parameters = json.load(f)
+        if 'inputDataPrefix' in parameters:
+            input_data_prefix = parameters["inputDataPrefix"]["value"]
+
+            return input_data_prefix
+        
+        return ''
+
 
 def get_scene_file(parameters_file: str) -> str:
     """
@@ -333,6 +337,9 @@ def get_scene_file(parameters_file: str) -> str:
 
         elif 'blendFile' in parameters:
             scene_file = parameters["blendFile"]["value"]
+
+        elif 'wavFile' in parameters:
+            scene_file = parameters["wavFile"]["value"]
 
     return scene_file
 
