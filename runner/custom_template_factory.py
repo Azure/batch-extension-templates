@@ -43,6 +43,22 @@ def set_template_pool_id(in_memory_json_object: str, pool_id: str):
             in_memory_json_object["pool"]["id"] = pool_id
 
 
+def check_offer_type(in_memory_offer_type: str, VM_image_type: str):
+    """
+    Check to see if the custom image type matches the type in the json file
+
+    :param in_memory_offer_type: The json object that needs to be updated with a version and offer type for the images 
+    :type in_memory_offer_type: str
+    :param VM_image_type: The OS type of the rendering image 
+    :type VM_image_type: str
+    :return:
+    """
+    if in_memory_offer_type == "rendering-windows2016" and VM_image_type.lower() == "windows":
+        return True
+    elif in_memory_offer_type == "rendering-centos73" and VM_image_type.lower() == "centos":
+        return True
+    return False;
+
 def set_custom_image(in_memory_json_object: str, VM_image_URL: str, VM_image_type: str):
     """
     Sets what the custom image the tests are going to run on. 
@@ -56,17 +72,16 @@ def set_custom_image(in_memory_json_object: str, VM_image_URL: str, VM_image_typ
     """
 
     if in_memory_json_object.get("variables").get("osType").get("imageReference") is not None:
-        del in_memory_json_object["variables"][
+        if check_offer_type(in_memory_json_object["variables"]["osType"]["imageReference"]["offer"], VM_image_type):
+            del in_memory_json_object["variables"][
             "osType"]["imageReference"]["publisher"]
-        del in_memory_json_object["variables"][
+            del in_memory_json_object["variables"][
             "osType"]["imageReference"]["offer"]
-        del in_memory_json_object["variables"][
+            del in_memory_json_object["variables"][
             "osType"]["imageReference"]["sku"]
-        del in_memory_json_object["variables"][
+            del in_memory_json_object["variables"][
             "osType"]["imageReference"]["version"]
-        in_memory_json_object["variables"]["osType"][
-            "imageReference"]["virtualMachineImageId"] = VM_image_URL
-
+            in_memory_json_object["variables"]["osType"]["imageReference"]["virtualMachineImageId"] = VM_image_URL
 
 def update_resource_file_url(resource_files, resource_branch_name):
     """

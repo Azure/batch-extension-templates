@@ -98,7 +98,9 @@ def runner_arguments():
     parser.add_argument("ServicePrincipalCredentialsResouce",
                         help="Service Principal resource")
     parser.add_argument("-VMImageURL", default=None,
-                        help="The custom image resource URL, if you want the temlates to run on a custom image")
+                        help="The custom image resource URL, if you want the templates to run on a custom image")
+    parser.add_argument("-VMImageOS", default=None,
+                        help="The custom OS type can be either 'windows' or 'centos', if you want the templates to run on a custom image.")
     parser.add_argument("-KeyVaultUrl", default=None,
                         help="Azure Key vault to fetch secrets from, service principal must have access")
     parser.add_argument("-CleanUpResources", action="store_false")
@@ -109,7 +111,7 @@ def runner_arguments():
 
 
 def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient,
-                           images_refs: 'List[utils.ImageReference]', VMImageURL: str):
+                           images_refs: 'List[utils.ImageReference]', VMImageURL: str, VMImageOS: str):
     """
     Creates all resources needed to run the job, including creating the containers and the pool needed to run the job.
     Then creates job and checks if the expected output is correct.
@@ -128,7 +130,7 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
             utils.TestState.IN_PROGRESS, "Test starting for {}".format(test.job_id))
 
         test.upload_assets(blob_client)
-        test.create_and_submit_pool(batch_client, images_refs, VMImageURL)
+        test.create_and_submit_pool(batch_client, images_refs, VMImageURL, VMImageOS)
         test.create_and_submit_job(batch_client)
 
     logger.info(
@@ -137,7 +139,7 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
     threads = []  # type: List[threading.Thread]
     try:
         threads = utils.start_test_threads("run_test", _test_managers, blob_client,
-                                           batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL)
+                                           batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS)
         utils.wait_for_threads_to_finish(threads)
 
     except KeyboardInterrupt:
@@ -210,7 +212,7 @@ def main():
                     image["osType"], image["offer"], image["version"]))
 
         run_test_manager_tests(blob_client, batch_client,
-                               images_refs, args.VMImageURL)
+                               images_refs, args.VMImageURL, args.VMImageOS)
 
     except batchmodels.BatchErrorException as err:
         utils.print_batch_exception(err)

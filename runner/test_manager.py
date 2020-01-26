@@ -85,7 +85,8 @@ class TestManager(object):
                  interrupt_main_on_failure: bool,
                  timeout: int,
                  stop_thread,
-                 VM_image_URL=None):
+                 VM_image_URL=None,
+                 VM_image_OS=None):
         """ The main entry point for a test - expects pool and job to have been created already.
         Monitors pool until sufficient nodes reach idle, then monitors job until all tasks complete and all task outputs are present in storage. 
         
@@ -101,6 +102,8 @@ class TestManager(object):
         :type stop_thread: Func['bool']
         :param VM_image_URL: VM Image URL for the pool - only set if a Custom Image is being used.
         :type VM_image_URL: str
+        :param VM_image_OS: VM Image OS type for the pool - only set if a Custom Image is being used.
+        :type VM_image_OS: str
         """
 
         self.status = utils.TestStatus(
@@ -110,7 +113,7 @@ class TestManager(object):
 
         try:
             self.monitor_pool_and_retry_if_needed(
-                batch_service_client, image_references, test_timeout, stop_thread, VM_image_URL, self.VM_OS_type)
+                batch_service_client, image_references, test_timeout, stop_thread, VM_image_URL, VM_image_OS)
 
             self.monitor_job_and_retry_if_needed(
                 batch_service_client, test_timeout, stop_thread)
@@ -204,7 +207,7 @@ class TestManager(object):
         ctm.set_template_pool_id(template, self.pool_id)
         ctm.set_pool_resource_file_urls_to_branch(
             template, self.repository_branch_name)
-        if VM_image_URL is not None:
+        if VM_image_URL is not None and VM_OS_type is not None:
             ctm.set_custom_image(template, VM_image_URL, VM_OS_type)
 
         all_pools = [p.id for p in batch_service_client.pool.list()]
