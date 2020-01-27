@@ -233,8 +233,8 @@ if __name__ == '__main__':
     try:
         main()
         logger.info("Exit code 0")
-        os._exit(0)
+        sys.exit(0)
     except Exception as err:
         traceback.print_exc()
         logger.info("Exit code 1")
-        os._exit(1)
+        sys.exit(1)
