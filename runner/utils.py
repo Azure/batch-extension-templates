@@ -771,34 +771,43 @@ def timedelta_since(start_time: datetime):
     return datetime.now(timezone.utc) - start_time
 
 
-def run_with_jitter_retry(method, *args, retry_count=0):
+def run_with_jitter_retry(method, *args):
     """Recursively retries a webservice call with a retry timing jitter between 0.1 - 1 second when the call fails with 503 or 'connection forcibly closed'
 
     This was found necessary when running job and pool submission to batch service naively multithreaded across 'n' threads where 'n' equals the number of tests, (should probably use threadpool if revisiting this).
     Jitter is to desync multiple failures so they aren't all retried at identical times and the batch FE's drop the connection again.
     
     :param method: The method to run with jitter retry
-    :type method: Func<>
-    :param retry_count: The current retry count, incremented for each recursive call, defaults to 0
-    :type retry_count: int, optional
+    :type method: Func<>  
     """
-    max_retry_count = 10
-    try:
-        method(*args)
-    except ClientRequestError as e:
-        if any('too many 503 error' in arg for arg in e.args) and retry_count < max_retry_count:
-            logger.info(
-                "Retrying call due to 503 received from service - retryCount: {} of {}".format(retry_count, max_retry_count))
-            time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
-            run_with_jitter_retry(method, args, retry_count + 1)
-        raise
-    except requests_ConnectionError as e:
-        if ('Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
-            logger.info(
-                "Retrying call as connection forcibly closed by remote host - retryCount: {} of {}".format(retry_count, max_retry_count))
-            time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
-            run_with_jitter_retry(method, args, retry_count + 1)
-        raise
+    def run_with_jitter_retry_inner(retry_count, method, *args):
+        """Need a separate method header definition which includes the retry count, so we can still expose the simple API (method, *args) to consumers.
+        If we put retry_count at the end with a default 0 argument, it gets lumped in and sent with the *args!
+        
+        :param retry_count: The current retry count, incremented for each recursive call, defaults to 0
+        :type retry_count: int
+        :param method: The method to execute
+        :type method: [type]
+        """
+        max_retry_count = 10
+        try:
+            method(*args)
+        except ClientRequestError as e:
+            if any('too many 503 error' in arg for arg in e.args) and retry_count < max_retry_count:
+                logger.info(
+                    "Retrying call due to 503 received from service - retryCount: {} of {}".format(retry_count, max_retry_count))
+                time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
+                run_with_jitter_retry(retry_count + 1, method, args)
+            raise
+        except requests_ConnectionError as e:
+            if ('Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
+                logger.info(
+                    "Retrying call as connection forcibly closed by remote host - retryCount: {} of {}".format(retry_count, max_retry_count))
+                time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
+                run_with_jitter_retry(retry_count + 1, method, args)
+            raise
+    
+    run_with_jitter_retry_inner(0, method, *args)
 
 
 def wait_for_threads_to_finish(threads: 'List[threading.thread]', log_waiting: bool = False):
