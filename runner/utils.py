@@ -476,10 +476,15 @@ def start_test_threads(method_name: str, test_managers: 'list[test_manager.TestM
     """
     threads = []  # type: List[threading.Thread]
 
-    for j in test_managers:
+    for j in test_managers[:-1]:
         thread = threading.Thread(target=getattr(j, method_name), args=args)
         threads.append(thread)
         thread.start()
+
+    j = test_managers[-1]
+    thread = threading.Thread(target=getattr(j, method_name), args=[args[0], 5])
+    threads.append(thread)
+    thread.start()
 
     return threads
 

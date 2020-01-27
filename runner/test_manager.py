@@ -14,6 +14,7 @@ import logger
 import exceptions as ex
 import threading
 import _thread
+import random
 
 """
 This module is responsible for managing an individual Test case, including retries due to transient Pool / Job execution issues.
@@ -466,3 +467,23 @@ class TestManager(object):
             logger.info('Deleting output container [{}]...'.format(
                 self.storage_info.output_container))
             blob_client.delete_container(self.storage_info.output_container)
+
+
+    def poll_lambda_or_throw__KB_interrupt(self, stop_thread, throw_interrupt_after = -1):
+
+        stop_thread_called = False
+        while not throw_interrupt_after == 0 and not stop_thread_called:
+            time.sleep(random.uniform(0.1, 1))
+            throw_interrupt_after = throw_interrupt_after - 1
+
+            try:
+                utils.check_stop_thread(stop_thread)
+            
+            except ex.StopThreadException as e:
+                stop_thread_called = True
+                logger.error("Called stopthreadException")
+        
+        if throw_interrupt_after == 0:
+            logger.error("Calling thread.interrupt_main")
+            _thread.interrupt_main()
+

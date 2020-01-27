@@ -133,13 +133,15 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
         test.create_and_submit_pool(batch_client, images_refs, VMImageURL, VMImageOS)
         test.create_and_submit_job(batch_client)
 
-    logger.info(
-        "Finished submitting jobs and pools, starting test monitor threads.")
+    # logger.info(
+    #     "Finished submitting jobs and pools, starting test monitor threads.")
     stop_threads = False
     threads = []  # type: List[threading.Thread]
     try:
-        threads = utils.start_test_threads("run_test", _test_managers, blob_client,
-                                           batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS)
+        #threads = utils.start_test_threads("run_test", _test_managers, blob_client,
+        #                                   batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS)
+
+        threads = utils.start_test_threads("poll_lambda_or_throw__KB_interrupt", _test_managers, lambda: stop_threads, VMImageURL)
         utils.wait_for_threads_to_finish(threads)
 
     except KeyboardInterrupt:
@@ -220,8 +222,8 @@ def main():
     finally:
         #try run delete on pools / jobs again single threaded in case the thread-per-test cleanup failed 
         #(which it still does sometimes)
-        for test in _test_managers:
-            test.delete_resources(batch_client, blob_client, False)
+        # for test in _test_managers:
+        #     test.delete_resources(batch_client, blob_client, False)
 
         end_time = datetime.now(timezone.utc).replace(microsecond=0)
         logger.print_result(_test_managers)
@@ -230,11 +232,12 @@ def main():
     logger.info('Elapsed time: {}'.format(end_time - start_time))
 
 if __name__ == '__main__':
-    try:
-        main()
-        logger.info("Exit code 0")
-        sys.exit(0)
-    except Exception as err:
-        traceback.print_exc()
-        logger.info("Exit code 1")
-        sys.exit(1)
+    while True:
+        try:
+            _test_managers = []
+            
+            main()
+            logger.info("Exit code 0")
+        except Exception as err:
+            traceback.print_exc()
+            logger.info("Exit code 1")
