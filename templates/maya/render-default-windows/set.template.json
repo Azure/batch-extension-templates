@@ -37,14 +37,6 @@
                 "advancedType": "file-group"
             }
         },
-        "inputDataSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputData"
-            }
-        },
         "sceneFile": {
             "type": "string",
             "metadata": {

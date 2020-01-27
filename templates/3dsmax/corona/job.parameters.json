@@ -5,11 +5,8 @@
    "poolId":{
       "value":"mypool"
    },
-   "inputFilegroup":{
-      "value":"myfilegroup"
-   },
-   "inputFilegroupSas":{
-      "value":"https://myfilegroup"
+   "inputData":{
+      "value":"rendering"
    },
    "sceneFile":{
       "value":"MyScene.max"
@@ -36,6 +33,6 @@
       "value":1
    },
    "outputs":{
-      "value":"myfilegroup"
+      "value":"rendering-outputs"
    }
 }

@@ -21,7 +21,7 @@
                 "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
-        "nodeSize": {
+        "vmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the nodes that run the tasks in the pool"
@@ -94,7 +94,7 @@
     "pool": {
         "id": "[parameters('poolId')]",
         "displayName": "Blender Ubuntu DR pool",
-        "vmSize": "[parameters('nodeSize')]",
+        "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",

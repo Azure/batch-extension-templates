@@ -18,7 +18,7 @@
                 "description": "The pool id"
             }
         },
-        "nodeCount":{
+        "dedicatedVmCount":{
             "type":"int",
             "defaultValue":2,
             "metadata":{
@@ -59,7 +59,7 @@
                             "maxTaskRetryCount":-1
                         },
                         "multiInstanceSettings":{
-                            "numberOfInstances":"[parameters('nodeCount')]",
+                            "numberOfInstances":"[parameters('dedicatedVmCount')]",
                             "coordinationCommandLine":"cd .. & vray-adv-dr.cmd [parameters('vrayPort')]",
                             "commonResourceFiles":[
                                 {

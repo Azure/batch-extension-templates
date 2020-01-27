@@ -5,11 +5,8 @@
    "poolId":{
       "value":"3dsmax-vray-dr-RT"
    },
-   "inputFilegroup":{
+   "inputData":{
       "value":"rendering"
-   },
-   "inputFilegroupSas":{
-      "value":"https://"
    },
    "sceneFile":{
       "value":"3dsmax-vray.max"
