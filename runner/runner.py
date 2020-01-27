@@ -148,7 +148,7 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
         logger.error(
             "Keyboard Interrupt triggered in main thread, calling stop_threads")
         stop_threads = True
-        utils.wait_for_threads_to_finish(threads)
+        utils.wait_for_threads_to_finish(threads, True)
 
 
 def main():
