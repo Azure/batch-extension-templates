@@ -810,7 +810,7 @@ def run_with_jitter_retry(method, *args):
     run_with_jitter_retry_inner(0, method, *args)
 
 
-def wait_for_threads_to_finish(threads: 'List[threading.thread]'):
+def wait_for_threads_to_finish(threads: 'List[threading.thread]', log_waiting: bool = False):
     """Polls and waits until all threads in a list are no longer alive
     
     :param threads: The threads to wait for.
@@ -821,7 +821,8 @@ def wait_for_threads_to_finish(threads: 'List[threading.thread]'):
         waiting = False
         for thread in threads:
             if thread.isAlive():
-                logger.info("Waiting for thread '{}' to complete".format(thread.ident))
+                if log_waiting:
+                    logger.info("Waiting for thread '{}' to complete".format(thread.ident))
                 waiting = True
                 thread.join(1)
 
