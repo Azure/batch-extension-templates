@@ -811,7 +811,7 @@ def wait_for_threads_to_finish(threads: 'List[threading.thread]', log_waiting: b
     while waiting:
         waiting = False
         for thread in threads:
-            if thread.isAlive(0):
+            if thread.isAlive():
                 if log_waiting:
                     logger.info("Waiting for thread '{}' to complete".format(thread.ident))
                 waiting = True
