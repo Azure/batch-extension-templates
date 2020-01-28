@@ -248,7 +248,7 @@ def terminate_job(batch_service_client: batch.BatchExtensionsClient, job_id: str
     
     except Exception as e:
         logger.info(
-            "Exception thrown when deleting job [{}] - e".format(job_id, e))
+            "Exception thrown when deleting job [{}] - [{}]".format(job_id, e))
         traceback.print_exc()
 
 
@@ -283,7 +283,7 @@ def delete_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
 
     except Exception as e:
         logger.info(
-            "Exception thrown when deleting job [{}] - e".format(job_id, e))
+            "Exception thrown when deleting job [{}] - [{}]".format(job_id, e))
         traceback.print_exc()
 
 
