@@ -16,6 +16,10 @@ class StopThreadException(Exception):
     """Raised by the main thread when we want the sub-thread running the test to cleanup and shutdown."""
     pass
 
+class TestFailedException(Exception):
+    """Raised by a test it fails, to be caught by the thread pool executor."""
+    pass
+
 
 class NonTerminalException(Exception):
     """Base class for non-terminal exceptions, define standard logging behaviour here."""

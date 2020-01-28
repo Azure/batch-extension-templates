@@ -20,6 +20,7 @@ import sys
 import itertools
 import random
 import pathlib
+import concurrent.futures as futures
 
 utc = pytz.utc
 
@@ -464,26 +465,6 @@ def check_for_pool_resize_error(pool_id: str, pool: str) -> bool:
     return False
 
 
-def start_test_threads(method_name: str, test_managers: 'list[test_manager.TestManager]', *args) -> 'List[threading.thread]':
-    """
-    Executes the specified test manager methods in parallel and returns the list of threads.
-
-    :param method_name: The test_managers method to be called
-    :type method_name: str
-    :param test_managers: a collection of tests for which to execute method_name 
-    :type  test_managers: List[test_managers.TestManager]
-    :param args: the arguments the method needs to run 
-    """
-    threads = []  # type: List[threading.Thread]
-
-    for j in test_managers:
-        thread = threading.Thread(target=getattr(j, method_name), args=args)
-        threads.append(thread)
-        thread.start()
-
-    return threads
-
-
 def update_params_with_values_from_keyvault(parameters: dict(), keyvault_client_with_url: tuple()):
     """
     Replaces parameters with keyvault placeholder values with the actual value fetched from keyvault.
@@ -808,23 +789,6 @@ def run_with_jitter_retry(method, *args):
             raise
     
     run_with_jitter_retry_inner(0, method, *args)
-
-
-def wait_for_threads_to_finish(threads: 'List[threading.thread]', log_waiting: bool = False):
-    """Polls and waits until all threads in a list are no longer alive
-    
-    :param threads: The threads to wait for.
-    :type threads: List[threading.thread]
-    """
-    waiting = True
-    while waiting:
-        waiting = False
-        for thread in threads:
-            if thread.isAlive():
-                if log_waiting:
-                    logger.info("Waiting for thread '{}' to complete".format(thread.ident))
-                waiting = True
-                thread.join(1)
 
 
 def has_timedout(timeout: datetime) -> bool:

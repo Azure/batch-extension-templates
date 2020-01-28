@@ -15,6 +15,7 @@ import azext.batch as batch
 import argparse
 from pygit2 import Repository
 import uuid
+import concurrent.futures as futures
 
 """
 This python module is used for validating the rendering templates by using the azure CLI. 
@@ -135,20 +136,20 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
 
     logger.info(
         "Finished submitting jobs and pools, starting test monitor threads.")
-    stop_threads = False
-    threads = []  # type: List[threading.Thread]
-    try:
-        threads = utils.start_test_threads("run_test", _test_managers, blob_client,
-                                           batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS)
-        utils.wait_for_threads_to_finish(threads)
 
-    except KeyboardInterrupt:
-        # A test has failed and triggered KeyboardInterrupt on main thread, so
-        # call stop_threads on all the other threads
-        logger.error(
-            "Keyboard Interrupt triggered in main thread, calling stop_threads")
-        stop_threads = True
-        utils.wait_for_threads_to_finish(threads, True)
+    stop_threads = False
+
+    with futures.ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_test_result = {executor.submit(test.run_test, 
+        blob_client, batch_client,  images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS)
+        :test for test in _test_managers}
+        for future in futures.as_completed(future_to_test_result):
+            result = future_to_test_result[future]
+            try:
+                data = future.result()
+            except Exception as exc:
+                logger.error("Test failure raised an exception, calling stop_threads. Exception: [{}]".format(exc))
+                stop_threads = True
 
 
 def main():
