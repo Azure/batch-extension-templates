@@ -810,22 +810,37 @@ def run_with_jitter_retry(method, *args):
     run_with_jitter_retry_inner(0, method, *args)
 
 
-def wait_for_threads_to_finish(threads: 'List[threading.thread]', log_waiting: bool = False):
+def wait_for_threads_to_finish(threads: 'List[threading.thread]', shutting_down: bool = False):
     """Polls and waits until all threads in a list are no longer alive
     
     :param threads: The threads to wait for.
     :type threads: List[threading.thread]
+    :param shutting_down: Are we in the process of shutting the runner down.
+    :type shutting_down: bool
     """
     waiting = True
     while waiting:
         waiting = False
-        for thread in threads:
-            if thread.isAlive():
-                if log_waiting:
+
+        aliveThreads = [thread for thread in threads if thread.isAlive()]
+
+        if len(aliveThreads) > 1 or (len(aliveThreads) == 1 and not shutting_down):
+            for thread in aliveThreads:
+                if shutting_down:
                     logger.info("Waiting for thread '{}' to complete".format(thread.ident))
                 waiting = True
                 thread.join(1)
-
+        
+        if len(aliveThreads) == 1:
+            #special casing needed for last thread which frequently seems to lock up and never exit
+            logger.info("Final test thread  [{}] running, giving it bounded chances to complete,".format(threads[0].ident))
+            for i in range(1, 12):
+                threads[0].join(5)
+            
+            if threads[0].isAlive:
+                logger.info("Final test thread [{}] still did not exit after bounded chances, exit anyway.")
+            else:
+                logger.info("Final test thread [{}] exited during bounded chances.")
 
 def has_timedout(timeout: datetime) -> bool:
     """Checks if a timeout has been reached (timeout in the past)
