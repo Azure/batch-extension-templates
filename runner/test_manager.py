@@ -423,6 +423,9 @@ class TestManager(object):
             logger.error(
                 "Calling thread.interrupt_main for failed test with job id [{}] and pool id [{}]".format(self.job_id, self.pool_id))
             _thread.interrupt_main()
+            logger.info("Got here")
+            _thread.exit()
+
 
     def on_test_completed_successfully(self, batch_service_client: batch.BatchExtensionsClient, blob_client: azureblob.BlockBlobService):
         """Called when the test completes successfully.
@@ -486,4 +489,5 @@ class TestManager(object):
         if throw_interrupt_after == 0:
             logger.error("Calling thread.interrupt_main")
             _thread.interrupt_main()
+            logger.info("Got Here!!!")
 

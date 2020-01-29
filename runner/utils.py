@@ -824,12 +824,19 @@ def wait_for_threads_to_finish(threads: 'List[threading.thread]', log_waiting: b
     waiting = True
     while waiting:
         waiting = False
-        for thread in threads:
-            if thread.isAlive():
-                if log_waiting:
-                    logger.info("Waiting for thread '{}' to complete".format(thread.ident))
+
+        aliveThreads = [thread for thread in threads if thread.isAlive()]
+        if len(aliveThreads) == 1:
+            #special casing needed for last thread which frequently seems to lock up and never exit
+            threads[0].join(60)
+
+        if len(aliveThreads) > 1:
+            for thread in aliveThreads:
+                logger.info("Waiting for thread '{}' to complete".format(thread.ident))
                 waiting = True
                 thread.join(1)
+           
+              ##TODO try move this new logic into the caller instead after the KBInterrupt (maybe don't share this method)
 
 
 def has_timedout(timeout: datetime) -> bool:

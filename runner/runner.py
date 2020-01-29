@@ -141,10 +141,10 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
         #threads = utils.start_test_threads("run_test", _test_managers, blob_client,
         #                                   batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS)
 
-        threads = utils.start_test_threads("poll_lambda_or_throw__KB_interrupt", _test_managers, lambda: stop_threads, VMImageURL)
+        threads = utils.start_test_threads("poll_lambda_or_throw__KB_interrupt", _test_managers, lambda: stop_threads)
         utils.wait_for_threads_to_finish(threads)
 
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as e:
         # A test has failed and triggered KeyboardInterrupt on main thread, so
         # call stop_threads on all the other threads
         logger.error(
