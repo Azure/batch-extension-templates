@@ -45,6 +45,6 @@
       "value":"2"
    },
    "vmSize":{
-      "value":"Standard_D3_v2"
+      "value":"Standard_NC6"
    }
 }
