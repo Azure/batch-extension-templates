@@ -831,16 +831,16 @@ def wait_for_threads_to_finish(threads: 'List[threading.thread]', shutting_down:
                 waiting = True
                 thread.join(1)
         
-        if len(aliveThreads) == 1:
+        elif len(aliveThreads) == 1:
             #special casing needed for last thread which frequently seems to lock up and never exit
-            logger.info("Final test thread  [{}] running, giving it bounded chances to complete,".format(threads[0].ident))
-            for i in range(1, 12):
-                threads[0].join(5)
+            last_chance_time_seconds = 60
+            logger.info("Final test thread  [{}] running, giving it final {} seconds to complete,".format(threads[0].ident, last_chance_time_seconds))
+            threads[0].join(last_chance_time_seconds)
             
             if threads[0].isAlive:
-                logger.info("Final test thread [{}] still did not exit after bounded chances, exit anyway.")
+                logger.info("Final test thread [{}] still did not exit after bounded chances, exit anyway.".format(threads[0].ident))
             else:
-                logger.info("Final test thread [{}] exited during bounded chances.")
+                logger.info("Final test thread [{}] exited during bounded chances.".format(threads[0].ident))
 
 def has_timedout(timeout: datetime) -> bool:
     """Checks if a timeout has been reached (timeout in the past)
