@@ -328,6 +328,7 @@ def retarget_job_to_new_pool(batch_service_client: batch.BatchExtensionsClient, 
             logger.info(
                 "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
             raise ex.JobAlreadyCompleteException(job_id, "Job already complete.")
+        raise
 
     # give the job time to move to disabled state before we try Patch it
     time.sleep(service_state_transition_seconds)
