@@ -362,8 +362,23 @@ def enable_job(batch_service_client: batch.BatchExtensionsClient, job_id: str):
     :param job_id: The job to enable
     :type job_id: str
     """
-    batch_service_client.job.enable(job_id)
-    logger.info("Successfully re-enabled job [{}]".format(job_id))
+    try:
+        batch_service_client.job.enable(job_id)
+        logger.info("Successfully re-enabled job [{}]".format(job_id))
+
+    except batchmodels.BatchErrorException as batch_exception:
+        # potential race condition where the nodes have gone idle and the job has 'Completed' between our internal 
+        # node-idle-timeout check and the call to disable the job. Just return in this case 
+        if expected_exception(batch_exception, "The specified job does not exist"):
+            logger.info(
+                "The specified Job [{}] did not exist when we tried to delete it.".format(job_id))
+            raise ex.JobAlreadyCompleteException(job_id, "Job already complete and deleted.")
+
+        if expected_exception(batch_exception, "The specified job is already in a completed state"):
+            logger.info(
+                "The specified Job [{}] was already in completed state when we tried to delete it.".format(job_id))
+            raise ex.JobAlreadyCompleteException(job_id, "Job already complete.")
+        raise
 
 
 def does_task_output_file_exist(batch_service_client: batch.BatchExtensionsClient, job_id: str, expected_file_output_name: str, retry_count = 0) -> bool:

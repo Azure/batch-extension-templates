@@ -373,7 +373,15 @@ class TestManager(object):
 
             utils.wait_for_steady_nodes(
                 batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
-            utils.enable_job(batch_service_client, self.job_id)
+            try:
+                utils.enable_job(batch_service_client, self.job_id)
+            except ex.JobAlreadyCompleteException:
+                # not entirely sure how we can get here - job should either be in disabled state or JobAlreadyCompleteException
+                # thrown by call to 'retarget_job_to_new_pool' above (which is caught and we return immediately), but have seen this call 
+                # to enable_job throw JobAlreadyCompleteException in logs so handling it anyway
+                self.pool_start_duration = utils.timedelta_since(
+                    self.start_time)
+                return
 
             self.pool_start_duration = utils.timedelta_since(self.start_time)
 
