@@ -816,13 +816,6 @@ def run_with_jitter_retry(method, *args):
                         .format(retry_count, max_retry_count, method.__name, args_string))
                 time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
                 run_with_jitter_retry_inner(retry_count + 1, method, *args)
-            elif any('[Errno 11001] getaddrinfo failed' in arg for arg in e.args) and retry_count < max_retry_count:
-                args_string =', '.join(args)
-                logger.info(
-                    "[Errno 11001] getaddrinfo failed - retryCount: {} of {} - retrying call to [{}] with args [{}]"
-                        .format(retry_count, max_retry_count, method.__name, args_string))
-                time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
-                run_with_jitter_retry_inner(retry_count + 1, method, *args)
             else:
                 raise
         except requests_ConnectionError as e:
