@@ -806,14 +806,17 @@ def run_with_jitter_retry(method, *args):
         :type method: [type]
         """
         max_retry_count = 10
+        args_string =', '.join(args)
+        method_string = method.__module__ + "." + method.__name__
+
         try:
             method(*args)
         except ClientRequestError as e:
             if any('too many 503 error' in arg for arg in e.args) and retry_count < max_retry_count:
-                args_string =', '.join(args)
+                
                 logger.info(
                     "503 received from service - retryCount: {} of {} - retrying call to [{}] with args [{}]"
-                        .format(retry_count, max_retry_count, method.__name, args_string))
+                        .format(retry_count, max_retry_count, method_string, args_string))
                 time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
                 run_with_jitter_retry_inner(retry_count + 1, method, *args)
             else:
@@ -821,7 +824,8 @@ def run_with_jitter_retry(method, *args):
         except requests_ConnectionError as e:
             if ('Connection aborted.' in e.message or 'An existing connection was forcibly closed by the remote host' in e.message) and retry_count < max_retry_count:
                 logger.info(
-                    "Retrying call as connection forcibly closed by remote host - retryCount: {} of {}".format(retry_count, max_retry_count))
+                    "Retrying call as connection forcibly closed by remote host - retryCount: {} of {} - - retrying call to [{}] with args [{}]"
+                        .format(retry_count, max_retry_count, method_string, args_string))
                 time.sleep(random.uniform(0.1, 1))  # jitter the next request a bit
                 run_with_jitter_retry_inner(retry_count + 1, method, *args)
             else:
