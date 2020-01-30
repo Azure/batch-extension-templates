@@ -788,9 +788,11 @@ def timedelta_since(start_time: datetime):
 
 
 def run_with_jitter_retry(method, *args):
-    """Recursively retries a webservice call with a retry timing jitter between 0.1 - 1 second when the call fails with 503 or 'connection forcibly closed'
+    """Recursively retries a webservice call with a retry timing jitter between 0.1 - 1 second when the call fails something transient
+    like a 503 or 'connection forcibly closed'
 
-    This was found necessary when running job and pool submission to batch service naively multithreaded across 'n' threads where 'n' equals the number of tests, (should probably use threadpool if revisiting this).
+    This was found necessary when running job and pool submission to batch service naively multithreaded across 'n' threads where 'n' equals the number of tests, 
+    (should move to asyncio pattern if revisiting this).
     Jitter is to desync multiple failures so they aren't all retried at identical times and the batch FE's drop the connection again.
     
     :param method: The method to run with jitter retry
@@ -806,7 +808,7 @@ def run_with_jitter_retry(method, *args):
         :type method: [type]
         """
         max_retry_count = 10
-        args_string =', '.join(args)
+        args_string =', '.join(str(arg) for arg in args)
         method_string = method.__module__ + "." + method.__name__
 
         try:
