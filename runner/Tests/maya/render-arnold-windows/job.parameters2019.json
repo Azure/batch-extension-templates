@@ -8,15 +8,9 @@
    "mayaVersion":{
       "value":"Maya2019"
    },
-   "inputFilegroup":{
-      "value":"myfilegroup"
-   },
    "inputData":{
       "value":"rendering"
    },   
-   "inputDataSas":{
-      "value":"rendering"
-   },
    "sceneFile":{
       "value":"maya.mb"
    },
@@ -29,7 +23,7 @@
    "dedicatedVmCount":{
       "value":"1"
    },
-   "nodeSize":{
+   "vmSize":{
       "value":"Standard_D2_v2"
    }
 }

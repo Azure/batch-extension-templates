@@ -63,15 +63,19 @@
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
+                "commandLine":"cmd.exe /c tree /A /F & dir /s",
                 "resourceFiles": [
                     {
-                        "source": {
-                            "fileGroup": "[parameters('inputData')]"
-                        },
-                        "filePath": "assets/"
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
+                        "filePath": "assets"
                     }
                 ],
-                "commandLine": "dir"
+                "userIdentity": {
+                    "autoUser": {
+                        "elevationLevel": "nonAdmin",
+                        "scope": "pool"
+                    }
+                }
             },
             "taskFactory": {
                 "type": "parametricSweep",

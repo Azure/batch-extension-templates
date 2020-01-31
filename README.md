@@ -1,5 +1,6 @@
 # Azure Batch Extension Templates
 [![VSTS Build Status](https://azurebatch.visualstudio.com/BatchExplorer/_apis/build/status/batch-extension-templates/batch-extension-templates%20CI?branchName=master)](https://azurebatch.visualstudio.com/BatchExplorer/_build/latest?definitionId=23&branchName=master)
+[![VSTS Build Status](https://azurebatch.vsrm.visualstudio.com/_apis/public/Release/badge/3426cbfe-4c9a-4da4-88df-70f025a77017/9/16)](https://azurebatch.visualstudio.com/BatchExplorer/_release?_a=releases&definitionId=9&branch=refs%2Fheads%2Fmaster)
 
 This repository contains templates that can be used with the [azure-batch-cli-extensions](https://github.com/Azure/azure-batch-cli-extensions)
 

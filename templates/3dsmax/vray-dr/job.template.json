@@ -41,19 +41,11 @@
                 "VRayRT"
             ]
         },
-        "inputFilegroup": {
+        "inputData": {
             "type": "string",
             "metadata": {
                 "description": "The file group where the input data is stored",
                 "advancedType": "file-group"
-            }
-        },
-        "inputFilegroupSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputFilegroup"
             }
         },
         "sceneFile": {
@@ -61,7 +53,7 @@
             "metadata": {
                 "description": "The 3ds Max scene file to be rendered",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroup",
+                "dependsOn": "inputData",
                 "wildcards": "*.max"
             }
         },
@@ -71,7 +63,7 @@
             "metadata": {
                 "description": "Optional 3ds Max path file",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroup",
+                "dependsOn": "inputData",
                 "wildcards": "*.mxp"
             }
         },
@@ -81,7 +73,7 @@
             "metadata": {
                 "description": "Optional 3ds Max pre-render script to execute",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroup"
+                "dependsOn": "inputData"
             }
         },
         "irradianceMapFile": {
@@ -90,7 +82,7 @@
             "metadata": {
                 "description": "Optional VRay irradiance map file",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroup"
+                "dependsOn": "inputData"
             }
         },
         "renderPresetFile": {
@@ -99,7 +91,7 @@
             "metadata": {
                 "description": "Optional render preset file",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroup",
+                "dependsOn": "inputData",
                 "wildcards": "*.rps"
             }
         },
@@ -124,7 +116,7 @@
                 "description": "Any additional arguments to pass to 3ds Max, e.g. -superBlack:1"
             }
         },
-        "nodeCount":{
+        "dedicatedVmCount":{
             "type":"int",
             "defaultValue":2,
             "metadata":{
@@ -172,10 +164,16 @@
                 "poolId":"[parameters('poolId')]"
             },
             "jobPreparationTask": {
-                "commandLine": "azcopy /source:\"[parameters('inputFilegroupSas')]\" /dest:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\assets\" /S || exit /b %errorlevel% & rmdir /S /Q \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\\assets\\outputs\" & exit /b 0",
+                "commandLine":"cmd.exe /c tree /A /F & dir /s",
+                "resourceFiles": [
+                    {
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
+                        "filePath": "assets"
+                    }
+                ],
                 "userIdentity": {
                     "autoUser": {
-                        "elevationLevel": "admin",
+                        "elevationLevel": "nonAdmin",
                         "scope": "pool"
                     }
                 }
@@ -186,7 +184,7 @@
                     {
                         "id":"Render",
                         "displayName":"Frame",
-                        "commandLine":"powershell.exe -File 3dsmax.ps1 -maxVersion \"[parameters('maxVersion')]\" -start [parameters('frameStart')] -end [parameters('frameEnd')] -outputName \"images\\[parameters('outputName')]\" -sceneFile \"[parameters('sceneFile')]\" -pathFile \"[parameters('pathFile')]\" -renderer [parameters('vrayRenderer')] -preRenderScript \"[parameters('preRenderScript')]\" -camera \"[parameters('camera')]\" -additionalArgs \" [parameters('additionalArgs')]\" -irradianceMap \"[parameters('irradianceMapFile')]\" -nodeCount [parameters('nodeCount')] -renderPresetFile \"[parameters('renderPresetFile')]\" -dr -vrayPort [parameters('vrayPort')]",
+                        "commandLine":"powershell.exe -File 3dsmax.ps1 -maxVersion \"[parameters('maxVersion')]\" -start [parameters('frameStart')] -end [parameters('frameEnd')] -outputName \"images\\[parameters('outputName')]\" -sceneFile \"[parameters('sceneFile')]\" -pathFile \"[parameters('pathFile')]\" -renderer [parameters('vrayRenderer')] -preRenderScript \"[parameters('preRenderScript')]\" -camera \"[parameters('camera')]\" -additionalArgs \" [parameters('additionalArgs')]\" -irradianceMap \"[parameters('irradianceMapFile')]\" -nodeCount [parameters('dedicatedVmCount')] -renderPresetFile \"[parameters('renderPresetFile')]\" -dr -vrayPort [parameters('vrayPort')]",
                         "userIdentity": {
                             "autoUser": {
                                 "elevationLevel": "admin",
@@ -194,7 +192,7 @@
                             }
                         },
                         "multiInstanceSettings":{
-                            "numberOfInstances":"[parameters('nodeCount')]",
+                            "numberOfInstances":"[parameters('dedicatedVmCount')]",
                             "coordinationCommandLine":"cmd.exe /c echo noop"
                         },
                         "resourceFiles":[

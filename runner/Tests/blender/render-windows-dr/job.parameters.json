@@ -8,9 +8,6 @@
    "inputData":{
       "value":"rendering"
    },
-   "inputDataSas":{
-      "value":"https://"
-   },
    "outputSas":{
       "value":"https://"
    },
@@ -36,7 +33,7 @@
    "dedicatedVmCount":{
       "value":"1"
    },
-   "nodeSize":{
+   "vmSize":{
       "value":"Standard_D3_v2"
    }
 }
