@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"3dsmax-vraynext-2019"
+      "value":"max2019-vraynext"
    },
    "poolId":{
-      "value":"3dsmax-vraynext-2019"
+      "value":"max2019-vraynext"
    },
    "inputData":{
       "value":"rendering"

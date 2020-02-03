@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"3dsmax-vraynext-gpu-2020"
+      "value":"max2020-vraynext-gpu"
    },
    "poolId":{
-      "value":"3dsmax-vraynext-gpu-2020"
+      "value":"max2020-vraynext-gpu"
    },
    "inputData":{
       "value":"rendering"
