@@ -1,24 +1,21 @@
 {
    "jobName":{
-      "value":"3dsmax-vrayrt-dr-2019"
+      "value":"3dsmax-vraynext-2019"
    },
    "poolId":{
-      "value":"3dsmax-vrayrt-dr-2019"
+      "value":"3dsmax-vraynext-2019"
    },
    "inputData":{
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"3dsmax-vraynext-gpu-2019.max"
+      "value":"3dsmax-vraynext-2019.max"
    },
    "maxVersion":{
       "value":"2019"
    },
    "renderer":{
       "value":"vray"
-   },
-   "vrayRenderer":{
-      "value": "VRayRT"
    },
    "outputName":{
       "value":"image.jpg"
@@ -42,7 +39,7 @@
       "value":"rendering-output"
    },
     "dedicatedVmCount":{
-      "value":"2"
+      "value":"1"
    },
    "vmSize":{
       "value":"Standard_D3_v2"

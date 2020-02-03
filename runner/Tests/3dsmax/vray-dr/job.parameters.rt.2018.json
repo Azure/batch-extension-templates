@@ -1,15 +1,15 @@
 {
    "jobName":{
-      "value":"max2018-vray-rt"
+      "value":"3dsmax-vrayrt-dr-2018"
    },
    "poolId":{
-      "value":"3dsmax-vray-dr-RT"
+      "value":"3dsmax-vrayrt-dr-2018"
    },
    "inputData":{
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"3dsmax-vray.max"
+      "value":"3dsmax-vraynext-gpu-2018.max"
    },
    "maxVersion":{
       "value":"2018"
