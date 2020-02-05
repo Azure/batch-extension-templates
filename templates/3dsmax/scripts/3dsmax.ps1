@@ -202,7 +202,7 @@ if ($renderer -like "vray")
     $pre_render_script_content += "indexVrayNextGpu = findString rendererName ""V_Ray_GPU_Next_""`r`n"
     $pre_render_script_content += "if (indexVrayNextGpu == 1 and r.V_Ray_settings.output_splitgbuffer and r.V_Ray_settings.output_splitfilename != """") then (fileName = ""$outputPath"" + (filenameFromPath r.V_Ray_settings.output_splitfilename); r.V_Ray_settings.output_splitfilename = fileName)`r`n"
     $pre_render_script_content += "if (indexVrayNextGpu == 1 and r.V_Ray_settings.output_saveRawFile and r.V_Ray_settings.output_rawFileName != """") then (fileName = ""$outputPath"" + (filenameFromPath r.V_Ray_settings.output_rawFileName); r.V_Ray_settings.output_rawFileName = fileName)`r`n"
-}df
+}
 
 if ((Test-Path ".\RepathRenderElements.ms"))
 {
