@@ -84,7 +84,7 @@ class TestState(Enum):
     STOP_THREAD = 7
     TIMED_OUT = 8
 
-timeout_delta_pool_resize = timedelta(minutes=15)
+timeout_delta_pool_resize = timedelta(minutes=20)
 timeout_delta_node_idle = timedelta(minutes=15)
 timeout_delta_job_complete = timedelta(minutes=15)
 
