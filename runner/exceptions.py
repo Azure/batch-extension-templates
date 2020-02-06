@@ -42,6 +42,11 @@ class PoolResizeFailedException(NonTerminalException):
     def __init__(self, identifier, message):
         super().__init__(identifier, message)
 
+class PoolResizeTimedOutException(NonTerminalException):
+
+    def __init__(self, identifier, message):
+        super().__init__(identifier, message)
+
 
 class NodesFailedToStartException(NonTerminalException):
 

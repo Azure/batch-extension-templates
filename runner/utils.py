@@ -84,7 +84,7 @@ class TestState(Enum):
     STOP_THREAD = 7
     TIMED_OUT = 8
 
-timeout_delta_pool_resize = timedelta(minutes=15)
+timeout_delta_pool_resize = timedelta(minutes=20)
 timeout_delta_node_idle = timedelta(minutes=15)
 timeout_delta_job_complete = timedelta(minutes=15)
 
@@ -632,7 +632,10 @@ def wait_for_pool_resize_operation(batch_service_client: batch.BatchExtensionsCl
         check_stop_thread(stop_thread)
 
         if has_timedout(timeout_pool_resize):
-            raise ex.PoolResizeFailedException(
+            # occasionally we see pool resizes get "stuck" and never complete, meaning the Batch internal
+            # resize timeout of 15minutes doesn't trigger. We can't try resize the pool in these cases as
+            # there is already an ongoing resize operation. Need to delete and recreate a new pool
+            raise ex.PoolResizeTimedOutException(
                 pool_id, "Timed out waiting for resize of pool.")
 
         time.sleep(10)
