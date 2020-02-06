@@ -352,7 +352,7 @@ class TestManager(object):
                 batch_service_client, self.pool_id, self.min_required_vms, test_timeout, stop_thread)
             self.pool_start_duration = utils.timedelta_since(self.start_time)
 
-        except (ex.PoolResizeFailedException, ex.NodesFailedToStartException):
+        except (ex.PoolResizeFailedException, ex.NodesFailedToStartException, ex.PoolResizeTimedOutException):
             # pool failed to get enough nodes to idle from both initial
             # allocation and any secondary pool resize too - try create a whole
             # new pool and change job to target it
