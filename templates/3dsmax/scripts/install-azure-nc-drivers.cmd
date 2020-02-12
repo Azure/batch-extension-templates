@@ -16,9 +16,9 @@ set driver_filename=%driver_version%-tesla-desktop-winserver2016-international.e
 rem If already installed, skip
 if exist %AZ_BATCH_NODE_SHARED_DIR%\init.txt exit /b 0
 
-rem Install Chocolatey - https://chocolatey.org 
-@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-if %errorlevel% neq 0 exit /b %errorlevel%
+rem Install Chocolatey if required - https://chocolatey.org 
+choco -v
+if %errorlevel% neq 0 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
 
 rem Install 7zip
 choco install -y 7zip
