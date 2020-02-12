@@ -144,7 +144,7 @@
             },
             "resourceFiles": [
                 {
-                    "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
+                    "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/fix/choco-tls12/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
                     "filePath": "install-azure-nc-drivers.cmd"
                 }
             ]
