@@ -1,15 +1,15 @@
 {
    "jobName":{
-      "value":"max2020-vray-rt"
+      "value":"max2020-vrayrt-dr"
    },
    "poolId":{
-      "value":"3dsmax-vray-dr-RT-2020"
+      "value":"max2020-vrayrt-dr"
    },
    "inputData":{
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"3ds_max_next.max"
+      "value":"3dsmax-vray-rt-2018.max"
    },
    "maxVersion":{
       "value":"2020"
