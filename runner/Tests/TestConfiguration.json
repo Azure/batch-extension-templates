@@ -292,7 +292,55 @@
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
     },
-     {
+    {
+        "name": "3dsmax-vray-next-2018",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/vray/job.parameters.vraynext2018.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
+        "name": "3dsmax-vray-next-2019",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/vray/job.parameters.vraynext2019.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
+        "name": "3dsmax-vray-next-2020",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/vray/job.parameters.vraynext2020.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
+        "name": "3dsmax-vray-nextgpu-2018",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/vray/job.parameters.vraynextgpu2018.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
+        "name": "3dsmax-vray-nextgpu-2019",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/vray/job.parameters.vraynextgpu2019.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
+        "name": "3dsmax-vray-nextgpu-2020",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/vray/job.parameters.vraynextgpu2020.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
       "name": "3dsmax-corona-2018",
       "template": "../templates/3dsmax/corona/job.template.json",
       "poolTemplate": "../templates/3dsmax/corona/pool.template.json",
