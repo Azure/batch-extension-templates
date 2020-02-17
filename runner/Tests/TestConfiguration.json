@@ -341,6 +341,14 @@
         "applicationLicense":"3dsmax,vray"
     },
     {
+        "name": "3dsmax-vray-rt-2018",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/standard/job.parameters.vrayrt2018.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
       "name": "3dsmax-corona-2018",
       "template": "../templates/3dsmax/corona/job.template.json",
       "poolTemplate": "../templates/3dsmax/corona/pool.template.json",
