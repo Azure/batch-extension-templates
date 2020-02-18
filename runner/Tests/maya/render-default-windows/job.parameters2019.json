@@ -1,0 +1,29 @@
+{
+   "jobName":{
+      "value":"maya-windows-default-2019"
+   },
+   "poolId":{
+      "value":"maya-windows-default"
+   },
+   "mayaVersion":{
+      "value":"Maya2019"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"maya.mb"
+   },
+   "additionalflags":{
+      "value":"-of png"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
+   }
+}

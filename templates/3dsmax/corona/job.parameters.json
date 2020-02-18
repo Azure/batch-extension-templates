@@ -1,21 +1,24 @@
 {
    "jobName":{
-      "value":"3dsmax2019-default"
+      "value":"mycoronajob"
    },
    "poolId":{
-      "value":"3dsmax-default"
+      "value":"mypool"
    },
-   "inputFilegroup":{
+   "inputData":{
       "value":"rendering"
    },
-   "inputFilegroupSas":{
-      "value":"https://"
-   },
    "sceneFile":{
-      "value":"3dsmax-arnold.max"
+      "value":"MyScene.max"
+   },
+   "pathFile":{
+      "value":"MyScene.mxp"
    },
    "maxVersion":{
       "value":"2019"
+   },
+   "preRenderScript":{
+      "value":"prerender.ms"
    },
    "outputName":{
       "value":"image.jpg"
@@ -29,13 +32,7 @@
    "frameStep":{
       "value":1
    },
-   "frameWidth":{
-      "value":1600
-   },
-   "frameHeight":{
-      "value":1200
-   },
    "outputs":{
-      "value":"rendering-output"
+      "value":"rendering-outputs"
    }
 }

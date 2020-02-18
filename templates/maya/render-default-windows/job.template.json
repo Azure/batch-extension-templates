@@ -20,13 +20,14 @@
         },
         "mayaVersion": {
             "type": "string",
-            "defaultValue": "Maya2018",
+            "defaultValue": "Maya2019",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
                 "Maya2017",
-                "Maya2018"
+                "Maya2018",
+                "Maya2019"
             ]
         },
         "inputData": {
@@ -34,14 +35,6 @@
             "metadata": {
                 "description": "The file group where the input data is stored",
                 "advancedType": "file-group"
-            }
-        },
-        "inputDataSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputData"
             }
         },
         "sceneFile": {
@@ -95,6 +88,9 @@
             },
             "Maya2018":{
                 "environmentValue": "%MAYA_2018_EXEC%"
+            },
+            "Maya2019":{
+                "environmentValue": "%MAYA_2019_EXEC%"
             }
         }
    },
@@ -107,13 +103,18 @@
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
+                "commandLine":"cmd.exe /c tree /A /F & dir /s",
+                "resourceFiles": [
+                    {
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]"
+                    }
+                ],
                 "userIdentity": {
                     "autoUser": {
-                        "scope": "pool",
-                        "elevationLevel": "nonAdmin"
+                        "elevationLevel": "nonAdmin",
+                        "scope": "pool"
                     }
-                },
-                "commandLine": "cmd.exe /c set & echo --- & azcopy /source:\"[parameters('inputDataSas')]\" /dest:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" /S || exit /b %errorlevel%"
+                }
             },
             "jobReleaseTask": {
                 "userIdentity": {

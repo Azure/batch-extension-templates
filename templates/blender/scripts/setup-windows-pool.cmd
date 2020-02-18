@@ -4,7 +4,7 @@ if exist "C:\Python37\python.exe" (
     echo # installing microsoft build tools for the azure-batch cli
     choco install microsoft-visual-cpp-build-tools -y
 ) else (
-    choco install python -y 
+    choco install python --version=3.7.4 -y
     echo # refreshing environment vars ...
     call RefreshEnv.cmd
     echo # installing azure-batch sdk for python ...

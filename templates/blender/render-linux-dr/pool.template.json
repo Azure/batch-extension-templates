@@ -9,7 +9,7 @@
         },
         "dedicatedVmCount": {
             "type": "int",
-            "defaultValue": 4,
+            "defaultValue": 2,
             "metadata": {
                 "description": "The number of dedicated nodes in the Azure Batch pool"
             }
@@ -21,7 +21,7 @@
                 "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
-        "nodeSize": {
+        "vmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the nodes that run the tasks in the pool"
@@ -94,7 +94,7 @@
     "pool": {
         "id": "[parameters('poolId')]",
         "displayName": "Blender Ubuntu DR pool",
-        "vmSize": "[parameters('nodeSize')]",
+        "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
@@ -111,7 +111,7 @@
             },
             "resourceFiles": [
                 {
-                    "blobSource": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/setup-linux-pool.sh",
+                    "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/setup-linux-pool.sh",
                     "filePath": "setup-linux-pool.sh"
                 }
             ]

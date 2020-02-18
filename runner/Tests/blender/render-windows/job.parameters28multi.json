@@ -1,0 +1,32 @@
+{
+   "jobName":{
+      "value":"blender-windows28multi"
+   },
+   "poolId":{
+      "value":"blender-windows"
+   },
+   "blenderVersion":{
+      "value": "2.8"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "blendFile":{
+      "value":"shapes.blend"
+   },
+   "frameStart":{
+      "value":1
+   },
+   "frameEnd":{
+      "value":1
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
+   }
+}

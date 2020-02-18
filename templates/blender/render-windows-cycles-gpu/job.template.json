@@ -22,14 +22,6 @@
                 "advancedType": "file-group"
             }
         },
-        "inputDataSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputData"
-            }
-        },
         "blendFile": {
             "type": "string",
             "metadata": {
@@ -77,19 +69,23 @@
             },
             "displayName": "[parameters('blendFile')]",
             "onAllTasksComplete": "terminateJob",
-            "jobPreparationTask":{
-                "userIdentity":{
+            "jobPreparationTask": {
+                "commandLine":"cmd.exe /c tree /A /F & dir /s",
+                "resourceFiles": [
+                    {
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]"
+                    },
+                    {
+                        "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/blender_cycles_use_gpu.py",
+                        "filePath": "blender_cycles_use_gpu.py"
+                    }
+                ],
+                "userIdentity": {
                     "autoUser": {
+                        "elevationLevel": "nonAdmin",
                         "scope": "pool"
                     }
-                },
-               "commandLine":"azcopy /source:\"[parameters('inputDataSas')]\" /dest:\"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" /S & exit /b 0",
-               "resourceFiles": [
-                {
-                    "blobSource": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/blender_cycles_use_gpu.py",
-                    "filePath": "blender_cycles_use_gpu.py"
                 }
-            ]
             },
             "jobReleaseTask":{
                "userIdentity":{

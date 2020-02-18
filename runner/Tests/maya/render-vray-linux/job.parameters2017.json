@@ -3,18 +3,12 @@
       "value":"maya-vray-linux-2017"
    },
    "poolId":{
-      "value":"vray-linux"
+      "value":"maya-vray-linux"
    },
    "mayaVersion":{
       "value":"Maya2017"
    },
-   "inputFilegroup":{
-      "value":"myfilegroup"
-   },
    "inputData":{
-      "value":"rendering"
-   },
-   "inputDataSas":{
       "value":"rendering"
    },
    "sceneFile":{
@@ -23,7 +17,10 @@
    "outputs":{
       "value":"rendering-output"
    },
-   "outputFilegroup":{
-      "value":"myfilegroup"
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
    }
 }

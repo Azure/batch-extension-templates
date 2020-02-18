@@ -17,11 +17,18 @@
                 "advancedType": "job-id"
             }
         },
-        "inputFilegroup": {
+        "inputData": {
             "type": "string",
             "metadata": {
                 "description": "The file group where the input images are stored. Any non-image files will fail to convert.",
                 "advancedType": "file-group"
+            }
+        },
+        "inputDataPrefix": {
+            "type": "string",
+            "defaultValue": "parent-folder/outputs",
+            "metadata": {
+                "description": "The relative path with '/' slashes in the filegroup where the individual frames reside"
             }
         },
         "resize": {
@@ -31,7 +38,7 @@
                 "description": "Image resize percent"
             }
         },
-        "outputFilegroup": {
+        "outputs": {
             "type": "string",
             "metadata": {
                 "description": "The file group where outputs will be stored",
@@ -51,14 +58,15 @@
             "taskFactory": {
                 "type": "taskPerFile",
                 "source": {
-                    "fileGroup": "[parameters('inputFilegroup')]"
+                    "fileGroup": "[parameters('inputData')]",
+                    "prefix": "[parameters('inputDataPrefix')]"
                 },
                 "repeatTask": {
                     "displayName": "Convert image {fileName}",
                     "commandLine": "set & mkdir images & convert {fileName} -resize [parameters('resize')]% \"images/{fileName}\"",
                     "resourceFiles": [
                         {
-                            "blobSource": "{url}",
+                            "httpUrl": "{url}",
                             "filePath": "{fileName}"
                         }
                     ],
@@ -67,7 +75,7 @@
                             "filePattern": "../stdout.txt",
                             "destination": {
                                 "autoStorage": {
-                                    "fileGroup": "[parameters('outputFilegroup')]",
+                                    "fileGroup": "[parameters('outputs')]",
                                     "path": "[parameters('jobName')]/logs/{fileName}.log"
                                 }
                             },
@@ -79,7 +87,7 @@
                             "filePattern": "../stderr.txt",
                             "destination": {
                                 "autoStorage": {
-                                    "fileGroup": "[parameters('outputFilegroup')]",
+                                    "fileGroup": "[parameters('outputs')]",
                                     "path": "[parameters('jobName')]/logs/{fileName}_error.log"
                                 }
                             },
@@ -91,7 +99,7 @@
                             "filePattern": "images/**/*",
                             "destination": {
                                 "autoStorage": {
-                                    "fileGroup": "[parameters('outputFilegroup')]",
+                                    "fileGroup": "[parameters('outputs')]",
                                     "path": "[parameters('jobName')]/outputs"
                                 }
                             },

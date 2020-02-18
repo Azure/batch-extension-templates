@@ -17,7 +17,7 @@
                 "advancedType": "job-id"
             }
         },
-        "inputFilegroup": {
+        "inputData": {
             "type": "string",
             "metadata": {
                 "description": "The file group where the input files are stored.",
@@ -48,14 +48,14 @@
             "taskFactory": {
                 "type": "taskPerFile",
                 "source": {
-                    "fileGroup": "[parameters('inputFilegroup')]"
+                    "fileGroup": "[parameters('inputData')]"
                 },
                 "repeatTask": {
                     "displayName": "convert file {fileName}",
                     "commandLine": "set & mkdir converted & ffmpeg -y -i \"{fileName}\" -acodec libmp3lame \"converted/{fileNameWithoutExtension}.mp3\"",
                     "resourceFiles": [
                         {
-                            "blobSource": "{url}",
+                            "httpUrl": "{url}",
                             "filePath": "{fileName}"
                         }
                     ],

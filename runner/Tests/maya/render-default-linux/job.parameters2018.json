@@ -3,18 +3,12 @@
       "value":"maya-linux-default-2018"
    },
    "poolId":{
-      "value":"default-linux"
+      "value":"maya-linux-default"
    },
    "mayaVersion":{
       "value":"Maya2018"
    },
-   "inputFilegroup":{
-      "value":"myfilegroup"
-   },
    "inputData":{
-      "value":"rendering"
-   },
-   "inputDataSas":{
       "value":"rendering"
    },
    "sceneFile":{
@@ -26,7 +20,10 @@
    "outputs":{
       "value":"rendering-output"
    },
-   "outputFilegroup":{
-      "value":"myfilegroup"
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
    }
 }

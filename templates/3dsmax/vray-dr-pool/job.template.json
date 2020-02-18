@@ -18,7 +18,7 @@
                 "description": "The pool id"
             }
         },
-        "nodeCount":{
+        "dedicatedVmCount":{
             "type":"int",
             "defaultValue":2,
             "metadata":{
@@ -59,11 +59,11 @@
                             "maxTaskRetryCount":-1
                         },
                         "multiInstanceSettings":{
-                            "numberOfInstances":"[parameters('nodeCount')]",
+                            "numberOfInstances":"[parameters('dedicatedVmCount')]",
                             "coordinationCommandLine":"cd .. & vray-adv-dr.cmd [parameters('vrayPort')]",
                             "commonResourceFiles":[
                                 {
-                                    "blobSource":"https://raw.githubusercontent.com/Azure/azure-hpc/master/Rendering/VRayPoolManager/Scripts/vray-adv-dr.cmd",
+                                    "httpUrl":"https://raw.githubusercontent.com/Azure/azure-hpc/master/Rendering/VRayPoolManager/Scripts/vray-adv-dr.cmd",
                                     "filePath":"vray-adv-dr.cmd"
                                 }
                             ]

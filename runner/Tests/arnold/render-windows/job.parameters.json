@@ -13,5 +13,11 @@
    },
    "outputs":{
       "value":"rendering-output"
+   },
+   "dedicatedVmCount":{
+      "value":"1"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
    }
 }

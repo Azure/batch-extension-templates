@@ -63,15 +63,19 @@
                 "poolId": "[parameters('poolId')]"
             },
             "jobPreparationTask": {
+                "commandLine":"cmd.exe /c tree /A /F & dir /s",
                 "resourceFiles": [
                     {
-                        "source": {
-                            "fileGroup": "[parameters('inputData')]"
-                        },
-                        "filePath": "assets/"
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]",
+                        "filePath": "assets"
                     }
                 ],
-                "commandLine": "dir"
+                "userIdentity": {
+                    "autoUser": {
+                        "elevationLevel": "nonAdmin",
+                        "scope": "pool"
+                    }
+                }
             },
             "taskFactory": {
                 "type": "parametricSweep",
@@ -90,7 +94,7 @@
                             "elevationLevel": "admin"
                         }
                     },
-                    "commandLine": "mkdir images & subst X: %AZ_BATCH_JOB_PREP_WORKING_DIR%\\assets & %VRAY_3.60.4_EXEC% -sceneFile=\"X:\\[parameters('sceneFile')]\" -frames={0} -imgfile=\"%AZ_BATCH_TASK_WORKING_DIR%\\images\\image{0}.png\" -display=0",
+                    "commandLine": "mkdir images & subst X: %AZ_BATCH_JOB_PREP_WORKING_DIR%\\assets & %VRAY_4.10.03_EXEC% -sceneFile=\"X:\\[parameters('sceneFile')]\" -frames={0} -imgfile=\"%AZ_BATCH_TASK_WORKING_DIR%\\images\\image{0}.png\" -display=0",
                     "outputFiles": [
                         {
                             "filePattern": "../stdout.txt",

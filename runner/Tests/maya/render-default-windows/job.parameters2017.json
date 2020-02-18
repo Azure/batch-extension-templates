@@ -3,19 +3,13 @@
       "value":"maya-windows-default-2017"
    },
    "poolId":{
-      "value":"default-windows"
+      "value":"maya-windows-default"
    },
    "mayaVersion":{
       "value":"Maya2017"
    },
-   "inputFilegroup":{
-      "value":"myfilegroup"
-   },
    "inputData":{
       "value":"rendering"
-   },
-   "inputDataSas":{
-      "value":"https://myfilegroup"
    },
    "sceneFile":{
       "value":"maya.mb"
@@ -26,7 +20,10 @@
    "outputs":{
       "value":"rendering-output"
    },
-   "outputFilegroup":{
-      "value":"myfilegroup"
+    "dedicatedVmCount":{
+      "value":"1"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
    }
 }

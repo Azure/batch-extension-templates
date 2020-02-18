@@ -1,0 +1,47 @@
+{
+   "jobName":{
+      "value":"max2020-vray-adv"
+   },
+   "poolId":{
+      "value":"3dsmax-vray-Adv-2020"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"3dsmax2019_adv_next.max"
+   },
+   "maxVersion":{
+      "value":"2020"
+   },
+   "outputName":{
+      "value":"image.jpg"
+   },
+   "vrayRenderer":{
+      "value": "VRayAdv"
+   },
+   "frameStart":{
+      "value":1
+   },
+   "frameEnd":{
+      "value":1
+   },
+   "frameStep":{
+      "value":1
+   },
+   "frameWidth":{
+      "value":40
+   },
+   "frameHeight":{
+      "value":30
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+    "dedicatedVmCount":{
+      "value":"2"
+   },
+   "vmSize":{
+      "value":"Standard_D3_v2"
+   }
+}

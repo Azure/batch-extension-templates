@@ -1,0 +1,26 @@
+{
+   "jobName":{
+      "value":"container-centos-maya2017-vray"
+   },
+   "poolId":{
+      "value":"container-centos-maya2017-vray"
+   },
+   "containerImage":{
+      "value": "azurebatchrendering/centos-maya_2017u5_vray36004"
+   },
+   "mayaVersion":{
+      "value":"Maya2017"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"maya-vray.mb"
+   },
+   "additionalflags":{
+      "value":"-of png"
+   },
+   "outputs":{
+      "value":"rendering-output"
+   }
+}

@@ -1,17 +1,24 @@
 {
     "parameters": {
-        "poolName": {
+        "poolId": {
             "type": "string",
             "defaultValue": "ffmpeg-pool",
             "metadata": {
                 "description": "Id of the pool"
             }
         },
-        "numberNodes": {
+        "dedicatedVmCount": {
             "type": "int",
             "defaultValue": 1,
             "metadata": {
                 "description": "The number of nodes in the Azure Batch pool where the job will run"
+            }
+        },
+        "lowPriorityVmCount": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
         "vmSize": {
@@ -38,17 +45,18 @@
                 "publisher": "batch",
                 "offer": "rendering-windows2016",
                 "sku": "rendering",
-                "version": "1.1.7"
+                "version": "latest"
             },
             "nodeAgentSKUId": "batch.node.windows amd64"
         }
     },
     "pool": {
-        "id": "[parameters('poolName')]",
-        "displayName": "Ffmpeg pool running: [parameters('poolName')]",
+        "id": "[parameters('poolId')]",
+        "displayName": "Ffmpeg pool running: [parameters('poolId')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
-        "targetDedicatedNodes": "[parameters('numberNodes')]",
+        "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
+        "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
         "enableAutoScale": false
     }
 }

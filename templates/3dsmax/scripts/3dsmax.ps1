@@ -66,6 +66,12 @@ function SetupDistributedRendering
     $vraydr_content | Out-File "$pluginConfig2019\vray_dr.cfg" -Force -Encoding ASCII
     $vrayrtdr_content | Out-File "$pluginConfig2019\vrayrt_dr.cfg" -Force -Encoding ASCII
 
+    # Max 2020
+    $pluginConfig2020 = "$env:LOCALAPPDATA\Autodesk\3dsMaxIO\2020 - 64bit\ENU\en-US\plugcfg"
+    New-Item "$pluginConfig2020" -ItemType Directory -Force
+    $vraydr_content | Out-File "$pluginConfig2020\vray_dr.cfg" -Force -Encoding ASCII
+    $vrayrtdr_content | Out-File "$pluginConfig2020\vrayrt_dr.cfg" -Force -Encoding ASCII
+
     # Create preRender script to enable distributed rendering in the scene
     $vrayLogFile = "$env:AZ_BATCH_TASK_WORKING_DIR\VRayLog.log" -replace "\\", "\\"
     $script:pre_render_script_content += "-- VRay DR setup`r`n"
@@ -85,7 +91,7 @@ function SetupDistributedRendering
         ElseIf($renderer -eq "VRayAdv")
         {
             $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender)`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
         }
@@ -100,7 +106,22 @@ function SetupDistributedRendering
         ElseIf($renderer -eq "VRayAdv")
         {
             $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender)`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
+            $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
+            $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
+        }
+    }
+    ElseIf($maxVersion -eq "2020"){
+        IF($renderer -eq "VRayRT"){
+            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_GPU_""`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.distributed_rendering = true)`r`n"            
+            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_level = 4`r`n"
+            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_file = ""$vrayLogFile""`r`n"
+        }    
+        ElseIf($renderer -eq "VRayAdv")
+        {
+            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
             $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
         }
@@ -114,17 +135,21 @@ function SetupDistributedRendering
 $pre_render_script = "prerender.ms"
 $pre_render_script_content = "-- Pre render script`r`n"
 $pre_render_script_content += "r = renderers.current`r`n"
+$pre_render_script_content += "mversion = maxVersion()`r`n"
+#$pre_render_script_content += "r = print ('Using 3ds Max '+ mversion[8] as string)`r`n"
 
 if ($dr)
 {
     SetupDistributedRendering
 }
 
-Write-Host "Using renderer $renderer"
+Write-Host "Using renderer 3ds-Max $maxVersion with $renderer"
 
 if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
 {
     $irMap = "$workingDirectory\$irradianceMap"
+    $irMap = $irMap -replace "\\", "\\"
+    
     Write-Host "Setting IR map to $irMap"
     $pre_render_script_content += "-- Set the IR path`r`n"
     If ($maxVersion -eq "2018")
@@ -138,10 +163,18 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
             $pre_render_script_content += "r.adv_irradmap_loadFileName = ""$irMap""`r`n"
         }
     }
+    ElseIf ($maxVersion -eq "2020")
+    {
+        IF($renderer -ne "VRayRT"){
+
+            $pre_render_script_content += "r.adv_irradmap_loadFileName = ""$irMap""`r`n"
+        }
+    }
 }
 
 if ($renderer -eq "arnold")
 {
+    Write-Host "3ds Max is using the Arnold renderer " 
     $pre_render_script_content += "-- Fail on arnold license error`r`n"
     $pre_render_script_content += "r.abort_on_license_fail = true`r`n"
     $pre_render_script_content += "r.prepass_enabled = false`r`n"
@@ -154,11 +187,28 @@ if ($renderer -eq "arnold")
 
 if ($renderer -like "vray")
 {
-    $outputFiles = "$env:AZ_BATCH_TASK_WORKING_DIR\images\____.jpg" -replace "\\", "\\"
+    Write-Host "3ds Max is using the Vray renderer " 
+    $outputPath = "$env:AZ_BATCH_TASK_WORKING_DIR\images\" -replace "\\", "\\"
     $pre_render_script_content += "-- Set output channel path`r`n"
     $pre_render_script_content += "rendererName = r as string`r`n"
-    $pre_render_script_content += "index = findString rendererName ""V_Ray_Adv_""`r`n"
-    $pre_render_script_content += "if index == 1 then (r.output_splitfilename = ""$outputFiles"")`r`n"
+    $pre_render_script_content += "indexVrayAdv = findString rendererName ""V_Ray_Adv_""`r`n"
+    $pre_render_script_content += "if (indexVrayAdv == 1 and r.output_splitgbuffer and r.output_splitfilename != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_splitfilename); r.output_splitfilename = fileName)`r`n"
+    $pre_render_script_content += "if (indexVrayAdv == 1 and r.output_saveRawFile and r.output_rawFileName != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_rawFileName); r.output_rawFileName = fileName)`r`n"
+
+    $pre_render_script_content += "indexVrayNext = findString rendererName ""V_Ray_Next_""`r`n"
+    $pre_render_script_content += "if (indexVrayNext == 1 and r.output_splitgbuffer and r.output_splitfilename != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_splitfilename); r.output_splitfilename = fileName)`r`n"
+    $pre_render_script_content += "if (indexVrayNext == 1 and r.output_saveRawFile and r.output_rawFileName != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_rawFileName); r.output_rawFileName = fileName)`r`n"
+
+    $pre_render_script_content += "indexVrayNextGpu = findString rendererName ""V_Ray_GPU_Next_""`r`n"
+    $pre_render_script_content += "if (indexVrayNextGpu == 1 and r.V_Ray_settings.output_splitgbuffer and r.V_Ray_settings.output_splitfilename != """") then (fileName = ""$outputPath"" + (filenameFromPath r.V_Ray_settings.output_splitfilename); r.V_Ray_settings.output_splitfilename = fileName)`r`n"
+    $pre_render_script_content += "if (indexVrayNextGpu == 1 and r.V_Ray_settings.output_saveRawFile and r.V_Ray_settings.output_rawFileName != """") then (fileName = ""$outputPath"" + (filenameFromPath r.V_Ray_settings.output_rawFileName); r.V_Ray_settings.output_rawFileName = fileName)`r`n"
+}
+
+if ((Test-Path ".\RepathRenderElements.ms"))
+{
+	$remapRenderElementsScript = (Get-Content -Path ".\RepathRenderElements.ms" -Raw)
+	$pre_render_script_content += "-- Remap any render element paths`r`n"
+	$pre_render_script_content += $remapRenderElementsScript
 }
 
 $pre_render_script_content | Out-File $pre_render_script -Encoding ASCII
@@ -318,10 +368,19 @@ ElseIf ($maxVersion -eq "2019")
             exit 1
         }
 }
+ElseIf ($maxVersion -eq "2020")
+{
+        $max_exec = $env:3DSMAX_2020_EXEC
+        if(-Not (Test-Path "$env:3DSMAX_2020"))
+        {
+            Write-Host "3ds Max 2020 doesn't exist on this rendering image, please use a newer version of the rendering image."
+            exit 1
+        }
+}
 Else 
 {
-    Write-Host "No version of 3ds Max was selected. 3ds Max 2019 was selected by default."
-    $max_exec = $env:3DSMAX_2019_EXEC
+    Write-Host "No version of 3ds Max was selected. 3ds Max 2020 was selected by default."
+    $max_exec = $env:3DSMAX_2020_EXEC
 }
 
 Write-Host "Executing $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`""
@@ -338,6 +397,10 @@ If ($maxVersion -eq "2018")
 ElseIf ($maxVersion -eq "2019")
 {   
     Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2019 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue 
+}
+ElseIf ($maxVersion -eq "2020")
+{  
+    Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2020 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue 
 }
 
 if ($renderer -like "vray")

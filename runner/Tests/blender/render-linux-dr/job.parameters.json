@@ -3,13 +3,10 @@
       "value":"blender-linux-dr"
    },
    "poolId":{
-      "value":"blender-ubuntu-dr"
+      "value":"blender-linux-dr"
    },
    "inputData":{
       "value":"rendering"
-   },
-   "inputDataSas":{
-      "value":"https://"
    },
    "outputSas":{
       "value":"https://"
@@ -24,12 +21,18 @@
       "value":1
    },
    "xTiles":{
-      "value":3
+      "value":2
    },
    "yTiles":{
-      "value":3
+      "value":2
    },
    "outputs":{
       "value":"rendering-output"
+   },
+   "dedicatedVmCount":{
+      "value":"2"
+   },
+   "vmSize":{
+      "value":"Standard_D2_v2"
    }
 }

@@ -18,7 +18,7 @@
                 "advancedType": "job-id"
             }
         },
-        "inputFilegroupName": {
+        "inputData": {
             "type": "string",
             "metadata": {
                 "description": "The file group where the data is stored",
@@ -30,15 +30,7 @@
             "metadata": {
                 "description": "The V-Ray scene file to be rendered (.vrscene)",
                 "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroupName"
-            }
-        },
-        "inputFilegroupSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS URL for reading and writing the data from the selected file group",
-                "advancedType": "file-group-write-sas",
-                "dependsOn": "inputFilegroupName"
+                "dependsOn": "inputData"
             }
         },
         "frameStart": {
@@ -66,18 +58,14 @@
             "jobPreparationTask": {
                 "resourceFiles":[
                     {
-                        "blobSource":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/vray/render-linux-with-blobfuse-mount/installblobfuse.sh",
+                        "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/vray/render-linux-with-blobfuse-mount/installblobfuse.sh",
                         "filePath":"installblobfuse.sh"
                     }
                 ],
                 "environmentSettings":[
                     {
                         "name":"INPUT_FILEGROUP_NAME",
-                        "value":"fgrp-[parameters('inputFilegroupName')]"
-                    },
-                    {
-                        "name":"INPUT_FILEGROUP_SAS",
-                        "value":"[parameters('inputFilegroupSas')]"
+                        "value":"fgrp-[parameters('inputData')]"
                     }
                 ],
                 "commandLine": "/bin/bash -c installblobfuse.sh",
@@ -89,7 +77,7 @@
                 }
             },
             "jobReleaseTask": {
-                "commandLine": "/bin/bash -c \"fusermount -u $AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputFilegroupName')]\"",
+                "commandLine": "/bin/bash -c \"fusermount -u $AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputData')]\"",
                 "userIdentity": {
                     "autoUser": {
                         "elevationLevel": "admin",
@@ -114,7 +102,7 @@
                             "elevationLevel": "admin"
                         }
                     },
-                    "commandLine": "source /etc/profile.d/chaos.sh;vray2017.sh -sceneFile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputFilegroupName')]/[parameters('sceneFile')]\" -frames={0} -imgfile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputFilegroupName')]/image{0}.png\" -display=0;err=$?;exit $err"
+                    "commandLine": "source /etc/profile.d/chaos.sh;vray2017.sh -sceneFile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputData')]/[parameters('sceneFile')]\" -frames={0} -imgfile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputData')]/image{0}.png\" -display=0;err=$?;exit $err"
                 }
             },
             "onAllTasksComplete": "terminateJob"

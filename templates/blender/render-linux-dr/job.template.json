@@ -25,14 +25,6 @@
                 "advancedType": "file-group"
             }
         },
-        "inputDataSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputData"
-            }
-        },
         "blendFile": {
             "type": "string",
             "metadata": {
@@ -137,13 +129,18 @@
             "onAllTasksComplete": "terminateJob",
             "usesTaskDependencies": true,
             "jobPreparationTask": {
+                "commandLine":"/bin/bash -c \"ls -l -R\"",
+                "resourceFiles": [
+                    {
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]"
+                    }
+                ],
                 "userIdentity": {
                     "autoUser": {
-                        "scope": "pool",
-                        "elevationLevel": "admin"
+                        "elevationLevel": "nonAdmin",
+                        "scope": "pool"
                     }
-                },
-                "commandLine": "/bin/bash -c 'azcopy --source \"[parameters('inputDataSas')]\" --destination \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" --recursive'"
+                }
             },
             "jobReleaseTask": {
                 "userIdentity": {
@@ -165,7 +162,6 @@
                     { "name": "OUTPUT_FORMAT", "value": "[parameters('outputFormat')]" },
                     { "name": "BLEND_FILE", "value": "[parameters('blendFile')]" },
                     { "name": "OPTIONAL_PARAMS", "value": "[parameters('optionalParameters')]" },
-                    { "name": "INPUT_CONTAINER_SAS", "value": "[parameters('inputDataSas')]" },
                     { "name": "OUTPUT_CONTAINER_SAS", "value": "[parameters('outputSas')]" },
                     { "name": "X_TILES", "value": "[parameters('xTiles')]" },
                     { "name": "Y_TILES", "value": "[parameters('yTiles')]" },
@@ -185,7 +181,7 @@
                 "killJobOnCompletion": false,
                 "resourceFiles": [
                     {
-                        "blobSource": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/python-frame-splitter.py",
+                        "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/python-frame-splitter.py",
                         "filePath": "scripts/python-frame-splitter.py"
                     }
                 ],

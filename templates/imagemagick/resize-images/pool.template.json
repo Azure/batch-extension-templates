@@ -1,20 +1,27 @@
 {
     "parameters": {
-        "poolName": {
+        "poolId": {
             "type": "string",
             "defaultValue": "image-magick-pool",
             "metadata": {
                 "description": "The ID of Azure Batch pool"
             }
         },
-        "vmCount": {
+        "dedicatedVmCount": {
             "type": "int",
             "defaultValue": 1,
             "metadata": {
-                "description": "The number of virtual machines in the Azure Batch pool where the job will run"
+                "description": "The number of dedicated nodes in the Azure Batch pool"
             }
         },
-        "nodeSize": {
+        "lowPriorityVmCount": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The number of low priority nodes in the Azure Batch pool"
+            }
+        },
+        "vmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the virtual machines that run the application"
@@ -97,11 +104,12 @@
         }
     },
     "pool": {
-        "id": "[parameters('poolName')]",
+        "id": "[parameters('poolId')]",
         "displayName": "ImageMagick pool",
-        "vmSize": "[parameters('nodeSize')]",
+        "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
-        "targetDedicatedNodes": "[parameters('vmCount')]",
+        "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
+        "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
         "enableAutoScale": false
     }
 }

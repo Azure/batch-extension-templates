@@ -7,11 +7,18 @@
                 "description": "Id of the pool"
             }
         },
-        "vmCount": {
+        "dedicatedVmCount": {
             "type": "int",
             "defaultValue": 1,
             "metadata": {
-                "description": "The number of virtual machines in the Azure Batch pool where the job will run"
+                "description": "The number of dedicated nodes in the Azure Batch pool"
+            }
+        },
+        "lowPriorityVmCount": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
         "vmSize": {
@@ -97,7 +104,7 @@
                 "publisher": "batch",
                 "offer": "rendering-windows2016",
                 "sku": "rendering",
-                "version": "1.3.4"
+                "version": "1.3.8"
             },
             "nodeAgentSKUId": "batch.node.windows amd64"
         }
@@ -107,7 +114,8 @@
         "displayName": "V-Ray Windows rendering pool",
         "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
-        "targetDedicatedNodes": "[parameters('vmCount')]",
+        "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
+        "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
         "enableAutoScale": false,
         "applicationLicenses": [
             "vray"

@@ -2,7 +2,7 @@
     "parameters": {
         "poolId": {
             "type": "string",
-            "defaultValue": "blender-ubuntu",
+            "defaultValue": "blender-custom-pool",
             "metadata": {
                 "description": "Id of the pool"
             }
@@ -21,7 +21,7 @@
                 "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
-        "nodeSize": {
+        "vmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the nodes that run the tasks in the pool"
@@ -83,38 +83,21 @@
     "variables": {
         "osType": {
             "imageReference": {
-                "publisher": "Canonical",
-                "offer": "UbuntuServer",
-                "sku": "16.04.0-LTS",
-                "version": "latest"
+                "publisher": "batch",
+                "offer": "rendering-centos73",
+                "sku": "rendering",
+                "version": "1.1.6"
             },
-            "nodeAgentSKUId": "batch.node.ubuntu 16.04"
+            "nodeAgentSKUId": "batch.node.centos 7"
         }
     },
     "pool": {
         "id": "[parameters('poolId')]",
-        "displayName": "Blender Ubuntu standard pool",
-        "vmSize": "[parameters('nodeSize')]",
+        "displayName": "Blender rendering pool for CentOS",
+        "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
-        "enableAutoScale": false,
-        "startTask": {
-            "commandLine": "/bin/bash -c ./setup-linux-pool.sh",
-            "waitForSuccess": true,
-            "maxTaskRetryCount": 0,
-            "userIdentity": {
-                "autoUser": {
-                    "scope": "pool",
-                    "elevationLevel": "admin"
-                }
-            },
-            "resourceFiles": [
-                {
-                    "blobSource": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/blender/scripts/setup-linux-pool.sh",
-                    "filePath": "setup-linux-pool.sh"
-                }
-            ]
-        }
+        "enableAutoScale": false
     }
 }

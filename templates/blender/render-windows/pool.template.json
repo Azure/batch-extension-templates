@@ -21,7 +21,7 @@
                 "description": "The number of low priority nodes in the Azure Batch pool"
             }
         },
-        "nodeSize": {
+        "vmSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the nodes that run the tasks in the pool"
@@ -93,7 +93,7 @@
                 "publisher": "batch",
                 "offer": "rendering-windows2016",
                 "sku": "rendering",
-                "version": "1.3.4"
+                "version": "1.3.8"
             },
             "nodeAgentSKUId": "batch.node.windows amd64"
         }
@@ -101,7 +101,7 @@
     "pool": {
         "id": "[parameters('poolId')]",
         "displayName": "Blender Windows standard pool",
-        "vmSize": "[parameters('nodeSize')]",
+        "vmSize": "[parameters('vmSize')]",
         "virtualMachineConfiguration": "[variables('osType')]",
         "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
