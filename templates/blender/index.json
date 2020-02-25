@@ -5,6 +5,16 @@
         "description": "Render a Blender scene using our CentOS Marketplace image."
     },
     {
+        "id": "render-linux-container",
+        "name": "Render frames on Ubuntu 16.04 using containers ",
+        "description": "Render a Blender scene using Ubuntu 16.04 using containers."
+    },
+    {
+        "id": "render-linux-container-280",
+        "name": "Render frames on Ubuntu 16.04 using containers and Blender 2.80",
+        "description": "Render a Blender scene using Ubuntu 16.04 using containers and Blender 2.80."
+    },
+    {
         "id": "render-linux-dr",
         "name": "Split frames into tiles and render on Ubuntu 16.04",
         "description": "Distributed rendering for Blender. Render tiles on multiple Ubuntu nodes with the CYCLES rendering engine."
