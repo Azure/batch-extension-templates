@@ -28,33 +28,38 @@
                 "Standard_D4_v2"
             ]
         },
-        "vmCount": {
+        "dedicatedVmCount": {
             "type": "int",
             "defaultValue": 2,
             "metadata": {
-                "description": "The number of the virtual machines"
+                "description": "The number of dedicated nodes in the Azure Batch pool"
+            }
+        },
+        "lowPriorityVmCount": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The number of low priority nodes in the Azure Batch pool"
             }
         }
     },
     "variables": {
         "osType": {
-            "publisher": "Canonical",
-            "offer": "UbuntuServer",
-            "sku": "16.04.0-LTS",
-            "version": "latest"
-        }
+           "imageReference": {
+              "publisher": "Canonical",
+              "offer": "UbuntuServer",
+              "sku": "16.04.0-LTS",
+              "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.ubuntu 16.04"
+          }
     },
     "pool": {
-        "type": "Microsoft.Batch/batchAccounts/pools",
-        "properties": {
-            "id": "[parameters('poolId')]",
-            "virtualMachineConfiguration": {
-                "imageReference": "[variables('osType')]",
-                "nodeAgentSKUId": "batch.node.ubuntu 16.04"
-            },
-            "vmSize": "[parameters('vmSize')]",
-            "targetDedicatedNodes": "[parameters('vmCount')]",
-            "enableAutoScale": false
-        }
+      "id": "[parameters('poolId')]",
+      "virtualMachineConfiguration": "[variables('osType')]",
+      "vmSize": "[parameters('vmSize')]",
+      "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
+      "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
+      "enableAutoScale": false
     }
 }

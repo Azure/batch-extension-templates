@@ -1,18 +1,15 @@
 {
    "jobName":{
-      "value":"max2018-vray-rt"
+      "value":"max2018-vrayrt-dr"
    },
    "poolId":{
-      "value":"3dsmax-vray-dr-RT"
+      "value":"max2018-vrayrt-dr"
    },
-   "inputFilegroup":{
+   "inputData":{
       "value":"rendering"
    },
-   "inputFilegroupSas":{
-      "value":"https://"
-   },
    "sceneFile":{
-      "value":"3dsmax-vray.max"
+      "value":"3dsmax-vray-rt-2018.max"
    },
    "maxVersion":{
       "value":"2018"
@@ -48,6 +45,6 @@
       "value":"2"
    },
    "vmSize":{
-      "value":"Standard_D3_v2"
+      "value":"Standard_NC6"
    }
 }

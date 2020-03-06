@@ -3,13 +3,10 @@
       "value":"max2020-vray"
    },
    "poolId":{
-      "value":"max-vray"
+      "value":"max2020-vray"
    },
-   "inputFilegroup":{
+   "inputData":{
       "value":"rendering"
-   },
-   "inputFilegroupSas":{
-      "value":"https://"
    },
    "sceneFile":{
       "value":"3dsmax-vray.max"

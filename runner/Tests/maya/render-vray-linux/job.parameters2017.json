@@ -8,13 +8,7 @@
    "mayaVersion":{
       "value":"Maya2017"
    },
-   "inputFilegroup":{
-      "value":"myfilegroup"
-   },
    "inputData":{
-      "value":"rendering"
-   },
-   "inputDataSas":{
       "value":"rendering"
    },
    "sceneFile":{
@@ -23,13 +17,10 @@
    "outputs":{
       "value":"rendering-output"
    },
-   "outputFilegroup":{
-      "value":"myfilegroup"
-   },
    "dedicatedVmCount":{
       "value":"1"
    },
-   "nodeSize":{
+   "vmSize":{
       "value":"Standard_D2_v2"
    }
 }

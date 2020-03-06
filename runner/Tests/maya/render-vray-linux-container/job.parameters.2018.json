@@ -11,14 +11,8 @@
    "mayaVersion":{
       "value":"Maya2018"
    },
-   "inputFilegroup":{
-      "value":"myfilegroup"
-   },
    "inputData":{
-      "value":"rendering"
-   },
-   "inputDataSas":{
-      "value":"rendering"
+      "value":"myfilegroup"
    },
    "sceneFile":{
       "value":"maya-vray.mb"
@@ -28,8 +22,5 @@
    },
    "outputs":{
       "value":"rendering-output"
-   },
-   "outputFilegroup":{
-      "value":"myfilegroup"
    }
 }

@@ -27,7 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="custom_template_factory.py" />
-    <Compile Include="job_manager.py" />
+    <Compile Include="test_manager.py" />
     <Compile Include="logger.py" />
     <Compile Include="runner.py" />
     <Compile Include="utils.py" />

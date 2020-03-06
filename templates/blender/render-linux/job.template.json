@@ -15,19 +15,11 @@
                 "advancedType": "job-id"
             }
         },
-         "inputData": {
+        "inputData": {
             "type": "string",
             "metadata": {
                 "description": "The file group where the input data is stored",
                 "advancedType": "file-group"
-            }
-        },
-        "inputDataSas": {
-            "type": "string",
-            "metadata": {
-                "description": "SAS token for reading the data from the selected file group",
-                "advancedType": "file-group-sas",
-                "dependsOn": "inputData"
             }
         },
         "blendFile": {
@@ -77,14 +69,19 @@
             },
             "displayName": "",
             "onAllTasksComplete": "terminateJob",
-            "jobPreparationTask":{
+            "jobPreparationTask": {
+                "commandLine":"/bin/bash -c \"ls -l -R\"",
+                "resourceFiles": [
+                    {
+                        "autoStorageContainerName": "fgrp-[parameters('inputData')]"
+                    }
+                ],
                 "userIdentity": {
                     "autoUser": {
-                        "scope": "pool",
-                        "elevationLevel": "admin"
+                        "elevationLevel": "nonAdmin",
+                        "scope": "pool"
                     }
-                },
-                "commandLine": "/bin/bash -c 'azcopy --source \"[parameters('inputDataSas')]\" --destination \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" --recursive'"
+                }
             },
             "jobReleaseTask": {
                 "userIdentity": {

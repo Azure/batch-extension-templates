@@ -8,9 +8,6 @@
    "inputData":{
       "value":"rendering"
    },
-   "inputDataSas":{
-      "value":"https://"
-   },
    "outputSas":{
       "value":"https://"
    },
@@ -24,10 +21,10 @@
       "value":1
    },
    "xTiles":{
-      "value":3
+      "value":2
    },
    "yTiles":{
-      "value":3
+      "value":2
    },
    "outputs":{
       "value":"rendering-output"
@@ -35,7 +32,7 @@
    "dedicatedVmCount":{
       "value":"2"
    },
-   "nodeSize":{
+   "vmSize":{
       "value":"Standard_D2_v2"
    }
 }

@@ -3,13 +3,10 @@
       "value":"max2019-arnold"
    },
    "poolId":{
-      "value":"max-arnold"
+      "value":"max2019-arnold"
    },
-   "inputFilegroup":{
+   "inputData":{
       "value":"rendering"
-   },
-   "inputFilegroupSas":{
-      "value":"https://"
    },
    "sceneFile":{
       "value":"3dsmax-arnold.max"

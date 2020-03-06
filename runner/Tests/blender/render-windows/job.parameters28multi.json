@@ -1,15 +1,15 @@
 {
    "jobName":{
-      "value":"blender-windows"
+      "value":"blender-windows28multi"
    },
    "poolId":{
       "value":"blender-windows"
    },
+   "blenderVersion":{
+      "value": "2.8"
+   },
    "inputData":{
       "value":"rendering"
-   },
-   "inputDataSas":{
-      "value":"https://"
    },
    "blendFile":{
       "value":"shapes.blend"
@@ -26,7 +26,7 @@
    "dedicatedVmCount":{
       "value":"1"
    },
-   "nodeSize":{
+   "vmSize":{
       "value":"Standard_D2_v2"
    }
 }

@@ -1,6 +1,27 @@
 {
   "tests": [
     {
+        "name": "ffmpeg-wav-to-mp3",
+        "template": "../templates/ffmpeg/convert-wav-to-mp3/job.template.json",
+        "poolTemplate": "../templates/ffmpeg/convert-wav-to-mp3/pool.template.json",
+        "parameters": "Tests/ffmpeg/convert-wav-to-mp3/job.parameters.json",
+        "expectedOutput":"ffmpeg.mp3"
+    },
+    {
+        "name": "ffmpeg-animation-from-images",
+        "template": "../templates/ffmpeg/create-animation-from-images/job.template.json",
+        "poolTemplate": "../templates/ffmpeg/create-animation-from-images/pool.template.json",
+        "parameters": "Tests/ffmpeg/create-animation-from-images/job.parameters.json",
+        "expectedOutput":"ffmpeg-animation-from-images.mp4"
+    },
+    {
+        "name": "imagemagick-resize-images",
+        "template": "../templates/imagemagick/resize-images/job.template.json",
+        "poolTemplate": "../templates/imagemagick/resize-images/pool.template.json",
+        "parameters": "Tests/imagemagick/resize-images/job.parameters.json",
+        "expectedOutput":"image0001.jpg"
+    },
+    {
         "name": "maya2017-default-windows",
         "template": "../templates/maya/render-default-windows/job.template.json",
         "poolTemplate": "../templates/maya/render-default-windows/pool.template.json",
@@ -127,11 +148,25 @@
         "expectedOutput":"blender-linux_0001.png"
     },
     {
-        "name": "blender-windows",
+        "name": "blender-windows279",
         "template": "../templates/blender/render-windows/job.template.json",
         "poolTemplate": "../templates/blender/render-windows/pool.template.json",
-        "parameters": "Tests/blender/render-windows/job.parameters.json",
-        "expectedOutput":"blender-windows_0001.png"
+        "parameters": "Tests/blender/render-windows/job.parameters279.json",
+        "expectedOutput":"blender-windows279_0001.png"
+    },
+    {
+        "name": "blender-windows28multi",
+        "template": "../templates/blender/render-windows/job.template.json",
+        "poolTemplate": "../templates/blender/render-windows/pool.template.json",
+        "parameters": "Tests/blender/render-windows/job.parameters28multi.json",
+        "expectedOutput":"blender-windows28multi_0001.png"
+    },
+    {
+        "name": "blender-windows28",
+        "template": "../templates/blender/render-windows/job.template.json",
+        "poolTemplate": "../templates/blender/render-windows/pool.template.json",
+        "parameters": "Tests/blender/render-windows/job.parameters28.json",
+        "expectedOutput":"blender-windows28_0001.png"
     },
     {
         "name": "blender-linux-dr",
@@ -210,22 +245,6 @@
         "applicationLicense":"3dsmax,vray"
     },
     {
-        "name": "3dsmax-vray-dr-rt-2018",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.rt.2018.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
-    },
-    {
-        "name": "3dsmax-vray-dr-rt-2019",
-        "template": "../templates/3dsmax/vray-dr/job.template.json",
-        "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
-        "parameters": "Tests/3dsmax/vray-dr/job.parameters.rt.2019.json",
-        "expectedOutput":"image0001.jpg",
-        "applicationLicense":"3dsmax,vray"
-    },
-    {
         "name": "3dsmax-vray-dr-rt-2020",
         "template": "../templates/3dsmax/vray-dr/job.template.json",
         "poolTemplate": "../templates/3dsmax/vray-dr/pool.template.json",
@@ -257,7 +276,31 @@
         "expectedOutput":"image0001.jpg",
         "applicationLicense":"3dsmax,vray"
     },
-     {
+    {
+        "name": "3dsmax-vray-next-2018",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/standard/job.parameters.vraynext2018.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
+        "name": "3dsmax-vray-next-2019",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/standard/job.parameters.vraynext2019.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
+        "name": "3dsmax-vray-next-2020",
+        "template": "../templates/3dsmax/standard/job.template.json",
+        "poolTemplate": "../templates/3dsmax/standard/pool.template.json",
+        "parameters": "Tests/3dsmax/standard/job.parameters.vraynext2020.json",
+        "expectedOutput":"image0001.jpg",
+        "applicationLicense":"3dsmax,vray"
+    },
+    {
       "name": "3dsmax-corona-2018",
       "template": "../templates/3dsmax/corona/job.template.json",
       "poolTemplate": "../templates/3dsmax/corona/pool.template.json",
