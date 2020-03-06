@@ -155,7 +155,7 @@
             "metadata": {
                 "description": "Version of the AppPackage containing additional plugins"
             }
-        },
+        }
     },
     "variables": {
         "osType": {
