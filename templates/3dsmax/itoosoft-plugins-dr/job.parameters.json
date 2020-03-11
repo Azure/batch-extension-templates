@@ -1,0 +1,32 @@
+{
+    "jobName":{
+        "value":"myvraydrjob"
+    },
+    "poolId":{
+        "value":"mypool"
+    },
+    "inputData":{
+        "value":"rendering"
+    },
+    "maxVersion":{
+      "value":"2019"
+    },
+    "sceneFile":{
+        "value":"MyScene.max"
+    },
+    "outputName":{
+        "value":"image.jpg"
+    },
+    "frameStart":{
+        "value":1
+    },
+    "frameEnd":{
+        "value":1
+    },
+    "outputs":{
+        "value":"rendering-outputs"
+    },
+    "dedicatedVmCount":{
+        "value":2
+    }
+}

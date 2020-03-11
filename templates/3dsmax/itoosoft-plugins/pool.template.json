@@ -1,0 +1,203 @@
+{
+    "parameters": {
+        "poolName": {
+            "type": "string",
+            "metadata": {
+                "description": "Id of the pool"
+            }
+        },
+        "renderer": {
+            "type": "string",
+            "defaultValue": "vray",
+            "metadata": {
+                "description": "The renderer to use"
+            },
+            "allowedValues": [
+                "arnold",
+                "vray"
+            ]
+        },
+		"forestPackAppPackageName": {
+            "type": "string",
+			"defaultValue": "forestPackPro",
+            "metadata": {
+                "description": "Name of the AppPackage containing forestPack binaries"
+            }
+        },
+        "forestPackAppPackageVersion": {
+            "type": "string",
+			"defaultValue": "6.2.2",
+            "metadata": {
+                "description": "Version of the AppPackage containing forestPack binaries"
+            }
+        },
+		"forestPackInstallCommand": {
+            "type": "string",
+			"defaultValue": "forestPackSetup.exe /S",
+            "metadata": {
+                "description": "CommandLine for executing the forestPack installer"
+            }
+        },
+		 "railCloneAppPackageName": {
+            "type": "string",
+			"defaultValue": "railClonePro",
+            "metadata": {
+                "description": "Name of the AppPackage containing railClone binaries"
+            }
+        },
+        "railCloneAppPackageVersion": {
+            "type": "string",
+			"defaultValue": "3.3.1",
+            "metadata": {
+                "description": "Version of the AppPackage containing railClone binaries"
+            }
+        },
+		 "railCloneInstallCommand": {
+            "type": "string",
+			"defaultValue": "railCloneSetup.exe /S",
+            "metadata": {
+                "description": "CommandLine for executing the railClone installer"
+            }
+        },
+         "additionalPluginsAppPackageName": {
+            "type": "string",
+			"defaultValue": "additionalPlugins",
+            "metadata": {
+                "description": "Name of the AppPackage containing additional files to copy into 3dsmax install directory (or directories)"
+            }
+        },
+        "additionalPluginsAppPackageVersion": {
+            "type": "string",
+            "defaultValue": "1.0.0",
+            "metadata": {
+                "description": "Version of the AppPackage containing additional plugins"
+            }
+        },
+        "dedicatedVmCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "The number of dedicated nodes in the Azure Batch pool"
+            }
+        },
+        "lowPriorityVmCount": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "The number of low priority nodes in the Azure Batch pool"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "The size of the virtual machines that run the application"
+            },
+            "defaultValue": "Standard_D5_v2",
+            "allowedValues": [
+                "Standard_A8",
+                "Standard_A9",
+                "Standard_A10",
+                "Standard_A11",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_D15_v2",
+                "Standard_D2_v3",
+                "Standard_D4_v3",
+                "Standard_D8_v3",
+                "Standard_D16_v3",
+                "Standard_D32_v3",
+                "Standard_D64_v3",
+                "Standard_E2_v3",
+                "Standard_E4_v3",
+                "Standard_E8_v3",
+                "Standard_E16_v3",
+                "Standard_E32_v3",
+                "Standard_E64_v3",
+                "Standard_F1",
+                "Standard_F2",
+                "Standard_F4",
+                "Standard_F8",
+                "Standard_F16",
+                "Standard_F2s_v2",
+                "Standard_F4s_v2",
+                "Standard_F8s_v2",
+                "Standard_F16s_v2",
+                "Standard_F32s_v2",
+                "Standard_F64s_v2",
+                "Standard_F72s_v2",
+                "Standard_G1",
+                "Standard_G2",
+                "Standard_G3",
+                "Standard_G4",
+                "Standard_G5",
+                "Standard_H8",
+                "Standard_H16",
+                "Standard_H8m",
+                "Standard_H16m",
+                "Standard_H16r",
+                "Standard_H16mr",
+                "Standard_L4",
+                "Standard_L8",
+                "Standard_L16",
+                "Standard_L32",
+                "Standard_M64s",
+                "Standard_M64ms",
+                "Standard_M128s"
+            ]
+        }
+    },
+    "variables": {
+        "osType": {
+            "imageReference": {
+                "publisher": "batch",
+                "offer": "rendering-windows2016",
+                "sku": "rendering",
+                "version": "latest"
+            },
+            "nodeAgentSKUId": "batch.node.windows amd64"
+        }
+    },
+    "pool": {
+        "id": "[parameters('poolName')]",
+        "displayName": "3ds Max with forestPack and railClone pool running: [parameters('poolName')]",
+        "vmSize": "[parameters('vmSize')]",
+        "virtualMachineConfiguration": "[variables('osType')]",
+        "targetDedicatedNodes": "[parameters('dedicatedVmCount')]",
+        "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
+        "applicationLicenses": [
+            "3dsmax",
+            "[parameters('renderer')]"
+        ],
+         "applicationPackageReferences": [
+          { 
+            "applicationId": "[parameters('forestPackAppPackageName')]", "version": "[parameters('forestPackAppPackageVersion')]"
+          },
+          {
+            "applicationId": "[parameters('railCloneAppPackageName')]", "version": "[parameters('railCloneAppPackageVersion')]" 
+          },
+          {
+            "applicationId": "[parameters('additionalPluginsAppPackageName')]", "version": "[parameters('additionalPluginsAppPackageVersion')]"
+          }
+       ],
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "startTask": {
+            "commandLine": "cmd /c REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /f && REG COPY HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /s && REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 /f && %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2019 %3DSMAX_2019%\\\\Plugins & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2020%\\\\Plugins & exit /b 0",
+            "waitForSuccess": true,
+            "maxTaskRetryCount": 0,
+            "userIdentity": {
+                "autoUser": {
+                    "elevationLevel": "admin",
+                    "scope": "pool"
+                }
+            }
+        }
+    }
+}

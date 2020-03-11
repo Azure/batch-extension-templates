@@ -14,25 +14,25 @@ IF "%VRAY_RENDERER%"=="VRayAdv" (
     echo.AppName=C:\Autodesk\3dsMax2019\3dsmaxio.exe >> C:\Autodesk\3dsMax2019\vrayspawner.ini
 
     IF "%MAX_VERSION%"=="2018" (
-	   start /wait "vrayspawner2018" "C:\Autodesk\3dsMax2018\vrayspawner2018.exe" "-port=%VRAY_PORT%"
+	   start "vrayspawner2018" "C:\Autodesk\3dsMax2018\vrayspawner2018.exe" "-port=%VRAY_PORT%" > vrayexe.output.txt
     ) 
     IF "%MAX_VERSION%"=="2019" (
-	   start /wait "vrayspawner2019" "C:\Autodesk\3dsMax2019\vrayspawner2019.exe" "-port=%VRAY_PORT%"
+	   start "vrayspawner2019" "C:\Autodesk\3dsMax2019\vrayspawner2019.exe" "-port=%VRAY_PORT%" > vrayexe.output.txt
     )
 	IF "%MAX_VERSION%"=="2020" (
-	   start /wait "vrayspawner2020" "C:\Autodesk\3dsMax2020\vrayspawner2020.exe" "-port=%VRAY_PORT%"
+	   start "vrayspawner2020" "C:\Autodesk\3dsMax2020\vrayspawner2020.exe" "-port=%VRAY_PORT%" > vrayexe.output.txt
     )
 )
 
 IF "%VRAY_RENDERER%"=="VRayRT" (
     IF "%MAX_VERSION%"=="2018" (
-	   start /wait "vray2018" "C:\server\3dsMax2018Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%"
+	   start "vray2018" "C:\server\3dsMax2018Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%" > vrayexe.output.txt
     ) 
     IF "%MAX_VERSION%"=="2019" (
-	   start /wait "vray2019" "C:\server\3dsMax2019Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%"
+	   start "vray2019" "C:\server\3dsMax2019Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%" > vrayexe.output.txt
     )
 	IF "%MAX_VERSION%"=="2020" (
-	   start /wait "vray2020" "C:\server\3dsMax2020Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%"
+	   start "vray2020" "C:\server\3dsMax2020Vray\bin\vray.exe" "-server" "-portNumber=%VRAY_PORT%" > vrayexe.output.txt
     )
 ) 
 
