@@ -208,7 +208,7 @@
                     "filePath": "install-azure-nc-drivers.cmd"
                 },
                 {
-                    "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/feature/3dsmax-forestpack-railclone/templates/3dsmax/scripts/PrepareVrayServices.bat",
+                    "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/PrepareVrayServices.bat",
                     "filePath":"PrepareVrayServices.bat"
                 }
             ]
