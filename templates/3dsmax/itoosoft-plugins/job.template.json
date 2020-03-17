@@ -93,16 +93,6 @@
                 "wildcards": "*.vrmap"
             }
         },
-         "colorCorrectionFile": {
-            "type": "string",
-            "defaultValue": "None",
-            "metadata": {
-                "description": "Optional VRay colorCorrection file",
-                "advancedType": "file-in-file-group",
-                "dependsOn": "inputFilegroup",
-                "wildcards": "*.vccglb"
-            }
-        },
         "renderPresetFile": {
             "type": "string",
             "defaultValue": "None",
@@ -259,16 +249,6 @@
                             "uploadOptions": {
                                 "uploadCondition": "taskCompletion"
                             }
-                        }
-                    ],
-                    "environmentSettings": [
-                        {
-                            "name": "VRAY_VFB_GLOBAL_PRESET_FILE",
-                            "value": "[parameters('colorCorrectionFile')]"
-                        },
-                        {
-                            "name": "VRAY_VFB_GLOBAL_PRESET_FILE_USE",
-                            "value": "1"
                         }
                     ]
                 }
