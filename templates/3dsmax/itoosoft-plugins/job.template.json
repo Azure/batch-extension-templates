@@ -101,6 +101,7 @@
                 "advancedType": "file-in-file-group",
                 "dependsOn": "inputFilegroup",
                 "wildcards": "*.vccglb"
+            }
         },
         "renderPresetFile": {
             "type": "string",
