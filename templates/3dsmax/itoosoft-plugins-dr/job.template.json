@@ -84,6 +84,16 @@
                 "dependsOn": "inputData"
             }
         },
+        "colorCorrectionFile": {
+            "type": "string",
+            "defaultValue": "None",
+            "metadata": {
+                "description": "Optional VRay colorCorrection file",
+                "advancedType": "file-in-file-group",
+                "dependsOn": "inputData",
+                "wildcards": "*.vccglb"
+            }
+        },
         "renderPresetFile": {
             "type": "string",
             "defaultValue": "None",
@@ -110,7 +120,7 @@
         },
         "additionalArgs": {
             "type": "string",
-            "defaultValue": " ",
+            "defaultValue": "-atmospherics:1",
             "metadata": {
                 "description": "Any additional arguments to pass to 3ds Max, e.g. -superBlack:1"
             }
@@ -183,7 +193,7 @@
                     {
                         "id":"Render",
                         "displayName":"Frame",
-                        "commandLine":"powershell.exe -File 3dsmax.ps1 -maxVersion \"[parameters('maxVersion')]\" -start [parameters('frameStart')] -end [parameters('frameEnd')] -outputName \"images\\[parameters('outputName')]\" -sceneFile \"[parameters('sceneFile')]\" -pathFile \"[parameters('pathFile')]\" -renderer [parameters('vrayRenderer')] -preRenderScript \"[parameters('preRenderScript')]\" -camera \"[parameters('camera')]\" -additionalArgs \" [parameters('additionalArgs')]\" -irradianceMap \"[parameters('irradianceMapFile')]\" -nodeCount [parameters('dedicatedVmCount')] -renderPresetFile \"[parameters('renderPresetFile')]\" -dr -vrayPort [parameters('vrayPort')]",
+                        "commandLine":"powershell.exe -File 3dsmax.ps1 -maxVersion \"[parameters('maxVersion')]\" -start [parameters('frameStart')] -end [parameters('frameEnd')] -outputName \"images\\[parameters('outputName')]\" -sceneFile \"[parameters('sceneFile')]\" -pathFile \"[parameters('pathFile')]\" -renderer [parameters('vrayRenderer')] -preRenderScript \"[parameters('preRenderScript')]\" -camera \"[parameters('camera')]\" -additionalArgs \" [parameters('additionalArgs')]\" -irradianceMap \"[parameters('irradianceMapFile')]\" -nodeCount [parameters('dedicatedVmCount')] -renderPresetFile \"[parameters('renderPresetFile')]\" -colorCorrectionFile \"[parameters('colorCorrectionFile')]\" -dr -vrayPort [parameters('vrayPort')]",
                         "userIdentity": {
                             "autoUser": {
                                 "elevationLevel": "admin",
