@@ -14,7 +14,8 @@ param (
     [string]$additionalArgs = $null,
     [int]$vrayPort = 20204,
     [string]$renderPresetFile = $null,
-    [string]$maxVersion = $null
+    [string]$maxVersion = $null,
+    [string]$colorCorrectionFile = $null
 )
 
 $OutputEncoding = New-Object -typename System.Text.UnicodeEncoding
@@ -170,6 +171,16 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
             $pre_render_script_content += "r.adv_irradmap_loadFileName = ""$irMap""`r`n"
         }
     }
+}
+
+if (ParameterValueSet $colorCorrectionFile -and $renderer -like "vray")
+{
+    $ccFile = "$workingDirectory\$colorCorrectionFile"
+    $ccFile = $ccFile -replace "\\", "\\"
+    
+    Write-Host "Setting colorCorrection file to $ccFile"
+    $pre_render_script_content += "-- Set the CC filePath`r`n"
+    $pre_render_script_content += "vfbControl #loadglobalccpreset ""$ccFile""`r`n"
 }
 
 if ($renderer -eq "arnold")
