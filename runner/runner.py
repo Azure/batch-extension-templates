@@ -106,12 +106,14 @@ def runner_arguments():
     parser.add_argument("-CleanUpResources", action="store_false")
     parser.add_argument("-RepositoryBranchName", default="master",
                         help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
+    parser.add_argument("-UseLowPriorityVMs", default="True",
+                        help="If true use low priority VMs, if not false use VMs decided in the json files")
 
     return parser.parse_args()
 
 
 def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client: batch.BatchExtensionsClient,
-                           images_refs: 'List[utils.ImageReference]', VMImageURL: str, VMImageOS: str):
+                           images_refs: 'List[utils.ImageReference]', VMImageURL: str, VMImageOS: str, UseLowPriorityVMs: bool):
     """
     Creates all resources needed to run the job, including creating the containers and the pool needed to run the job.
     Then creates job and checks if the expected output is correct.
@@ -128,9 +130,10 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
     for test in _test_managers:
         test.status = utils.TestStatus(
             utils.TestState.IN_PROGRESS, "Test starting for {}".format(test.job_id))
+        print(UseLowPriorityVMs) 
 
         test.upload_assets(blob_client)
-        test.create_and_submit_pool(batch_client, images_refs, VMImageURL, VMImageOS)
+        test.create_and_submit_pool(batch_client, images_refs, VMImageURL, VMImageOS, UseLowPriorityVMs)
         test.create_and_submit_job(batch_client)
 
     logger.info(
@@ -139,7 +142,7 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
     threads = []  # type: List[threading.Thread]
     try:
         threads = utils.start_test_threads("run_test", _test_managers, blob_client,
-                                           batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS)
+                                           batch_client, images_refs, True, _timeout, lambda: stop_threads, VMImageURL, VMImageOS, UseLowPriorityVMs)
         utils.wait_for_threads_to_finish(threads)
 
     except KeyboardInterrupt:
@@ -211,8 +214,9 @@ def main():
                 images_refs.append(utils.ImageReference(
                     image["osType"], image["offer"], image["version"]))
 
+        print(args.UseLowPriorityVMs)
         run_test_manager_tests(blob_client, batch_client,
-                               images_refs, args.VMImageURL, args.VMImageOS)
+                               images_refs, args.VMImageURL, args.VMImageOS, args.UseLowPriorityVMs)
 
     except batchmodels.BatchErrorException as err:
         utils.print_batch_exception(err)

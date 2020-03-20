@@ -30,7 +30,10 @@ class TestManager(object):
                  application_licenses: str = None,
                  repository_branch_name: str = None,
                  run_unique_id: str = None,
-                 VM_OS_type=None):
+                 VM_OS_type=None, 
+                 use_low_priority_vms=False
+                 ):
+
         super(TestManager, self).__init__()
 
         # properties from args
@@ -48,6 +51,7 @@ class TestManager(object):
         # The attribute 'pool_template_file' of type 'str'
         self.pool_template_file = pool_template_file
         self.VM_OS_type = VM_OS_type  # The attribute 'VM_OS_type' of type 'str'
+        self.use_low_priority_vms = use_low_priority_vms # The attribute 'use_low_priority_vms' of type 'bool'
 
         # other properties
         # The attribute 'raw_job_id' of type 'str'
@@ -86,7 +90,8 @@ class TestManager(object):
                  timeout: int,
                  stop_thread,
                  VM_image_URL=None,
-                 VM_image_OS=None):
+                 VM_image_OS=None,
+                 use_low_priority_vms=False):
         """ The main entry point for a test - expects pool and job to have been created already.
         Monitors pool until sufficient nodes reach idle, then monitors job until all tasks complete and all task outputs are present in storage. 
         
@@ -113,7 +118,7 @@ class TestManager(object):
 
         try:
             self.monitor_pool_and_retry_if_needed(
-                batch_service_client, image_references, test_timeout, stop_thread, VM_image_URL, VM_image_OS)
+                batch_service_client, image_references, test_timeout, stop_thread, VM_image_URL, VM_image_OS, use_low_priority_vms)
 
             self.monitor_job_and_retry_if_needed(
                 batch_service_client, test_timeout, stop_thread)
@@ -178,7 +183,7 @@ class TestManager(object):
         utils.submit_job(batch_client, template, parameters, self.raw_job_id)
 
     def create_and_submit_pool(self, batch_service_client: batch.BatchExtensionsClient,
-                               image_references: 'List[utils.ImageReference]', VM_image_URL=None, VM_OS_type=None):
+                               image_references: 'List[utils.ImageReference]', VM_image_URL=None, VM_OS_type=None, UseLowPriorityVMs=True):
         """
         Creates the Pool that will be submitted to the batch service.
 
@@ -213,7 +218,9 @@ class TestManager(object):
         all_pools = [p.id for p in batch_service_client.pool.list()]
 
         if self.pool_id not in all_pools:
-            self.submit_pool(batch_service_client, template)
+            print("create_and_submit_pool")
+            print(UseLowPriorityVMs)
+            self.submit_pool(batch_service_client, template, UseLowPriorityVMs)
         else:
             logger.info('pool [{}] already exists'.format(self.pool_id))
 
@@ -290,7 +297,7 @@ class TestManager(object):
             utils.upload_file_to_container(
                 blob_client, input_container_name, file_path)
 
-    def submit_pool(self, batch_service_client: batch.BatchExtensionsClient, template: str):
+    def submit_pool(self, batch_service_client: batch.BatchExtensionsClient, template: str, UseLowPriorityVMs: bool):
         """
         Submits a batch pool based on the template 
 
@@ -300,13 +307,16 @@ class TestManager(object):
         :type template: str
         """
         parameters = ctm.load_file(self.parameters_file)
+        print("submit_pool: ")
+        print(UseLowPriorityVMs)
+        if UseLowPriorityVMs==True:
+            print("setting low pro")
+            #swap the dedicated vm count to low pri and zero out the dedicated count (to reduce testing COGS)
+            ctm.set_low_priority_vm_count(template, str(self.min_required_vms))
 
-        #swap the dedicated vm count to low pri and zero out the dedicated count (to reduce testing COGS)
-        ctm.set_low_priority_vm_count(template, str(self.min_required_vms))
-
-        #some tests set the dedicated vm count in the test parameters file, and some use the default in the template, so override both to 0
-        ctm.set_dedicated_vm_count(parameters, 0)
-        ctm.set_dedicated_vm_count(template, 0)
+            #some tests set the dedicated vm count in the test parameters file, and some use the default in the template, so override both to 0
+            ctm.set_dedicated_vm_count(parameters, 0)
+            ctm.set_dedicated_vm_count(template, 0)
 
         # updates any placeholder parameter values with the values from
         # keyVault, if required
@@ -330,7 +340,7 @@ class TestManager(object):
                 traceback.print_exc()
                 utils.print_batch_exception(err)
 
-    def monitor_pool_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, image_references: 'List[utils.ImageReference]', test_timeout: datetime, stop_thread, VM_image_URL, VM_OS_type):
+    def monitor_pool_and_retry_if_needed(self, batch_service_client: batch.BatchExtensionsClient, image_references: 'List[utils.ImageReference]', test_timeout: datetime, stop_thread, VM_image_URL, VM_OS_type, use_low_priority_vms):
         """
         Monitors a pool to reach steady state, if it fails to resize or too many nodes fail to start then create a new pool named "<oldPool>-retry" and shift the job over to run on it.
 
@@ -360,8 +370,7 @@ class TestManager(object):
             self.pool_id = self.pool_id + "-retry"
 
             self.create_and_submit_pool(
-                batch_service_client, image_references, VM_image_URL, VM_OS_type)
-
+                batch_service_client, image_references, VM_image_URL, VM_OS_type, use_low_priority_vms)
             try:
                 utils.retarget_job_to_new_pool(
                     batch_service_client, self.job_id, self.pool_id)
