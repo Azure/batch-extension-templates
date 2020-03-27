@@ -91,7 +91,7 @@ class TestManager(object):
                  stop_thread,
                  VM_image_URL=None,
                  VM_image_OS=None,
-                 use_low_priority_vms=False):
+                 use_low_priority_vms=True):
         """ The main entry point for a test - expects pool and job to have been created already.
         Monitors pool until sufficient nodes reach idle, then monitors job until all tasks complete and all task outputs are present in storage. 
         
@@ -197,6 +197,8 @@ class TestManager(object):
         :type VM_OS_type: str
         :param VM_OS_type: The custom image operating system type, this can be windows or centos. This is needed if you
         want to use a custom image.
+        :param UseLowPriorityVMs: True: Use low priority nodes, False: will use the type in the template file
+        :type UseLowPriorityVMs: bool
         """
 
         # load the template file
@@ -218,8 +220,6 @@ class TestManager(object):
         all_pools = [p.id for p in batch_service_client.pool.list()]
 
         if self.pool_id not in all_pools:
-            print("create_and_submit_pool")
-            print(UseLowPriorityVMs)
             self.submit_pool(batch_service_client, template, UseLowPriorityVMs)
         else:
             logger.info('pool [{}] already exists'.format(self.pool_id))
@@ -305,12 +305,11 @@ class TestManager(object):
         :type batch_service_client: `azure.batch.BatchExtensionsClient`
         :param template: The in memory version of the template used to create a the job.
         :type template: str
+        :param UseLowPriorityVMs: True: Use low priority nodes, False: will use the type in the template file
+        :type UseLowPriorityVMs: bool
         """
         parameters = ctm.load_file(self.parameters_file)
-        print("submit_pool: ")
-        print(UseLowPriorityVMs)
         if UseLowPriorityVMs==True:
-            print("setting low pro")
             #swap the dedicated vm count to low pri and zero out the dedicated count (to reduce testing COGS)
             ctm.set_low_priority_vm_count(template, str(self.min_required_vms))
 
