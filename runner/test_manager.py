@@ -31,8 +31,7 @@ class TestManager(object):
                  repository_branch_name: str = None,
                  run_unique_id: str = None,
                  VM_OS_type=None, 
-                 use_low_priority_vms=False
-                 ):
+                 use_low_priority_vms=True):
 
         super(TestManager, self).__init__()
 
@@ -355,6 +354,9 @@ class TestManager(object):
         :type VM_image_URL: str
         :param VM_OS_type: The OS type of the VM to use for the pool.
         :type VM_OS_type: str
+        :param use_low_priority_vms: 
+        :param UseLowPriorityVMs: True: Use low priority nodes, False: will use the type in the template file.
+        :type use_low_priority_vms: bool
         """
         try:
             utils.wait_for_steady_nodes(

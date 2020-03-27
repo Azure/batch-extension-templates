@@ -130,7 +130,6 @@ def run_test_manager_tests(blob_client: azureblob.BlockBlobService, batch_client
     for test in _test_managers:
         test.status = utils.TestStatus(
             utils.TestState.IN_PROGRESS, "Test starting for {}".format(test.job_id))
-        print(UseLowPriorityVMs) 
 
         test.upload_assets(blob_client)
         test.create_and_submit_pool(batch_client, images_refs, VMImageURL, VMImageOS, UseLowPriorityVMs)
@@ -214,7 +213,6 @@ def main():
                 images_refs.append(utils.ImageReference(
                     image["osType"], image["offer"], image["version"]))
 
-        print(args.UseLowPriorityVMs)
         run_test_manager_tests(blob_client, batch_client,
                                images_refs, args.VMImageURL, args.VMImageOS, args.UseLowPriorityVMs)
 
