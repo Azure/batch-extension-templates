@@ -108,7 +108,6 @@ def runner_arguments():
                         help="Select the branch you want to pull your resources files from, default=master, current=Gets the branch you working on")
     parser.add_argument("-UseLowPriorityVMs", default="True",
                         help="If true use low priority VMs, if not false use VMs decided in the json files")
-
     return parser.parse_args()
 
 
