@@ -591,7 +591,10 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
     except (ex.PoolResizeFailedException):
         # double the node count and try again
         pool = batch_service_client.pool.get(pool_id)
-        new_node_count = pool.target_low_priority_nodes * 2
+        if pool.target_low_priority_nodes > 0:
+            new_node_count = pool.target_low_priority_nodes * 2
+        else:
+            new_node_count = pool.target_dedicated_nodes * 2
         logger.info("Resizing pool [{}] to '{}' nodes".format(
             pool_id, new_node_count))
         batch_service_client.pool.resize(pool_id, batchmodels.PoolResizeParameter(
@@ -601,8 +604,14 @@ def wait_for_steady_nodes(batch_service_client: batch.BatchExtensionsClient, poo
             batch_service_client, pool_id, test_timeout, stop_thread)
 
     pool = batch_service_client.pool.get(pool_id)
-    max_allowed_failed_nodes = pool.target_low_priority_nodes - min_required_vms
-
+    new_node_count = 0 
+    # If the pool is a low priority or dedicated 
+    if pool.target_low_priority_nodes > 0:
+        new_node_count = pool.target_low_priority_nodes * 2
+    else:
+        new_node_count = pool.target_dedicated_nodes * 2
+    
+    max_allowed_failed_nodes = new_node_count - min_required_vms
     wait_for_enough_idle_vms(batch_service_client, pool_id, min_required_vms,
                              max_allowed_failed_nodes, pool.state_transition_time, test_timeout, stop_thread)
 
