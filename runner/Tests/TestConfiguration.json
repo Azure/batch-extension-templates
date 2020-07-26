@@ -127,13 +127,6 @@
         "expectedOutput":"maya-vray.0001.png"
     },
     {
-        "name": "maya2017-vray-linux",
-        "template": "../templates/maya/render-vray-linux/job.template.json",
-        "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
-        "parameters": "Tests/maya/render-vray-linux/job.parameters2017.json",
-        "expectedOutput":"maya-vray.0001.png"
-    },
-    {
         "name": "maya2018-vray-linux",
         "template": "../templates/maya/render-vray-linux/job.template.json",
         "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
@@ -357,7 +350,7 @@
     {
         "osType": "linux",
         "offer": "rendering-centos73",
-        "version": "1.1.6"
+        "version": "1.1.7"
     },
     {
         "publisher": "microsoft-azure-batch",
