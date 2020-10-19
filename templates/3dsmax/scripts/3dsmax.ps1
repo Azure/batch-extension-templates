@@ -355,43 +355,32 @@ if (ParameterValueSet $renderPresetFile)
 # Create folder for outputs
 mkdir -Force images > $null
 
-# Render
-$max_exec = "3dsmaxcmdio.exe"
+# Set executable path based on the version of 3dsmax in use, path is: C:\Autodesk\3dsMax$maxVersion\3dsmaxcmdio.exe 
 If ($maxVersion -eq "2018")
 {
-    if ($env:3DSMAX_2018 -and (Test-Path "$env:3DSMAX_2018"))
-    {
-        # New image
-        $max_exec = "${env:3DSMAX_2018}3dsmaxcmdio.exe"
-    }
-
-    if($env:3DSMAX_2018_EXEC -MATCH "cmdio")
-    {
-        $max_exec = $env:3DSMAX_2018_EXEC
-    }
+    $max_exec = $env:3DSMAX_2018_EXEC
 }
 ElseIf ($maxVersion -eq "2019")
 {
-        $max_exec = $env:3DSMAX_2019_EXEC
-        if(-Not (Test-Path "$env:3DSMAX_2019"))
-        {
-            Write-Host "3ds Max 2019 doesn't exist on this rendering image, please use a newer version of the rendering image."
-            exit 1
-        }
+	$max_exec = $env:3DSMAX_2019_EXEC
 }
 ElseIf ($maxVersion -eq "2020")
 {
-        $max_exec = $env:3DSMAX_2020_EXEC
-        if(-Not (Test-Path "$env:3DSMAX_2020"))
-        {
-            Write-Host "3ds Max 2020 doesn't exist on this rendering image, please use a newer version of the rendering image."
-            exit 1
-        }
+	$max_exec = $env:3DSMAX_2020_EXEC
 }
 Else 
 {
-    Write-Host "No version of 3ds Max was selected. 3ds Max 2020 was selected by default."
+    Write-Host "No version of 3ds Max was selected. Defaulting to 3ds Max 2020."
     $max_exec = $env:3DSMAX_2020_EXEC
+}
+
+#####################TODO remove the below line
+$max_exec = "C:\Autodesk\3dsMax2020\3dsmaxio.exe"
+
+if(-Not (Test-Path -Path $max_exec -PathType leaf))
+{
+	Write-Host "3ds Max executable wasn't found on this rendering image at the path $max_exec, aborting render."
+	exit 1
 }
 
 Write-Host "Executing $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`""
