@@ -173,6 +173,36 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
     }
 }
 
+######## temp test
+$pythonScriptFile = "pythonScript.py"
+$python_script_content = "Azure 3dsmaxio.exe batch command."
+$python_script_content += "from __future__ import print_function`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "import sys`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "import pymxs`r`n"
+$python_script_content += "rt = pymxs.runtime`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "pymxs.print_(`"3dsmax-command: START`")`r`n"
+$python_script_content += "sys.__stdout__.write(`"START\n`")`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "# rt.loadMaxFile(`"3dsmax-vraynext-2019.max`")`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "try:`r`n"
+$python_script_content += "`trt.render(outputfile=r`"images\image.jpg`", vdb=False)`r`n"
+$python_script_content += "except Exception:`r`n"
+$python_script_content += "`tpass`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "pymxs.print_(`"3dsmax-command: END`")`r`n"
+$python_script_content += "sys.__stdout__.write(`"END\n`")`r`n"
+$python_script_content += "sys.__stdout__.flush()`r`n"
+$python_script_content += "`r`n"
+$python_script_content += "rt.quitMax()`r`n"
+
+$python_script_content | Out-File $pythonScriptFile -Encoding ASCII
+
+
 if (ParameterValueSet $colorCorrectionFile -and $renderer -like "vray")
 {
     $ccFile = "$workingDirectory\$colorCorrectionFile"
@@ -383,10 +413,8 @@ if(-Not (Test-Path -Path $max_exec -PathType leaf))
 	exit 1
 }
 
-Write-Host "Executing $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`""
+cmd.exe /c $max_exec  -silent -secure off -batch -U PythonHost `"$pythonScriptFile`" $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`"
 
-cmd.exe /c $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -v:5 -outputName:`"$outputName`" $pathFileParam `"$sceneFile`" `>Max_frame.log 2`>`&1
-$result = $lastexitcode
 
 Write-Host "last exit code $result"
 
