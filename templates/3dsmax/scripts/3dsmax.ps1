@@ -175,7 +175,6 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
 
 ######## temp test
 $pythonScriptFile = "pythonScript.py"
-$python_script_content = "Azure 3dsmaxio.exe batch command."
 $python_script_content += "from __future__ import print_function`r`n"
 $python_script_content += "`r`n"
 $python_script_content += "import sys`r`n"
