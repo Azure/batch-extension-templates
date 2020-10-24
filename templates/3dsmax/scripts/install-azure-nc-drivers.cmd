@@ -10,8 +10,8 @@ rem Ignore check for now, system doesn't seem to be returning NVIDIA devices
 rem wmic path win32_VideoController get name | findstr /C:"NVIDIA Tesla" || exit /b 0
 wmic path win32_VideoController get name
 
-set driver_version=442.50
-set driver_filename=%driver_version%-tesla-desktop-winserver-2019-2016-international.exe
+set driver_version=452.39
+set driver_filename=%driver_version%-data-center-tesla-desktop-winserver-2019-2016-international.exe
 
 rem If already installed, skip
 if exist %AZ_BATCH_NODE_SHARED_DIR%\init.txt exit /b 0
