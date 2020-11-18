@@ -20,14 +20,15 @@
         },
         "maxVersion": {
             "type": "string",
-            "defaultValue": "2020",
+            "defaultValue": "2021",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
                 "2018",
                 "2019",
-                "2020"
+                "2020",
+                "2021"
             ]
         },
         "renderer": {

@@ -73,6 +73,12 @@ function SetupDistributedRendering
     $vraydr_content | Out-File "$pluginConfig2020\vray_dr.cfg" -Force -Encoding ASCII
     $vrayrtdr_content | Out-File "$pluginConfig2020\vrayrt_dr.cfg" -Force -Encoding ASCII
 
+    # Max 2020
+    $pluginConfig2020 = "$env:LOCALAPPDATA\Autodesk\3dsMaxIO\2021 - 64bit\ENU\en-US\plugcfg"
+    New-Item "$pluginConfig2020" -ItemType Directory -Force
+    $vraydr_content | Out-File "$pluginConfig2021\vray_dr.cfg" -Force -Encoding ASCII
+    $vrayrtdr_content | Out-File "$pluginConfig2021\vrayrt_dr.cfg" -Force -Encoding ASCII
+
     # Create preRender script to enable distributed rendering in the scene
     $vrayLogFile = "$env:AZ_BATCH_TASK_WORKING_DIR\VRayLog.log" -replace "\\", "\\"
     $script:pre_render_script_content += "-- VRay DR setup`r`n"
@@ -127,6 +133,21 @@ function SetupDistributedRendering
             $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
         }
     }
+    ElseIf($maxVersion -eq "2021"){
+        IF($renderer -eq "VRayRT"){
+            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_GPU_""`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.distributed_rendering = true)`r`n"            
+            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_level = 4`r`n"
+            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_file = ""$vrayLogFile""`r`n"
+        }    
+        ElseIf($renderer -eq "VRayAdv")
+        {
+            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
+            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
+            $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
+            $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
+        }
+    }
 
     # We need to wait for vrayspawner or vray.exe to start before continuing
     Start-Sleep 30
@@ -165,6 +186,13 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
         }
     }
     ElseIf ($maxVersion -eq "2020")
+    {
+        IF($renderer -ne "VRayRT"){
+
+            $pre_render_script_content += "r.adv_irradmap_loadFileName = ""$irMap""`r`n"
+        }
+    }
+    ElseIf ($maxVersion -eq "2021")
     {
         IF($renderer -ne "VRayRT"){
 
@@ -388,10 +416,19 @@ ElseIf ($maxVersion -eq "2020")
             exit 1
         }
 }
+ElseIf ($maxVersion -eq "2021")
+{
+        $max_exec = $env:3DSMAX_2021_EXEC
+        if(-Not (Test-Path "$env:3DSMAX_2021"))
+        {
+            Write-Host "3ds Max 2021 doesn't exist on this rendering image, please use a newer version of the rendering image."
+            exit 1
+        }
+}
 Else 
 {
-    Write-Host "No version of 3ds Max was selected. 3ds Max 2020 was selected by default."
-    $max_exec = $env:3DSMAX_2020_EXEC
+    Write-Host "No version of 3ds Max was selected. 3ds Max 2021 was selected by default."
+    $max_exec = $env:3DSMAX_2021_EXEC
 }
 
 Write-Host "Executing $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`""
@@ -412,6 +449,10 @@ ElseIf ($maxVersion -eq "2019")
 ElseIf ($maxVersion -eq "2020")
 {  
     Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2020 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue 
+}
+ElseIf ($maxVersion -eq "2021")
+{  
+    Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2021 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue 
 }
 
 if ($renderer -like "vray")
