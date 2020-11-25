@@ -17,6 +17,8 @@ param (
     [string]$maxVersion = $null,
     [string]$colorCorrectionFile = $null
 )
+gci env:* | sort-object name
+Write-Host gci env:* | sort-object name
 
 $OutputEncoding = New-Object -typename System.Text.UnicodeEncoding
 
@@ -73,9 +75,9 @@ function SetupDistributedRendering
     $vraydr_content | Out-File "$pluginConfig2020\vray_dr.cfg" -Force -Encoding ASCII
     $vrayrtdr_content | Out-File "$pluginConfig2020\vrayrt_dr.cfg" -Force -Encoding ASCII
 
-    # Max 2020
+    # Max 2021
     $pluginConfig2020 = "$env:LOCALAPPDATA\Autodesk\3dsMaxIO\2021 - 64bit\ENU\en-US\plugcfg"
-    New-Item "$pluginConfig2020" -ItemType Directory -Force
+    New-Item "$pluginConfig2021" -ItemType Directory -Force
     $vraydr_content | Out-File "$pluginConfig2021\vray_dr.cfg" -Force -Encoding ASCII
     $vrayrtdr_content | Out-File "$pluginConfig2021\vrayrt_dr.cfg" -Force -Encoding ASCII
 
