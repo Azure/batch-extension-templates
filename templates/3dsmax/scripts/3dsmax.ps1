@@ -17,8 +17,9 @@ param (
     [string]$maxVersion = $null,
     [string]$colorCorrectionFile = $null
 )
-gci env:* | sort-object name
-Write-Host gci env:* | sort-object name
+gci env:* | Format-Table -Wrap -AutoSize
+
+Write-Host gci env:* | Format-Table -Wrap -AutoSize
 
 $OutputEncoding = New-Object -typename System.Text.UnicodeEncoding
 
