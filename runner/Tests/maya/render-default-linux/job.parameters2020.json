@@ -1,12 +1,12 @@
 {
    "jobName":{
-      "value":"maya-arnold-windows-2018"
+      "value":"maya-linux-default-2020"
    },
    "poolId":{
-      "value":"maya-arnold-windows"
+      "value":"maya-linux-default"
    },
    "mayaVersion":{
-      "value":"Maya2018"
+      "value":"Maya2019"
    },
    "inputData":{
       "value":"rendering"

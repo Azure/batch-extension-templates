@@ -1,24 +1,24 @@
 {
    "jobName":{
-      "value":"max2018-vraynext-gpu"
+      "value":"max2021-vraynext-dr"
    },
    "poolId":{
-      "value":"max2018-vraynext-gpu"
+      "value":"max2021-vraynext-dr"
    },
    "inputData":{
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"3dsmax-vraynext-gpu-2018.max"
+      "value":"3dsmax-vraynext-2019.max"
    },
    "maxVersion":{
-      "value":"2018"
-   },
-   "renderer":{
-      "value":"vray"
+      "value":"2021"
    },
    "outputName":{
       "value":"image.jpg"
+   },
+   "vrayRenderer":{
+      "value": "VRayAdv"
    },
    "frameStart":{
       "value":1
@@ -39,9 +39,9 @@
       "value":"rendering-output"
    },
     "dedicatedVmCount":{
-      "value":"1"
+      "value":"2"
    },
    "vmSize":{
-      "value":"Standard_NC6"
+      "value":"Standard_D3_v2"
    }
 }

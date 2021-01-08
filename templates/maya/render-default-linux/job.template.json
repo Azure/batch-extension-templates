@@ -25,9 +25,6 @@
                 "description": "The renderer to use"
             },
             "allowedValues":[
-                "Maya2017",
-                "Maya2018",
-                "Maya2019",
                 "Maya2020"
             ]
         },
