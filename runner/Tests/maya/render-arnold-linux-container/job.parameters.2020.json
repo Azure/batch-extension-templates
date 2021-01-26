@@ -1,15 +1,15 @@
 {
    "jobName":{
-      "value":"container-centos-maya2017-arnold"
+      "value":"container-centos-maya2020-arnold"
    },
    "poolId":{
-      "value":"container-centos-maya2017-arnold"
+      "value":"container-centos-maya2020-arnold"
    },
    "containerImage":{
-      "value": "azurebatchrendering/centos-maya_2017u5_arnold2011:latest"
+      "value": "azurebatchrendering/centos-maya_2018u4_arnold2023:latest"
    },
    "mayaVersion":{
-      "value":"Maya2017"
+      "value":"Maya2020"
    },
    "inputData":{
       "value":"rendering"

@@ -20,14 +20,11 @@
         },
         "mayaVersion": {
             "type": "string",
-            "defaultValue": "Maya2019",
+            "defaultValue": "Maya2020",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
-                "Maya2017",
-                "Maya2018",
-                "Maya2019",
                 "Maya2020"
             ]
         },
@@ -130,7 +127,7 @@
                             "elevationLevel": "admin"
                         }
                     },
-                        "commandLine": "/bin/bash -c 'set -e; set -o pipefail; mkdir \"$AZ_BATCH_TASK_WORKING_DIR/thumbs\";mkdir \"$AZ_BATCH_TASK_WORKING_DIR/images\";sudo mkdir -m a=rwx -p \"/X\";sudo mount --rbind $AZ_BATCH_JOB_PREP_WORKING_DIR /X;export maya_version=[parameters('mayaVersion')].sh;export maya_version=${{maya_version,,}};$maya_version -r arnold -ai:lve 1 [parameters('additionalFlags')] -proj \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" -rd \"$AZ_BATCH_TASK_WORKING_DIR/images\" -s {0} -e {0} \"/X/[parameters('sceneFile')]\";err=$?;sudo umount \"/X\";exit $err'",
+                        "commandLine": "/bin/bash -c 'set -e; set;set -o pipefail; mkdir \"$AZ_BATCH_TASK_WORKING_DIR/thumbs\";env;mkdir \"$AZ_BATCH_TASK_WORKING_DIR/images\";sudo mkdir -m a=rwx -p \"/X\";sudo mount --rbind $AZ_BATCH_JOB_PREP_WORKING_DIR /X;export maya_version=[parameters('mayaVersion')].sh;export maya_version=${{maya_version,,}};$maya_version -r arnold -ai:lve 1 [parameters('additionalFlags')] -proj \"$AZ_BATCH_JOB_PREP_WORKING_DIR\" -rd \"$AZ_BATCH_TASK_WORKING_DIR/images\" -s {0} -e {0} \"/X/[parameters('sceneFile')]\";err=$?;sudo umount \"/X\";exit $err'",
                       "environmentSettings": [
                         {
                             "name": "MAYA_SCRIPT_PATH",
