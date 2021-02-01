@@ -108,8 +108,7 @@
         "targetLowPriorityNodes": "[parameters('lowPriorityVmCount')]",
         "enableAutoScale": false,
         "applicationLicenses": [
-            "maya",
-            "vray"
+            "maya"
         ],
         "startTask": {
             "commandLine": "cmd.exe /c install-azure-nc-drivers.cmd [parameters('vmSize')]",
