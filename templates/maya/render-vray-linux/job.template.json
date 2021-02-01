@@ -26,7 +26,8 @@
             },
             "allowedValues":[
                 "Maya2017",
-                "Maya2018"            ]
+                "Maya2018"
+            ]
         },
         "inputData": {
             "type": "string",
