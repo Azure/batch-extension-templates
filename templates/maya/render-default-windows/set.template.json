@@ -1,0 +1,198 @@
+{
+    "templateMetadata": {
+        "description": "Application template for working with Maya default renderer on Windows."
+    },
+    "parameters": {
+        "poolId": {
+            "type": "string",
+            "defaultValue": "maya-sw-pool-windows",
+            "metadata": {
+                "description": "The ID of the pool on which to run the job."
+            }
+        },
+        "jobName": {
+            "type": "string",
+            "defaultValue": "maya-sw-windows",
+            "metadata": {
+                "description": "The unique name of the job.",
+                "advancedType": "job-id"
+            }
+        },
+        "mayaVersion": {
+            "type": "string",
+            "defaultValue": "Maya2019",
+            "metadata": {
+                "description": "The renderer to use"
+            },
+            "allowedValues":[
+                "Maya2020"
+            ]
+        },
+        "inputData": {
+            "type": "string",
+            "metadata": {
+                "description": "The file group where the input data is stored",
+                "advancedType": "file-group"
+            }
+        },
+        "sceneFile": {
+            "type": "string",
+            "metadata": {
+                "description": "The Maya scene file to be rendered",
+                "advancedType": "file-in-file-group",
+                "dependsOn": "inputData"
+            }
+        },
+        "additionalFlags": {
+            "type": "string",
+            "defaultValue": " ",
+            "metadata": {
+                "description": "Any additional flags to pass to the renderer. Example: -cam camera2"
+            }
+        },
+        "jobPriority": {
+            "type": "int",
+            "defaultValue": 0,
+            "metadata": {
+                "description": "Priority values can range from -1000 to 1000, with -1000 being the lowest priority and 1000 being the highest priority."
+            }
+        },
+        "frameStart": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Index of the first frame to render"
+            }
+        },
+        "frameEnd": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Index of the last frame to render"
+            }
+        },
+        "outputs": {
+            "type": "string",
+            "metadata": {
+                "description": "The file group where outputs will be stored",
+                "advancedType": "file-group"
+            }
+        }
+    },
+    "variables":{
+        "MayaVersions": {
+            "Maya2020" : {
+                "environmentValue": "%MAYA_2020_EXEC%"
+            }
+        }
+   },
+    "job": {
+        "type": "Microsoft.Batch/batchAccounts/jobs",
+        "properties": {
+            "id": "[parameters('jobName')]",
+            "priority": "[parameters('jobPriority')]",
+            "poolInfo": {
+                "poolId": "[parameters('poolId')]"
+            },
+            "jobPreparationTask": {
+                "userIdentity": {
+                    "autoUser": {
+                        "scope": "pool",
+                        "elevationLevel": "nonAdmin"
+                    }
+                },
+                "commandLine": "SET"
+            },
+            "jobReleaseTask": {
+                "userIdentity": {
+                    "autoUser": {
+                       "scope": "pool",
+                       "elevationLevel": "nonAdmin"
+                    }
+                },
+                "commandLine":"cmd.exe /c DEL /S /Q \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" & exit /b 0"
+            },
+            "taskFactory": {
+                "type": "parametricSweep",
+                "parameterSets": [
+                    {
+                        "start": "[parameters('frameStart')]",
+                        "end": "[parameters('frameEnd')]",
+                        "step": 1
+                    }
+                ],
+                "repeatTask": {
+                    "displayName": "Frame {0}",
+                    "userIdentity": {
+                        "autoUser": {
+                            "scope": "pool",
+                            "elevationLevel": "admin"
+                        }
+                    },
+                    "commandLine": "SET",
+                    "environmentSettings": [
+                        {
+                            "name": "MAYA_SCRIPT_PATH",
+                            "value": "%AZ_BATCH_JOB_PREP_WORKING_DIR%\\scripts"
+                        },
+                        {
+                            "name": "FLEXLM_TIMEOUT",
+                            "value": "5000000"
+                        }
+                    ],
+                    "outputFiles": [
+                        {
+                            "filePattern": "../stdout.txt",
+                            "destination": {
+                                "autoStorage": {
+                                    "fileGroup": "[parameters('outputs')]",
+                                    "path": "[parameters('jobName')]/logs/frame_{0}.log"
+                                }
+                            },
+                            "uploadOptions": {
+                                "uploadCondition": "taskCompletion"
+                            }
+                        },
+                        {
+                            "filePattern": "../stderr.txt",
+                            "destination": {
+                                "autoStorage": {
+                                    "fileGroup": "[parameters('outputs')]",
+                                    "path": "[parameters('jobName')]/logs/frame_{0}_error.log"
+                                }
+                            },
+                            "uploadOptions": {
+                                "uploadCondition": "taskCompletion"
+                            }
+                        },
+                        {
+                            "filePattern": "images/**/*",
+                            "destination": {
+                                "autoStorage": {
+                                    "fileGroup": "[parameters('outputs')]",
+                                    "path":"[parameters('jobName')]/images"
+                                }
+                            },
+                            "uploadOptions": {
+                                "uploadCondition": "taskSuccess"
+                            }
+                        },
+                        {
+                            "filePattern": "thumbs/**/*",
+                            "destination": {
+                                "autoStorage": {
+                                    "fileGroup": "[parameters('outputs')]",
+                                    "path": "[parameters('jobName')]/thumbs"
+                                }
+                            },
+                            "uploadOptions": {
+                                "uploadCondition": "taskSuccess"
+                            }
+                        }
+                    ]
+                }
+            },
+            "onAllTasksComplete": "terminateJob"
+        }
+    }
+}
