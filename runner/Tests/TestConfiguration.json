@@ -56,7 +56,7 @@
         "template": "../templates/maya/render-arnold-windows/job.template.json",
         "poolTemplate": "../templates/maya/render-arnold-windows/pool.template.json",
         "parameters": "Tests/maya/render-arnold-windows/job.parameters2020.json",
-        "expectedOutput":"maya-vray.0001.png"
+        "expectedOutput":"maya.exr.0001"
     },
     {
         "name": "maya2020-vray-windows",
