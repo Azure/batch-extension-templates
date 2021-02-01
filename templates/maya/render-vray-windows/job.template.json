@@ -134,7 +134,7 @@
                             "elevationLevel": "admin"
                         }
                     },
-                    "commandLine": "set; mkdir \"%AZ_BATCH_TASK_WORKING_DIR%\\thumbs\" & set &subst X: %AZ_BATCH_JOB_PREP_WORKING_DIR% & cmd.exe /v /c \"[variables('MayaVersions')[parameters('mayaVersion')].environmentValue] -renderer vray [parameters('additionalFlags')] -proj \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" -rd \"%AZ_BATCH_TASK_WORKING_DIR%\\images\" -s {0} -e {0} \"X:\\[parameters('sceneFile')]\"\"",
+                    "commandLine": "set; mkdir \"%AZ_BATCH_TASK_WORKING_DIR%\\thumbs\" &subst X: %AZ_BATCH_JOB_PREP_WORKING_DIR% & cmd.exe /v /c \"[variables('MayaVersions')[parameters('mayaVersion')].environmentValue] -renderer vray [parameters('additionalFlags')] -proj \"%AZ_BATCH_JOB_PREP_WORKING_DIR%\" -rd \"%AZ_BATCH_TASK_WORKING_DIR%\\images\" -s {0} -e {0} \"X:\\[parameters('sceneFile')]\"\"",
                     "environmentSettings": [
                         {
                             "name": "MAYA_SCRIPT_PATH",

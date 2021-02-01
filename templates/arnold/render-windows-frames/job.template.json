@@ -51,7 +51,7 @@
                 },
                 "repeatTask": {
                     "displayName": "frame {fileNameWithoutExtension}",
-                    "commandLine": "mkdir images & %ARNOLD_2020_EXEC% -l \"C:\\server\\mayaArnold\\2018\\shaders\" -i \"%AZ_BATCH_TASK_WORKING_DIR%\\assets\\{fileName}\" -dw -v 6 -o \"%AZ_BATCH_TASK_WORKING_DIR%\\images\\{fileNameWithoutExtension}.jpeg\"",
+                    "commandLine": "mkdir images & %ARNOLD_2020_EXEC% -l \"C:\\server\\mayaArnold\\2020\\shaders\" -i \"%AZ_BATCH_TASK_WORKING_DIR%\\assets\\{fileName}\" -dw -v 6 -o \"%AZ_BATCH_TASK_WORKING_DIR%\\images\\{fileNameWithoutExtension}.jpeg\"",
                     "resourceFiles": [
                         {
                             "httpUrl": "{url}",

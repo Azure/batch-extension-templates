@@ -1,6 +1,27 @@
 {
   "tests": [
     {
+        "name": "ffmpeg-wav-to-mp3",
+        "template": "../templates/ffmpeg/convert-wav-to-mp3/job.template.json",
+        "poolTemplate": "../templates/ffmpeg/convert-wav-to-mp3/pool.template.json",
+        "parameters": "Tests/ffmpeg/convert-wav-to-mp3/job.parameters.json",
+        "expectedOutput":"ffmpeg.mp3"
+    },
+    {
+        "name": "ffmpeg-animation-from-images",
+        "template": "../templates/ffmpeg/create-animation-from-images/job.template.json",
+        "poolTemplate": "../templates/ffmpeg/create-animation-from-images/pool.template.json",
+        "parameters": "Tests/ffmpeg/create-animation-from-images/job.parameters.json",
+        "expectedOutput":"ffmpeg-animation-from-images.mp4"
+    },
+    {
+        "name": "imagemagick-resize-images",
+        "template": "../templates/imagemagick/resize-images/job.template.json",
+        "poolTemplate": "../templates/imagemagick/resize-images/pool.template.json",
+        "parameters": "Tests/imagemagick/resize-images/job.parameters.json",
+        "expectedOutput":"image0001.jpg"
+    },
+    {
         "name": "arnold-windows-standalone",
         "template": "../templates/arnold/render-windows/job.template.json",
         "poolTemplate": "../templates/arnold/render-windows/pool.template.json",
@@ -59,11 +80,25 @@
         "expectedOutput":"maya.exr.0001"
     },
     {
+        "name": "maya2020-default-windows",
+        "template": "../templates/maya/render-default-windows/job.template.json",
+        "poolTemplate": "../templates/maya/render-default-windows/pool.template.json",
+        "parameters": "Tests/maya/render-default-windows/job.parameters2020.json",
+        "expectedOutput":"maya.exr.0001"
+    },
+    {
         "name": "maya2020-vray-windows",
         "template": "../templates/maya/render-vray-windows/job.template.json",
         "poolTemplate": "../templates/maya/render-vray-windows/pool.template.json",
         "parameters": "Tests/maya/render-vray-windows/job.parameters2020.json",
         "expectedOutput":"maya-vray.0001.png"
+    },
+    {
+        "name": "blender-windows-dr",
+        "template": "../templates/blender/render-windows-dr/job.template.json",
+        "poolTemplate": "../templates/blender/render-windows-dr/pool.template.json",
+        "parameters": "Tests/blender/render-windows-dr/job.parameters.json",
+        "expectedOutput":"tile_001.png"
     }
   ], 
   "images": [
@@ -75,7 +110,7 @@
     {
         "osType": "linux",
         "offer": "rendering-centos73",
-        "version": "1.1.6"
+        "version": "1.1.7"
     },
     {
         "publisher": "microsoft-azure-batch",
