@@ -146,10 +146,17 @@ def set_job_resource_file_urls_to_branch(in_memory_json_object: str, resource_br
 
     if resource_branch_name:
         try:
-            if in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"]:
-                resource_files = in_memory_json_object["job"]["properties"][
-                    "taskFactory"]["tasks"][0]["resourceFiles"]
-                update_resource_file_url(resource_files, resource_branch_name)
+            if in_memory_json_object["job"]["properties"]["taskFactory"]["repeatTask"]["resourceFiles"]:
+                resource_files = in_memory_json_object["job"]["properties"]["taskFactory"]["repeatTask"]["resourceFiles"]
+                update_resource_file_url(resource_files, resource_branch_name)    
+        except KeyError:
+            pass
+        except AttributeError:
+            pass
+        try:
+           if in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"]:
+                resource_files = in_memory_json_object["job"]["properties"]["taskFactory"]["tasks"][0]["resourceFiles"]
+                update_resource_file_url(resource_files, resource_branch_name)                
         except KeyError:
             pass
         except AttributeError:

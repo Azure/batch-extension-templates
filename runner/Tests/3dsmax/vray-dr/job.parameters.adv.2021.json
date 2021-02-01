@@ -1,9 +1,9 @@
 {
    "jobName":{
-      "value":"max2019-vraynext-dr"
+      "value":"max2021-vraynext-dr"
    },
    "poolId":{
-      "value":"max2019-vraynext-dr"
+      "value":"max2021-vraynext-dr"
    },
    "inputData":{
       "value":"rendering"
@@ -12,7 +12,7 @@
       "value":"3dsmax-vraynext-2019.max"
    },
    "maxVersion":{
-      "value":"2019"
+      "value":"2021"
    },
    "outputName":{
       "value":"image.jpg"

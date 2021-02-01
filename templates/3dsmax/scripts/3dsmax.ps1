@@ -17,6 +17,9 @@ param (
     [string]$maxVersion = $null,
     [string]$colorCorrectionFile = $null
 )
+gci env:* | Format-Table -Wrap -AutoSize
+
+Write-Host gci env:* | Format-Table -Wrap -AutoSize
 
 $OutputEncoding = New-Object -typename System.Text.UnicodeEncoding
 
@@ -55,23 +58,11 @@ function SetupDistributedRendering
 
     $vrayrtdr_content += "autostart_local_slave 0`r`n"
 
-    # Max 2018
-    $pluginConfig2018 = "$env:LOCALAPPDATA\Autodesk\3dsMaxIO\2018 - 64bit\ENU\en-US\plugcfg"
-    New-Item "$pluginConfig2018" -ItemType Directory -Force
-    $vraydr_content | Out-File "$pluginConfig2018\vray_dr.cfg" -Force -Encoding ASCII
-    $vrayrtdr_content | Out-File "$pluginConfig2018\vrayrt_dr.cfg" -Force -Encoding ASCII
-
-    # Max 2019
-    $pluginConfig2019 = "$env:LOCALAPPDATA\Autodesk\3dsMaxIO\2019 - 64bit\ENU\en-US\plugcfg"
-    New-Item "$pluginConfig2019" -ItemType Directory -Force
-    $vraydr_content | Out-File "$pluginConfig2019\vray_dr.cfg" -Force -Encoding ASCII
-    $vrayrtdr_content | Out-File "$pluginConfig2019\vrayrt_dr.cfg" -Force -Encoding ASCII
-
-    # Max 2020
-    $pluginConfig2020 = "$env:LOCALAPPDATA\Autodesk\3dsMaxIO\2020 - 64bit\ENU\en-US\plugcfg"
-    New-Item "$pluginConfig2020" -ItemType Directory -Force
-    $vraydr_content | Out-File "$pluginConfig2020\vray_dr.cfg" -Force -Encoding ASCII
-    $vrayrtdr_content | Out-File "$pluginConfig2020\vrayrt_dr.cfg" -Force -Encoding ASCII
+    # Max 2021
+    $pluginConfig2021 = "$env:LOCALAPPDATA\Autodesk\3dsMaxIO\2021 - 64bit\ENU\en-US\plugcfg"
+    New-Item "$pluginConfig2021" -ItemType Directory -Force
+    $vraydr_content | Out-File "$pluginConfig2021\vray_dr.cfg" -Force -Encoding ASCII
+    $vrayrtdr_content | Out-File "$pluginConfig2021\vrayrt_dr.cfg" -Force -Encoding ASCII
 
     # Create preRender script to enable distributed rendering in the scene
     $vrayLogFile = "$env:AZ_BATCH_TASK_WORKING_DIR\VRayLog.log" -replace "\\", "\\"
@@ -80,39 +71,7 @@ function SetupDistributedRendering
 
     $script:pre_render_script_content += "if index != 1 then (print ""VRay renderer not used, please save the scene with a VRay renderer selected."")`r`n"
 
-    If($maxVersion -eq "2018")
-    {
-        IF($renderer -eq "VRayRT")
-        {
-            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_RT_""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.distributed_rendering = true)`r`n"
-            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_level = 4`r`n"
-            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_file = ""$vrayLogFile""`r`n"
-        }
-        ElseIf($renderer -eq "VRayAdv")
-        {
-            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
-            $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
-            $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
-        }
-    }
-    ElseIf($maxVersion -eq "2019"){
-        IF($renderer -eq "VRayRT"){
-            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_GPU_""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.distributed_rendering = true)`r`n"            
-            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_level = 4`r`n"
-            $script:pre_render_script_content += "r.V_Ray_settings.system_vrayLog_file = ""$vrayLogFile""`r`n"
-        }    
-        ElseIf($renderer -eq "VRayAdv")
-        {
-            $script:pre_render_script_content += "index = findString rendererName ""V_Ray_Adv""`r`n"
-            $script:pre_render_script_content += "if index == 1 then (r.system_distributedRender = true)`r`n"
-            $script:pre_render_script_content += "r.system_vrayLog_level = 4`r`n"
-            $script:pre_render_script_content += "r.system_vrayLog_file = ""$vrayLogFile""`r`n"
-        }
-    }
-    ElseIf($maxVersion -eq "2020"){
+    If($maxVersion -eq "2021"){
         IF($renderer -eq "VRayRT"){
             $script:pre_render_script_content += "index = findString rendererName ""V_Ray_GPU_""`r`n"
             $script:pre_render_script_content += "if index == 1 then (r.distributed_rendering = true)`r`n"            
@@ -165,6 +124,13 @@ if (ParameterValueSet $irradianceMap -and $renderer -like "vray")
         }
     }
     ElseIf ($maxVersion -eq "2020")
+    {
+        IF($renderer -ne "VRayRT"){
+
+            $pre_render_script_content += "r.adv_irradmap_loadFileName = ""$irMap""`r`n"
+        }
+    }
+    ElseIf ($maxVersion -eq "2021")
     {
         IF($renderer -ne "VRayRT"){
 
@@ -357,41 +323,19 @@ mkdir -Force images > $null
 
 # Render
 $max_exec = "3dsmaxcmdio.exe"
-If ($maxVersion -eq "2018")
+If ($maxVersion -eq "2021")
 {
-    if ($env:3DSMAX_2018 -and (Test-Path "$env:3DSMAX_2018"))
-    {
-        # New image
-        $max_exec = "${env:3DSMAX_2018}3dsmaxcmdio.exe"
-    }
-
-    if($env:3DSMAX_2018_EXEC -MATCH "cmdio")
-    {
-        $max_exec = $env:3DSMAX_2018_EXEC
-    }
-}
-ElseIf ($maxVersion -eq "2019")
-{
-        $max_exec = $env:3DSMAX_2019_EXEC
-        if(-Not (Test-Path "$env:3DSMAX_2019"))
+        $max_exec = $env:3DSMAX_2021_EXEC
+        if(-Not (Test-Path "$env:3DSMAX_2021"))
         {
-            Write-Host "3ds Max 2019 doesn't exist on this rendering image, please use a newer version of the rendering image."
-            exit 1
-        }
-}
-ElseIf ($maxVersion -eq "2020")
-{
-        $max_exec = $env:3DSMAX_2020_EXEC
-        if(-Not (Test-Path "$env:3DSMAX_2020"))
-        {
-            Write-Host "3ds Max 2020 doesn't exist on this rendering image, please use a newer version of the rendering image."
+            Write-Host "3ds Max 2021 doesn't exist on this rendering image, please use a newer version of the rendering image."
             exit 1
         }
 }
 Else 
 {
-    Write-Host "No version of 3ds Max was selected. 3ds Max 2020 was selected by default."
-    $max_exec = $env:3DSMAX_2020_EXEC
+    Write-Host "No version of 3ds Max was selected. 3ds Max 2021 was selected by default."
+    $max_exec = $env:3DSMAX_2021_EXEC
 }
 
 Write-Host "Executing $max_exec -secure off $cameraParam $renderPresetFileParam $defaultArgumentsParam $additionalArgumentsParam -preRenderScript:`"$pre_render_script`" -start:$start -end:$end -outputName:`"$outputName`" $pathFileParam `"$sceneFile`""
@@ -401,17 +345,9 @@ $result = $lastexitcode
 
 Write-Host "last exit code $result"
 
-If ($maxVersion -eq "2018")
-{
-    Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2018 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue
-}
-ElseIf ($maxVersion -eq "2019")
-{   
-    Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2019 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue 
-}
-ElseIf ($maxVersion -eq "2020")
+If ($maxVersion -eq "2021")
 {  
-    Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2020 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue 
+    Copy-Item "${env:LOCALAPPDATA}\Autodesk\3dsMaxIO\2021 - 64bit\ENU\Network\Max.log" .\Max_full.log -ErrorAction SilentlyContinue 
 }
 
 if ($renderer -like "vray")

@@ -1,12 +1,12 @@
 {
    "jobName":{
-      "value":"maya-linux-default-2019"
+      "value":"maya-linux-default-2020"
    },
    "poolId":{
       "value":"maya-linux-default"
    },
    "mayaVersion":{
-      "value":"Maya2019"
+      "value":"Maya2020"
    },
    "inputData":{
       "value":"rendering"

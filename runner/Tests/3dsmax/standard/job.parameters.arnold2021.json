@@ -1,21 +1,21 @@
 {
    "jobName":{
-      "value":"max2018-vraynext-gpu"
+      "value":"max2021-arnold"
    },
    "poolId":{
-      "value":"max2018-vraynext-gpu"
+      "value":"max2021-arnold"
    },
    "inputData":{
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"3dsmax-vraynext-gpu-2018.max"
+      "value":"3dsmax-arnold.max"
    },
    "maxVersion":{
-      "value":"2018"
+      "value":"2021"
    },
    "renderer":{
-      "value":"vray"
+      "value":"arnold"
    },
    "outputName":{
       "value":"image.jpg"
@@ -42,6 +42,6 @@
       "value":"1"
    },
    "vmSize":{
-      "value":"Standard_NC6"
+      "value":"Standard_D3_v2"
    }
 }

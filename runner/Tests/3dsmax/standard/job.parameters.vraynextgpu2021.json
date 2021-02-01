@@ -1,18 +1,18 @@
 {
    "jobName":{
-      "value":"max2020-vraynext"
+      "value":"max2021-vraynext-gpu"
    },
    "poolId":{
-      "value":"max2020-vraynext"
+      "value":"max2021-vraynext-gpu"
    },
    "inputData":{
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"3dsmax-vraynext-2019.max"
+      "value":"3dsmax-vraynext-gpu-2019.max"
    },
    "maxVersion":{
-      "value":"2020"
+      "value":"2021"
    },
    "renderer":{
       "value":"vray"
@@ -42,6 +42,6 @@
       "value":"1"
    },
    "vmSize":{
-      "value":"Standard_D3_v2"
+      "value":"Standard_NC6"
    }
 }

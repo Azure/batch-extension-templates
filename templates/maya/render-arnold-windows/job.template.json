@@ -20,14 +20,12 @@
         },
         "mayaVersion": {
             "type": "string",
-            "defaultValue": "Maya2019",
+            "defaultValue": "Maya2020",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
-                "Maya2017",
-                "Maya2018",
-                "Maya2019"
+                "Maya2020"
             ]
         },
         "inputData": {
@@ -83,14 +81,8 @@
     },
     "variables":{
         "MayaVersions": {
-            "Maya2017" : {
-                "environmentValue": "%MAYA_2017_EXEC%"
-            },
-            "Maya2018":{
-                "environmentValue": "%MAYA_2018_EXEC%"
-            },
-            "Maya2019":{
-                "environmentValue": "%MAYA_2019_EXEC%"
+            "Maya2020":{
+                "environmentValue": "%MAYA_2020_EXEC%"
             }
         }
    },
