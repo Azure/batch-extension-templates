@@ -109,7 +109,7 @@
         },
         "forestPackAppPackageVersion": {
             "type": "string",
-			"defaultValue": "6.2.2",
+			"defaultValue": "6.3.1",
             "metadata": {
                 "description": "Version of the AppPackage containing forestPack binaries"
             }
@@ -130,7 +130,7 @@
         },
         "railCloneAppPackageVersion": {
             "type": "string",
-			"defaultValue": "3.3.1",
+			"defaultValue": "4.2.1",
             "metadata": {
                 "description": "Version of the AppPackage containing railClone binaries"
             }
@@ -151,7 +151,7 @@
         },
         "additionalPluginsAppPackageVersion": {
             "type": "string",
-            "defaultValue": "1.0.0",
+            "defaultValue": "1.0.1",
             "metadata": {
                 "description": "Version of the AppPackage containing additional plugins"
             }
