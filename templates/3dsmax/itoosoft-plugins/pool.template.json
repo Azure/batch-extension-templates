@@ -189,7 +189,7 @@
         "enableAutoScale": false,
         "enableInterNodeCommunication": false,
         "startTask": {
-            "commandLine": "cmd /c %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2021 %3DSMAX_2021%\\\\Plugins & exit /b 0",
+            "commandLine": "cmd /c %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2021%\\\\Plugins & exit /b 0",
             "waitForSuccess": true,
             "maxTaskRetryCount": 0,
             "userIdentity": {
