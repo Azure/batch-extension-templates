@@ -104,7 +104,7 @@
                 "publisher": "batch",
                 "offer": "rendering-centos73",
                 "sku": "rendering",
-                "version": "1.1.7"
+                "version": "1.1.8"
             },
             "nodeAgentSKUId": "batch.node.centos 7"
         }
@@ -119,6 +119,17 @@
         "enableAutoScale": false,
         "applicationLicenses": [
             "vray"
-        ]
+        ],
+        "startTask": {
+            "commandLine": "/bin/bash -c 'sudo systemctl stop vrlservice.service;'",
+            "waitForSuccess": true,
+            "maxTaskRetryCount": 0,
+            "userIdentity": {
+                "autoUser": {
+                    "elevationLevel": "admin",
+                    "scope": "pool"
+                }
+            }
+        }
     }
 }
