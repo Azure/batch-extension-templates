@@ -84,13 +84,12 @@
         },
         "maxVersion": {
             "type": "string",
-            "defaultValue": "2020",
+            "defaultValue": "2021",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
-                "2019",
-                "2020"
+                "2021"
             ]
         },
         "vrayPort": {
@@ -109,7 +108,7 @@
         },
         "forestPackAppPackageVersion": {
             "type": "string",
-			"defaultValue": "6.2.2",
+			"defaultValue": "6.3.1",
             "metadata": {
                 "description": "Version of the AppPackage containing forestPack binaries"
             }
@@ -130,7 +129,7 @@
         },
         "railCloneAppPackageVersion": {
             "type": "string",
-			"defaultValue": "3.3.1",
+			"defaultValue": "4.2.1",
             "metadata": {
                 "description": "Version of the AppPackage containing railClone binaries"
             }
@@ -193,7 +192,7 @@
         "enableAutoScale": false,
         "enableInterNodeCommunication": true,
         "startTask": {
-            "commandLine": "cmd.exe /c REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /f && REG COPY HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 HKLM\\SOFTWARE\\Autodesk\\3dsMax\\21.0 /s && REG DELETE HKLM\\SOFTWARE\\Autodesk\\3dsMax\\20.0 /f && %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2019 %3DSMAX_2019%\\\\Plugins & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2020%\\\\Plugins & install-azure-nc-drivers.cmd [parameters('vmSize')] & PrepareVrayServices.bat [parameters('maxVersion')] [parameters('vrayRenderer')] [parameters('vrayPort')]",
+            "commandLine": "cmd.exe /c %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2021%\\\\Plugins & install-azure-nc-drivers.cmd [parameters('vmSize')] & PrepareVrayServices.bat [parameters('maxVersion')] [parameters('vrayRenderer')] [parameters('vrayPort')]",
             "waitForSuccess": true,
             "maxTaskRetryCount": 1,
             "userIdentity": {

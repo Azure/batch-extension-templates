@@ -20,13 +20,12 @@
         },
         "maxVersion": {
             "type": "string",
-            "defaultValue": "2020",
+            "defaultValue": "2021",
             "metadata": {
                 "description": "The 3dsmax version for which the additional plugins have been installed"
             },
             "allowedValues":[
-              "2019",
-              "2020"
+              "2021"
             ]
         },
         "inputData": {
