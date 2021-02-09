@@ -92,18 +92,32 @@
         "poolTemplate": "../templates/maya/render-vray-windows/pool.template.json",
         "parameters": "Tests/maya/render-vray-windows/job.parameters2020.json",
         "expectedOutput":"maya-vray.0001.png"
+    },
+    {
+          "name":"vray-render-linux",
+          "template":"../templates/vray/render-linux/job.template.json",
+          "poolTemplate":"../templates/vray/render-linux/pool.template.json",
+          "parameters":"Tests/vray/render-linux/job.parameters.json",
+          "expectedOutput":"image1.png"
+    },
+    {
+        "poolTemplate": "../templates/arnold/render-linux-frames/pool.template.json",
+        "parameters": "Tests/arnold/render-linux-frames/job.parameters.json",
+        "template": "../templates/arnold/render-linux-frames/job.template.json",
+        "expectedOutput": "arnold.tif",
+        "name": "arnold-linux-frames"
     }
   ], 
   "images": [
     {
         "osType": "windows",
-        "offer": "rendering-windows2016-preview",
+        "offer": "rendering-windows2016",
         "version": "1.5.0"
     },
     {
         "osType": "linux",
-        "offer": "rendering-centos73",
-        "version": "1.1.7"
+        "offer": "rendering-centos73-preview",
+        "version": "1.1.9"
     },
     {
         "publisher": "microsoft-azure-batch",
