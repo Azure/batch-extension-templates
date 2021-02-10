@@ -21,24 +21,26 @@ if(rem != undefined) then
 
 r = renderers.current     
 rendererName = r as string
-indexVRay5 = findString rendererName "V_Ray_5_"
+indexVRay5 = findString rendererName "V_Ray_5"
 
 if (indexVRay5 == 1) then
 (
-    tokens = filterString irAutoSavePath "\\"
-    filename = tokens[tokens.count]
     prefix = sysEnv.GetEnvironmentVariable "AZ_BATCH_TASK_WORKING_DIR"
-    newPath = prefix + "\\images\\" + filename
-
     irAutoSavePath = r.adv_irradmap_autoSaveFileName
     if(irAutoSavePath != undefined) then
     (
+        tokens = filterString irAutoSavePath "\\"
+        filename = tokens[tokens.count]
+        newPath = prefix + "\\images\\" + filename
         r.adv_irradmap_autoSaveFileName = newPath
     )
 
     irSavePath = r.adv_irradmap_saveFileName
     if(irSavePath != undefined) then
     (
+        tokens = filterString irSavePath "\\"
+        filename = tokens[tokens.count]
+        newPath = prefix + "\\images\\" + filename
         r.adv_irradmap_saveFileName = newPath
     )
 )
