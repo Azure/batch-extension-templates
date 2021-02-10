@@ -85,29 +85,6 @@ if ($dr)
 
 Write-Host "Using renderer 3ds-Max $maxVersion with $renderer"
 
-if (ParameterValueSet $irradianceMap -and $renderer -like "vray*")
-{
-    $irMap = "$workingDirectory\$irradianceMap"
-    $irMap = $irMap -replace "\\", "\\"
-    
-    Write-Host "Setting IR map to $irMap"
-    $pre_render_script_content += "-- Set the IR path`r`n"
-    If ($maxVersion -eq "2021")
-    {
-        $pre_render_script_content += "r.adv_irradmap_loadFileName = ""$irMap""`r`n"
-    }
-}
-
-if (ParameterValueSet $colorCorrectionFile -and $renderer -like "vray*")
-{
-    $ccFile = "$workingDirectory\$colorCorrectionFile"
-    $ccFile = $ccFile -replace "\\", "\\"
-    
-    Write-Host "Setting colorCorrection file to $ccFile"
-    $pre_render_script_content += "-- Set the CC filePath`r`n"
-    $pre_render_script_content += "vfbControl #loadglobalccpreset ""$ccFile""`r`n"
-}
-
 if ($renderer -eq "arnold")
 {
     Write-Host "3ds Max is using the Arnold renderer " 
@@ -132,6 +109,29 @@ if ($renderer -like "vray*")
     $pre_render_script_content += "indexVray5 = findString rendererName ""V_Ray_5_""`r`n"
     $pre_render_script_content += "if (indexVray5 == 1 and r.output_splitgbuffer and r.output_splitfilename != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_splitfilename); r.output_splitfilename = fileName)`r`n"
     $pre_render_script_content += "if (indexVray5 == 1 and r.output_saveRawFile and r.output_rawFileName != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_rawFileName); r.output_rawFileName = fileName)`r`n"       
+
+    if (ParameterValueSet $irradianceMap)
+    {
+        $irMap = "$workingDirectory\$irradianceMap"
+        $irMap = $irMap -replace "\\", "\\"
+        
+        Write-Host "Setting IR map to $irMap"
+        $pre_render_script_content += "-- Set the IR path`r`n"
+        If ($maxVersion -eq "2021")
+        {
+            $pre_render_script_content += "r.adv_irradmap_loadFileName = ""$irMap""`r`n"
+        }
+    }
+
+    if (ParameterValueSet $colorCorrectionFile)
+    {
+        $ccFile = "$workingDirectory\$colorCorrectionFile"
+        $ccFile = $ccFile -replace "\\", "\\"
+        
+        Write-Host "Setting colorCorrection file to $ccFile"
+        $pre_render_script_content += "-- Set the CC filePath`r`n"
+        $pre_render_script_content += "vfbControl #loadglobalccpreset ""$ccFile""`r`n"
+    }
 }
 
 if ((Test-Path ".\RepathRenderElements.ms"))
