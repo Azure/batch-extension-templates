@@ -30,13 +30,12 @@
         },
         "vrayRenderer": {
             "type": "string",
-            "defaultValue": "VRayAdv",
+            "defaultValue": "VRay5",
             "metadata": {
                 "description": "The renderer to use"
             },
             "allowedValues":[
-                "VRayAdv",
-                "VRayRT"
+                "VRay5"
             ]
         },
         "inputData": {

@@ -44,9 +44,9 @@
                 "wildcards": "*.max"
             }
         },
-		    "renderer": {
+        "renderer": {
             "type": "string",
-            "defaultValue": "arnold",
+            "defaultValue": "vray",
             "metadata": {
                 "description": "The renderer to use"
             },
@@ -141,7 +141,7 @@
         },
         "scriptBranch": {
             "type": "string",
-            "defaultValue": "master",
+            "defaultValue": "fix/3dsmax2021",
             "metadata": {
                 "description": "Which branch of batch-extension-templates repo should be used to construct the httpurl for the scripts loaded as resourceFiles."
             }

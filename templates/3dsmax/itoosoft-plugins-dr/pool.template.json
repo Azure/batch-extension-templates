@@ -73,20 +73,19 @@
         },
         "vrayRenderer": {
             "type": "string",
-            "defaultValue": "VRayAdv",
+            "defaultValue": "VRay5",
             "metadata": {
-                "description": "The renderer to use"
+                "description": "The specific vray renderer to use"
             },
             "allowedValues":[
-                "VRayAdv",
-                "VRayRT"
+                "VRay5"
             ]
         },
         "maxVersion": {
             "type": "string",
             "defaultValue": "2021",
             "metadata": {
-                "description": "The renderer to use"
+                "description": "The 3dsmaxVersion to use for rendering"
             },
             "allowedValues":[
                 "2021"
@@ -154,6 +153,13 @@
             "metadata": {
                 "description": "Version of the AppPackage containing additional plugins"
             }
+        },
+        "scriptBranch": {
+            "type": "string",
+            "defaultValue": "fix/3dsmax2021",
+            "metadata": {
+                "description": "Which branch of batch-extension-templates repo should be used to construct the httpurl for the scripts loaded as resourceFiles."
+            }
         }
     },
     "variables": {
@@ -203,11 +209,11 @@
             },
             "resourceFiles": [
                 {
-                    "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
+                    "httpUrl": "https://raw.githubusercontent.com/Azure/batch-extension-templates/[parameters('scriptBranch')]/templates/3dsmax/scripts/install-azure-nc-drivers.cmd",
                     "filePath": "install-azure-nc-drivers.cmd"
                 },
                 {
-                    "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/PrepareVrayServices.bat",
+                    "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/[parameters('scriptBranch')]/templates/3dsmax/scripts/PrepareVrayServices.bat",
                     "filePath":"PrepareVrayServices.bat"
                 }
             ]
