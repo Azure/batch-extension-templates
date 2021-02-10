@@ -91,7 +91,7 @@
                 "description": "Optional VRay colorCorrection file",
                 "advancedType": "file-in-file-group",
                 "dependsOn": "inputData",
-                "wildcards": "*.vccglb"
+                "wildcards": "*.vfbl"
             }
         },
         "renderPresetFile": {
