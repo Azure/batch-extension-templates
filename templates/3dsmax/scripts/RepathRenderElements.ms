@@ -23,7 +23,7 @@ r = renderers.current
 rendererName = r as string
 indexVRay5 = findString rendererName "V_Ray_5_"
 
-if (indexVRay5 == 1 ) then
+if (indexVRay5 == 1) then
 (
     tokens = filterString irAutoSavePath "\\"
     filename = tokens[tokens.count]
