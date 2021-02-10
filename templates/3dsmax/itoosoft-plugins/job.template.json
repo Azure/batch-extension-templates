@@ -141,7 +141,7 @@
         },
         "scriptBranch": {
             "type": "string",
-            "defaultValue": "fix/3dsmax2021",
+            "defaultValue": "master",
             "metadata": {
                 "description": "Which branch of batch-extension-templates repo should be used to construct the httpurl for the scripts loaded as resourceFiles."
             }
