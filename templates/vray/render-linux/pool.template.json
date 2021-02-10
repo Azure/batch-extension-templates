@@ -119,17 +119,6 @@
         "enableAutoScale": false,
         "applicationLicenses": [
             "vray"
-        ],
-        "startTask": {
-            "commandLine": "/bin/bash -c 'sudo /usr/autodesk/mayaIO2020/vray/vrayses'",
-            "waitForSuccess": true,
-            "maxTaskRetryCount": 0,
-            "userIdentity": {
-                "autoUser": {
-                    "elevationLevel": "admin",
-                    "scope": "pool"
-                }
-            }
-        }
+        ]
     }
 }

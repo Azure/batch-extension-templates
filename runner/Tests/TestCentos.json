@@ -1,30 +1,44 @@
 {
-    "tests":[
+   "tests": [
        {
-          "name":"vray-render-linux",
-          "template":"../templates/vray/render-linux/job.template.json",
-          "poolTemplate":"../templates/vray/render-linux/pool.template.json",
-          "parameters":"Tests/vray/render-linux/job.parameters.json",
-          "expectedOutput":"image1.png"
-       }
-    ],
-    "images":[
-       {
-          "osType":"windows",
-          "offer":"rendering-windows2016",
-          "version":"1.5.0"
+           "poolTemplate": "../templates/arnold/render-linux-frames/pool.template.json",
+           "parameters": "Tests/arnold/render-linux-frames/job.parameters.json",
+           "template": "../templates/arnold/render-linux-frames/job.template.json",
+           "expectedOutput": "arnold.tif",
+           "name": "arnold-linux-frames"
        },
        {
-          "osType":"linux",
-          "offer":"rendering-centos73",
-          "version":"1.1.9"
+           "name": "vray-render-linux",
+           "template": "../templates/vray/render-linux/job.template.json",
+           "poolTemplate": "../templates/vray/render-linux/pool.template.json",
+           "parameters": "Tests/vray/render-linux/job.parameters.json",
+           "expectedOutput":"image1.png"
        },
        {
-          "publisher":"microsoft-azure-batch",
-          "osType":"linux",
-          "offer":"centos-container",
-          "sku":"7-5",
-          "version":"latest"
+           "name": "maya-arnold-linux",
+           "template": "../templates/arnold/render-linux-frames/job.template.json",
+           "poolTemplate": "../templates/arnold/render-linux-frames/pool.template.json",
+           "parameters": "Tests/maya/render-arnold-linux/job.parameters2020.json",
+           "expectedOutput":"image1.png"
+       },
+       {
+           "name": "maya-vray-linux",
+           "template": "../templates/maya/render-vray-linux/job.template.json",
+           "poolTemplate": "../templates/maya/render-vray-linux/pool.template.json",
+           "parameters": "Tests/maya/render-vray-linux/job.parameters2020.json",
+           "expectedOutput":"image1.png"
        }
-    ]
- }
+   ],
+   "images": [
+       {
+           "version": "1.3.8",
+           "osType": "windows",
+           "offer": "rendering-windows2016"
+       },
+       {
+           "version": "1.1.7",
+           "osType": "centos",
+           "offer": "rendering-centos73"
+       }
+   ]
+}
