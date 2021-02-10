@@ -5,10 +5,6 @@ set VRAY_PORT=%3
 setx AZ_BATCH_ACCOUNT_URL %AZ_BATCH_ACCOUNT_URL% /M
 setx AZ_BATCH_SOFTWARE_ENTITLEMENT_TOKEN %AZ_BATCH_SOFTWARE_ENTITLEMENT_TOKEN% /M
 
-IF /I "%VRAY_RENDERER%"=="vray5" (
-	IF "%MAX_VERSION%"=="2021" (
-	   start "vrayspawner2021" "C:\Autodesk\3dsMax2021\vrayspawner2021.exe" "-port=%VRAY_PORT%" > vrayexe.output.txt
-    )
-)
+start "vrayspawner2021" "C:\Autodesk\3dsMax2021\vrayspawner2021.exe" "-port=%VRAY_PORT%" > vrayexe.output.txt
 
 exit /b %errorlevel%
