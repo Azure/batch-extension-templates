@@ -205,7 +205,7 @@
                         },
                         "resourceFiles":[
                             {
-                                "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/master/templates/3dsmax/scripts/3dsmax.ps1",
+                                "httpUrl":"https://raw.githubusercontent.com/Azure/batch-extension-templates/fix/3dsmax2021/templates/3dsmax/scripts/3dsmax.ps1",
                                 "filePath":"3dsmax.ps1"
                             },
                             {
