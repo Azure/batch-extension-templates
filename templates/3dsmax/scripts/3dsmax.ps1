@@ -5,7 +5,7 @@ param (
     [string]$sceneFile,
     [int]$nodeCount = 1,
     [switch]$dr,
-    [string]$renderer = "vray5",
+    [string]$renderer = "vray",
     [string]$irradianceMap = $null,
     [string]$pathFile = $null,
     [string]$workingDirectory = "$env:AZ_BATCH_JOB_PREP_WORKING_DIR\assets",
