@@ -27,7 +27,14 @@
           "poolTemplate":"../templates/vray/render-linux/pool.template.json",
           "parameters":"Tests/vray/render-linux/job.parameters.json",
           "expectedOutput":"image1.png"
-       }
+       },
+       {
+        "name": "blender-windows28",
+        "template": "../templates/blender/render-linux/job.template.json",
+        "poolTemplate": "../templates/blender/render-linux/pool.template.json",
+        "parameters": "Tests/blender/render-linux/job.parameters2.8.json",
+        "expectedOutput":"blender-windows28_0001.png"
+        }
     ],
     "images":[
        {
