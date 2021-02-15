@@ -12,7 +12,7 @@
       "value":"rendering"
    },
    "sceneFile":{
-      "value":"maya.mb"
+      "value":"maya2020-arnold.mb"
    },
    "additionalflags":{
       "value":"-of png"

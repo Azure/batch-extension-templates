@@ -102,7 +102,7 @@
                             "elevationLevel": "admin"
                         }
                     },
-                    "commandLine": "source /etc/profile.d/chaos.sh;vray2017.sh -sceneFile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputData')]/[parameters('sceneFile')]\" -frames={0} -imgfile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputData')]/image{0}.png\" -display=0;err=$?;exit $err"
+                    "commandLine": "source /etc/profile.d/chaos.sh;vray2020.sh -sceneFile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputData')]/[parameters('sceneFile')]\" -frames={0} -imgfile=\"$AZ_BATCH_JOB_PREP_WORKING_DIR/fgrp-[parameters('inputData')]/image{0}.png\" -display=0;err=$?;exit $err"
                 }
             },
             "onAllTasksComplete": "terminateJob"
