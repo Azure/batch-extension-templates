@@ -22,13 +22,6 @@
          "expectedOutput":"image0001.jpg"
       },
       {
-         "name":"arnold-windows-standalone",
-         "template":"../templates/arnold/render-windows/job.template.json",
-         "poolTemplate":"../templates/arnold/render-windows/pool.template.json",
-         "parameters":"Tests/arnold/render-windows/job.parameters.json",
-         "expectedOutput":"arnold.ass.tif"
-      },
-      {
          "name":"arnold-windows-frames",
          "template":"../templates/arnold/render-windows-frames/job.template.json",
          "poolTemplate":"../templates/arnold/render-windows-frames/pool.template.json",
@@ -36,18 +29,11 @@
          "expectedOutput":"arnold.tif"
       },
       {
-         "name":"blender-windows279",
+         "name":"blender-windows28",
          "template":"../templates/blender/render-windows/job.template.json",
          "poolTemplate":"../templates/blender/render-windows/pool.template.json",
-         "parameters":"Tests/blender/render-windows/job.parameters279.json",
-         "expectedOutput":"blender-windows279_0001.png"
-      },
-      {
-         "name":"vray-render-windows",
-         "template":"../templates/vray/render-windows/job.template.json",
-         "poolTemplate":"../templates/vray/render-windows/pool.template.json",
-         "parameters":"Tests/vray/render-windows/job.parameters.json",
-         "expectedOutput":"image1.png"
+         "parameters":"Tests/blender/render-windows/job.parameters28.json",
+         "expectedOutput":"blender-windows28_0001.png"
       },
       {
          "name":"3dsmax-arnold-2021",
@@ -66,24 +52,10 @@
          "applicationLicense":"3dsmax,vray"
       },
       {
-         "name":"blender-windows28",
-         "template":"../templates/blender/render-windows/job.template.json",
-         "poolTemplate":"../templates/blender/render-windows/pool.template.json",
-         "parameters":"Tests/blender/render-windows/job.parameters28.json",
-         "expectedOutput":"blender-windows28_0001.png"
-      },
-      {
          "name":"maya2020-arnold-windows",
          "template":"../templates/maya/render-arnold-windows/job.template.json",
          "poolTemplate":"../templates/maya/render-arnold-windows/pool.template.json",
          "parameters":"Tests/maya/render-arnold-windows/job.parameters2020.json",
-         "expectedOutput":"maya.exr.0001"
-      },
-      {
-         "name":"maya2020-default-windows",
-         "template":"../templates/maya/render-default-windows/job.template.json",
-         "poolTemplate":"../templates/maya/render-default-windows/pool.template.json",
-         "parameters":"Tests/maya/render-default-windows/job.parameters2020.json",
          "expectedOutput":"maya.exr.0001"
       },
       {
@@ -105,20 +77,6 @@
          "template":"../templates/maya/render-vray-linux/job.template.json",
          "poolTemplate":"../templates/maya/render-vray-linux/pool.template.json",
          "parameters":"Tests/maya/render-vray-linux/job.parameters2020.json",
-         "expectedOutput":"image1.png"
-      },
-      {
-         "poolTemplate":"../templates/arnold/render-linux-frames/pool.template.json",
-         "parameters":"Tests/arnold/render-linux-frames/job.parameters.json",
-         "template":"../templates/arnold/render-linux-frames/job.template.json",
-         "expectedOutput":"arnold.tif",
-         "name":"arnold-linux-frames"
-      },
-      {
-         "name":"vray-render-linux",
-         "template":"../templates/vray/render-linux/job.template.json",
-         "poolTemplate":"../templates/vray/render-linux/pool.template.json",
-         "parameters":"Tests/vray/render-linux/job.parameters.json",
          "expectedOutput":"image1.png"
       },
       {
