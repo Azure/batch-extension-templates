@@ -245,11 +245,11 @@
                                 }
                             },
                             {
-                                "filePattern":"../prerender.ms",
+                                "filePattern":"*.ms",
                                 "destination":{
                                     "autoStorage":{
                                         "fileGroup":"[parameters('outputs')]",
-                                        "path":"[parameters('jobName')]/logs/prerender.ms"
+                                        "path":"[parameters('jobName')]/logs"
                                     }
                                 },
                                 "uploadOptions":{
