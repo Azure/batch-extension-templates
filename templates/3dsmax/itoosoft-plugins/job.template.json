@@ -241,6 +241,18 @@
                             }
                         },
                         {
+                            "filePattern":"../prerender.ms",
+                            "destination":{
+                                "autoStorage":{
+                                    "fileGroup":"[parameters('outputs')]",
+                                    "path":"[parameters('jobName')]/logs/prerender.ms"
+                                }
+                            },
+                            "uploadOptions":{
+                                "uploadCondition":"taskCompletion"
+                            }
+                        },
+                        {
                             "filePattern": "images/**/*",
                             "destination": {
                                 "autoStorage": {
