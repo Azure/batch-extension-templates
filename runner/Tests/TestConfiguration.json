@@ -98,14 +98,14 @@
          "template":"../templates/maya/render-arnold-linux/job.template.json",
          "poolTemplate":"../templates/maya/render-arnold-linux/pool.template.json",
          "parameters":"Tests/maya/render-arnold-linux/job.parameters2020.json",
-         "expectedOutput":"image1.png"
+         "expectedOutput":"maya2020-arnold.exr.0001"
       },
       {
          "name":"maya-vray-linux",
          "template":"../templates/maya/render-vray-linux/job.template.json",
          "poolTemplate":"../templates/maya/render-vray-linux/pool.template.json",
          "parameters":"Tests/maya/render-vray-linux/job.parameters2020.json",
-         "expectedOutput":"image1.png"
+         "expectedOutput":"maya-vray.0001.png"
       },
       {
          "poolTemplate":"../templates/arnold/render-linux-frames/pool.template.json",
@@ -126,7 +126,7 @@
          "template":"../templates/blender/render-linux/job.template.json",
          "poolTemplate":"../templates/blender/render-linux/pool.template.json",
          "parameters":"Tests/blender/render-linux/job.parameters2.8.json",
-         "expectedOutput":"blender-windows28_0001.png"
+         "expectedOutput":"blender-linux-2-8_0001.png"
       }
    ],
    "images":[
