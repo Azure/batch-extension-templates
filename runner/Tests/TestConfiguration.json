@@ -66,6 +66,14 @@
          "applicationLicense":"3dsmax,vray"
       },
       {
+         "name":"3dsmax-vray-2021-itoosoft",
+         "template":"../templates/3dsmax/standard/job.template.json",
+         "poolTemplate":"../templates/3dsmax/standard/pool.template.json",
+         "parameters":"Tests/3dsmax/standard/job.parameters.vray2021.json",
+         "expectedOutput":"image0001.jpg",
+         "applicationLicense":"3dsmax,vray"
+      },
+      {
          "name":"blender-windows28",
          "template":"../templates/blender/render-windows/job.template.json",
          "poolTemplate":"../templates/blender/render-windows/pool.template.json",
