@@ -17,8 +17,8 @@
    "outputName":{
       "value":"image.jpg"
    },
-   "vrayRenderer":{
-      "value": "VRay5"
+   "renderer":{
+      "value": "vray"
    },
    "frameStart":{
       "value":1
