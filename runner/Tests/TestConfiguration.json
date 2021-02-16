@@ -137,7 +137,7 @@
       },
       {
          "osType":"linux",
-         "offer":"rendering-centos73-preview",
+         "offer":"rendering-centos73",
          "version":"1.2.0"
       },
       {
