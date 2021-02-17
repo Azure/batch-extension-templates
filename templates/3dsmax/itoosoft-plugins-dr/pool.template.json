@@ -71,14 +71,14 @@
                 "Standard_NC24s_v3"
             ]
         },
-        "vrayRenderer": {
+        "renderer": {
             "type": "string",
-            "defaultValue": "VRay5",
+            "defaultValue": "vray",
             "metadata": {
                 "description": "The specific vray renderer to use"
             },
             "allowedValues":[
-                "VRay5"
+                "vray"
             ]
         },
         "maxVersion": {
@@ -198,7 +198,7 @@
         "enableAutoScale": false,
         "enableInterNodeCommunication": true,
         "startTask": {
-            "commandLine": "cmd.exe /c %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2021%\\\\Plugins & install-azure-nc-drivers.cmd [parameters('vmSize')] & PrepareVrayServices.bat [parameters('maxVersion')] [parameters('vrayRenderer')] [parameters('vrayPort')]",
+            "commandLine": "cmd.exe /c %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2021%\\\\Plugins & install-azure-nc-drivers.cmd [parameters('vmSize')] & PrepareVrayServices.bat [parameters('maxVersion')] [parameters('renderer')] [parameters('vrayPort')]",
             "waitForSuccess": true,
             "maxTaskRetryCount": 1,
             "userIdentity": {
