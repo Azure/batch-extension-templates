@@ -199,7 +199,7 @@
         "enableInterNodeCommunication": true,
         "startTask": {
             "commandLine": "cmd.exe /c %AZ_BATCH_APP_PACKAGE_[parameters('forestPackAppPackageName')]#[parameters('forestPackAppPackageVersion')]%\\\\[parameters('forestPackInstallCommand')] && %AZ_BATCH_APP_PACKAGE_[parameters('railCloneAppPackageName')]#[parameters('railCloneAppPackageVersion')]%\\\\[parameters('railCloneInstallCommand')] & robocopy /s %AZ_BATCH_APP_PACKAGE_[parameters('additionalPluginsAppPackageName')]#[parameters('additionalPluginsAppPackageVersion')]%\\\\2020 %3DSMAX_2021%\\\\Plugins & install-azure-nc-drivers.cmd [parameters('vmSize')] & PrepareVrayServices.bat [parameters('maxVersion')] [parameters('renderer')] [parameters('vrayPort')]",
-            "waitForSuccess": true,
+            "waitForSuccess": false,
             "maxTaskRetryCount": 1,
             "userIdentity": {
                 "autoUser": {
