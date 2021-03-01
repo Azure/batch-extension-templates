@@ -28,7 +28,7 @@ function ParameterValueSet([string]$value)
     return ($value -and -Not ($value -eq "none") -and -Not ([string]::IsNullOrWhiteSpace($value)))
 }
 
-function SetupDistributedRendering
+function WriteDistributedRenderingConfigs
 {
     Write-Host "Setting up DR..."
 
@@ -64,8 +64,6 @@ function SetupDistributedRendering
     $vraydr_content | Out-File "$pluginConfig2021\vray_dr.cfg" -Force -Encoding ASCII
     $vrayrtdr_content | Out-File "$pluginConfig2021\vrayrt_dr.cfg" -Force -Encoding ASCII
 
-    $script:pre_render_script_content += "r.system_distributedRender = true`r`n"           
-
     # We need to wait for vrayspawner or vray.exe to start before continuing
     Start-Sleep 30
 }
@@ -80,7 +78,8 @@ $pre_render_script_content += "rendererName = r as string`r`n"
 
 if ($dr)
 {
-    SetupDistributedRendering
+    WriteDistributedRenderingConfigs
+    $pre_render_script_content += "r.system_distributedRender = true`r`n"  
 }
 
 Write-Host "Using renderer 3ds-Max $maxVersion with $renderer"

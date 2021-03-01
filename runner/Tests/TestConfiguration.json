@@ -66,6 +66,22 @@
          "applicationLicense":"3dsmax,vray"
       },
       {
+         "name":"3dsmax-vray-2021-itoosoft",
+         "template":"../templates/3dsmax/itoosoft-plugins/job.template.json",
+         "poolTemplate":"../templates/3dsmax/itoosoft-plugins/pool.template.json",
+         "parameters":"Tests/3dsmax/itoosoft/job.parameters.2021.json",
+         "expectedOutput":"image0001.jpg",
+         "applicationLicense":"3dsmax,vray"
+      },
+      {
+         "name":"3dsmax-vray-2021-itoosoft-dr",
+         "template":"../templates/3dsmax/itoosoft-plugins-dr/job.template.json",
+         "poolTemplate":"../templates/3dsmax/itoosoft-plugins-dr/pool.template.json",
+         "parameters":"Tests/3dsmax/itoosoft/job.parameters.2021.dr.json",
+         "expectedOutput":"image0001.jpg",
+         "applicationLicense":"3dsmax,vray"
+      },
+      {
          "name":"blender-windows28",
          "template":"../templates/blender/render-windows/job.template.json",
          "poolTemplate":"../templates/blender/render-windows/pool.template.json",

@@ -1,0 +1,47 @@
+{
+   "jobName":{
+      "value":"max2021-vray-itoosoft-dr"
+   },
+   "poolId":{
+      "value":"max2021-vray-itoosoft-dr"
+   },
+   "inputData":{
+      "value":"rendering"
+   },
+   "sceneFile":{
+      "value":"3dsmax-vray.max"
+   },
+   "maxVersion":{
+      "value":"2021"
+   },
+   "outputName":{
+      "value":"image.jpg"
+   },
+   "renderer":{
+      "value": "vray"
+   },
+   "frameStart":{
+      "value":1
+   },
+   "frameEnd":{
+      "value":1
+   },
+   "frameStep":{
+      "value":1
+   },
+   "frameWidth":{
+      "value":40
+   },
+   "frameHeight":{
+      "value":30
+   },
+   "outputs":{
+      "value":"rendering-output"
+   },
+    "dedicatedVmCount":{
+      "value":"2"
+   },
+   "vmSize":{
+      "value":"Standard_D3_v2"
+   }
+}
