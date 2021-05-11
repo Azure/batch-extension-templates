@@ -102,9 +102,11 @@ if ($renderer -like "vray*")
     Write-Host "3ds Max is using the Vray renderer: $renderer" 
     $outputPath = "$env:AZ_BATCH_TASK_WORKING_DIR\images\" -replace "\\", "\\"
     $vrayLogFile = "$env:AZ_BATCH_TASK_WORKING_DIR\VRayLog.log" -replace "\\", "\\"
-
-    $pre_render_script_content += "r.V_Ray_settings.system_vrayLog_level = 4`r`n"
-    $pre_render_script_content += "r.V_Ray_settings.system_vrayLog_file = ""$vrayLogFile""`r`n"
+	
+	$pre_render_script_content += "indexVrayGPU = findString rendererName ""V_Ray_GPU_""`r`n"
+	$pre_render_script_content += "if (indexVrayGPU == 0) then (r.system_vrayLog_level = 4; r.system_vrayLog_file = ""$vrayLogFile"")"
+    $pre_render_script_content += "if (indexVrayGPU == 1) then (r.V_Ray_settings.system_vrayLog_level = 4; r.V_Ray_settings.system_vrayLog_file = ""$vrayLogFile"")"
+	
     $pre_render_script_content += "indexVray5 = findString rendererName ""V_Ray_5_""`r`n"
     $pre_render_script_content += "if (indexVray5 == 1 and r.output_splitgbuffer and r.output_splitfilename != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_splitfilename); r.output_splitfilename = fileName)`r`n"
     $pre_render_script_content += "if (indexVray5 == 1 and r.output_saveRawFile and r.output_rawFileName != """") then (fileName = ""$outputPath"" + (filenameFromPath r.output_rawFileName); r.output_rawFileName = fileName)`r`n"       
