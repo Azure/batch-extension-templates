@@ -10,11 +10,9 @@ Start-Transcript -Path (Join-Path $current_path "corona-install.log")
 cd $current_path
 Write-Host "Environment:"
 gci env: | sort name
-if (!$destination) { 
-    if ($env:3DSMAX_2019) {
-        $destination = $env:3DSMAX_2019
-    } elseif ($env:3DSMAX_2018) {
-        $destination = $env:3DSMAX_2018
+if (!$destination) {
+    if ($env:3DSMAX_2021) {
+        $destination = $env:3DSMAX_2021
     } else {
         $destination = (Get-ChildItem -Path "C:\Autodesk\3DsMax*" | Select-Object -Last 1).FullName
     }
