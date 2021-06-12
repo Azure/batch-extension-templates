@@ -32,13 +32,12 @@
         },
         "maxVersion": {
             "type": "string",
-            "defaultValue": "2019",
+            "defaultValue": "2021",
             "metadata": {
                 "description": "The version of 3ds Max to install Corona binaries into"
             },
             "allowedValues":[
-                "2018",
-                "2019"
+                "2021"
             ]
         },
         "dedicatedVmCount": {
