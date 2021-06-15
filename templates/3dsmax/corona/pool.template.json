@@ -149,7 +149,7 @@
         "enableAutoScale": false,
         "enableInterNodeCommunication": false,
         "startTask": {
-            "commandLine": "cmd /c powershell -ExecutionPolicy Unrestricted -File install-corona.ps1 [parameters('coronaFairSaasUsername')] [parameters('coronaFairSaasPassword')] \"%AZ_BATCH_APP_PACKAGE_[parameters('coronaAppPackageName')]#[parameters('coronaAppPackageVersion')]%\\3ds Max [parameters('maxVersion')] Plugin\" C:\\Autodesk\\3DsMax[parameters('maxVersion')]",
+            "commandLine": "cmd /c powershell -ExecutionPolicy Unrestricted -File install-corona.ps1 [parameters('coronaFairSaasUsername')] [parameters('coronaFairSaasPassword')] \"%AZ_BATCH_APP_PACKAGE_[parameters('coronaAppPackageName')]#[parameters('coronaAppPackageVersion')]%\\3dsMax [parameters('maxVersion')] Plugin\" C:\\Autodesk\\3DsMax[parameters('maxVersion')]",
             "waitForSuccess": true,
             "maxTaskRetryCount": 0,
             "userIdentity": {
