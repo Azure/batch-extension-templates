@@ -20,13 +20,12 @@
         },
         "maxVersion": {
             "type": "string",
-            "defaultValue": "2019",
+            "defaultValue": "2021",
             "metadata": {
                 "description": "The 3dsmax version for which Corona has been installed"
             },
             "allowedValues":[
-                "2018",
-                "2019"
+                "2021"
             ]
         },
         "inputData": {
