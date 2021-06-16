@@ -118,6 +118,13 @@
                 "Standard_M64ms",
                 "Standard_M128s"
             ]
+        },
+		  "scriptBranch": {
+            "type": "string",
+            "defaultValue": "master",
+            "metadata": {
+                "description": "Which branch of batch-extension-templates repo should be used to construct the httpurl for the install-corona script."
+            }
         }
     },
     "variables": {
@@ -149,7 +156,7 @@
         "enableAutoScale": false,
         "enableInterNodeCommunication": false,
         "startTask": {
-            "commandLine": "cmd /c powershell -ExecutionPolicy Unrestricted -File install-corona.ps1 [parameters('coronaFairSaasUsername')] [parameters('coronaFairSaasPassword')] \"%AZ_BATCH_APP_PACKAGE_[parameters('coronaAppPackageName')]#[parameters('coronaAppPackageVersion')]%\\3dsMax [parameters('maxVersion')] Plugin\" C:\\Autodesk\\3DsMax[parameters('maxVersion')]",
+            "commandLine": "cmd /c powershell -ExecutionPolicy Unrestricted -File install-corona.ps1 [parameters('coronaFairSaasUsername')] [parameters('coronaFairSaasPassword')] \"%AZ_BATCH_APP_PACKAGE_[parameters('coronaAppPackageName')]#[parameters('coronaAppPackageVersion')]%\"",
             "waitForSuccess": true,
             "maxTaskRetryCount": 0,
             "userIdentity": {
@@ -160,7 +167,7 @@
             },
             "resourceFiles": [
                 {
-                    "httpUrl": "https://raw.githubusercontent.com/Azure/Batch-extension-templates/master/templates/3dsmax/scripts/install-corona.ps1",
+                    "httpUrl": "https://raw.githubusercontent.com/Azure/Batch-extension-templates/[parameters('scriptBranch')]/templates/3dsmax/scripts/install-corona.ps1",
                     "filePath": "install-corona.ps1"
                 }
             ]
