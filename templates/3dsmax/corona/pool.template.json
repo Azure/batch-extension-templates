@@ -119,12 +119,12 @@
                 "Standard_M128s"
             ]
         },
-		  "scriptBranch": {
-            "type": "string",
-            "defaultValue": "master",
-            "metadata": {
-                "description": "Which branch of batch-extension-templates repo should be used to construct the httpurl for the install-corona script."
-            }
+		"scriptBranch": {
+			"type": "string",
+			"defaultValue": "master",
+			"metadata": {
+				"description": "Which branch of batch-extension-templates repo should be used to construct the httpurl for the install-corona script."
+			}
         }
     },
     "variables": {
