@@ -11,7 +11,7 @@ Write-Host "Environment:"
 gci env: | sort name
 
 
-$3dsmax2021Source = "$source\Autodesk\3ds Max 2021"
+$3dsmax2021Source = "$source\Corona Renderer\Autodesk\3ds Max 2021"
 $3dsmax2021Destination = $env:3DSMAX_2021
 if (Test-Path $3dsmax2021Destination -ErrorAction Continue) {
     Write-Host "Copying files from $3dsmax2021Source to $3dsmax2021Destination"
@@ -20,7 +20,7 @@ if (Test-Path $3dsmax2021Destination -ErrorAction Continue) {
     Write-Host "Destination $3dsmax2021Destination not found"
 }
 
-$coronaProgramFilesSource = "$source\Corona"
+$coronaProgramFilesSource = "$source\Corona Renderer\Corona"
 $coronaProgramFilesDestination = "C:\Program Files\Corona"
 
 new-item $coronaProgramFilesDestination -itemtype directory -force
