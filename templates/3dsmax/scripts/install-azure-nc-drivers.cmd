@@ -10,8 +10,8 @@ rem Ignore check for now, system doesn't seem to be returning NVIDIA devices
 rem wmic path win32_VideoController get name | findstr /C:"NVIDIA Tesla" || exit /b 0
 wmic path win32_VideoController get name
 
-set driver_version=398.75
-set driver_filename=%driver_version%-tesla-desktop-winserver2016-international.exe
+set driver_version=452.39
+set driver_filename=%driver_version%-data-center-tesla-desktop-winserver-2019-2016-international.exe
 
 rem If already installed, skip
 if exist %AZ_BATCH_NODE_SHARED_DIR%\init.txt exit /b 0
@@ -25,7 +25,7 @@ choco install -y 7zip
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 rem Download NVIDIA Tesla/CUDA drivers
-powershell.exe Invoke-WebRequest -Uri "http://us.download.nvidia.com/Windows/Quadro_Certified/%driver_version%/%driver_filename%" -OutFile "%driver_filename%"
+powershell.exe Invoke-WebRequest -Uri "http://us.download.nvidia.com/tesla/%driver_version%/%driver_filename%" -OutFile "%driver_filename%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 rem Extract and install NVIDIA drivers
